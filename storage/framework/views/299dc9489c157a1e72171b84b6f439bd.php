@@ -1,0 +1,251 @@
+<?php $__env->startSection('title', 'HR | PT. Dwida Jaya Tama'); ?>
+
+<?php $__env->startSection('content_header'); ?>
+    <div class="container">
+        <div class="row">
+            <div class="col float-left">
+                <h5><i class="fa fa-layer-group"></i> <strong>Daftar Lowongan Kerja</strong></h5>
+            </div>
+            <div class="col">
+                <a type="button" href="javascript:void(0)" id="createNewData" class="btn btn-primary float-right">+ Tambah</a>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bd-example-modal-lg" id="ajaxModal" arial-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalHeading"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="dataForm" name="dataForm" class="form-horizontal">
+                        <input type="hidden" name="data_id" id="data_id">
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Lowongan pekerjaan" aria-label="name"
+                                    id="name" name="name" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-building"></i></span>
+                                </div>
+                                <select type="text" class="form-control" id="corp" name="corp"
+                                    value="">
+                                    <?php $__currentLoopData = $corps; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($item->id); ?>"><?php echo e($item->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-timeline"></i></span>
+                                </div>
+                                <select type="text" class="form-control" id="dept" name="dept"
+                                    value="">
+                                    <?php $__currentLoopData = $depts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($item->id); ?>"><?php echo e($item->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-power-off"></i></span>
+                                </div>
+                                <select type="text" class="form-control" id="status" name="status"
+                                    value="">
+                                        <option value="0">Aktif</option>
+                                        <option value="1">Tidak Aktif</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3 col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-list"></i></span>
+                                </div>
+                                <textarea id="description" name="description" class="form-control" placeholder="Tulis deskripsi lowongan pekerjaan" rows="7"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btnSave" value="create">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+    <table class="table data-table display nowrap" width="100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Lowongan Pekerjaan</th>
+                <th>Unit Bisnis</th>
+                <th>Departemen</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('css'); ?>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/rowreorder/1.2.8/css/rowReorder.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('js'); ?>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            var table = $(".data-table").DataTable({
+                // lengthMenu:[[10,25,50,-1],['10', '25', '50', 'Show All']],
+                dom: 'frtip',
+                // buttons: [
+                //     'excel'
+                // ],
+                // rowReorder: {
+                //     selector: 'td:nth-child(2)'
+                // },
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: '<?php echo route('vacancies.data'); ?>',
+                columnDefs: [{
+                    searchable: false,
+                    orderable: false,
+                    targets: 0,
+                }, ],
+                order: [
+                    [2, 'asc']
+                ],
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'corp',
+                        name: 'corp'
+                    },
+                    {
+                        data: 'dept',
+                        name: 'dept'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                    },
+                    // {
+                    //     data: 'description',
+                    //     name: 'description'
+
+                    // },
+                ]
+            });
+
+            $("#createNewData").click(function() {
+                $("#data_id").val('');
+                $("#dataForm").trigger("reset");
+                $("#modalHeading").html("Tambah Data");
+                $("#ajaxModal").modal('show');
+            });
+
+            $("#btnSave").click(function(e) {
+                e.preventDefault();
+                $(this).html('Simpan');
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo e(route('vacancies.store')); ?>",
+                    data: $("#dataForm").serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        $("#dataForm").trigger("reset");
+                        $("#ajaxModal").modal('hide');
+                        table.draw();
+                    },
+                    error: function(data) {
+                        console.log('Error', data);
+                        $("#btnSave").html('Simpan');
+                    }
+                });
+            });
+
+            $('body').on('click', '.deleteData', function() {
+                var data_id = $(this).data("id");
+                if (confirm("Apakah Anda yakin?")) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "<?php echo e(route('vacancies.store')); ?>" + "/" + data_id,
+                        success: function(data) {
+                            table.draw();
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+            $('body').on('click', '.editData', function() {
+                var data_id = $(this).data("id");
+                $.get("<?php echo e(route('vacancies.index')); ?>" + "/" + data_id + "/edit", function(data) {
+                    $("#modalHeading").html("Ubah Data");
+                    $("#ajaxModal").modal('show');
+                    $("#data_id").val(data.id);
+                    $("#name").val(data.name);
+                    $("#dept").val(data.dept);
+                    $("#corp").val(data.corp);
+                    $("#description").val(data.description);
+                    $("#status").val(data.status);
+                });
+            });
+        });
+    </script>
+
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('adminlte::page', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/n1577460/public_html/rekrutmen/resources/views/pages/vacancy/index.blade.php ENDPATH**/ ?>
