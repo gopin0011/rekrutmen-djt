@@ -3,7 +3,7 @@
 @section('title', 'HR | PT. Dwida Jaya Tama')
 
 @section('content_header')
-    @if (Auth::user()->role != '0')
+    @if (Auth::user()->admin != '0')
         <h6>HUMAN RESOURCES INTEGRATED SYSTEM</h6>
     @else
         <h5>Selamat datang, <b>{{ Auth::user()->name; }}</b></h5>
@@ -16,7 +16,65 @@
     window.location.href='{{route('docs.index')}}'+'/a/'+data_id;
 }); --}}
 
-    @if (Auth::user()->role != '0')
+    @if (Auth::user()->admin != '0')
+        @if(count($reschedule)) 
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link active" href="#timeline" data-toggle="tab">Reschedule</a></li>
+                </ul>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content">
+                  <div class="tab-pane active" id="timeline">
+                    <!-- The timeline -->
+                    <div class="timeline timeline-inverse">
+                      <!-- timeline time label -->
+                      <div class="time-label">
+                        <span class="bg-success">
+                          <!-- 10 Feb. 2014 -->
+                        {{ \Carbon\Carbon::now()->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}
+                        </span>
+                      </div>
+                      <!-- /.timeline-label -->
+                      <!-- timeline item -->
+                      @foreach($reschedule as $row)
+                      <div>
+                        <i class="fas fa-envelope bg-primary"></i>
+
+                        <div class="timeline-item">
+                          <span class="time"><i class="far fa-clock"></i> {{$row->created_at->format('H:i')}}</span>
+
+                          <h3 class="timeline-header"><a href="#">{{$row->applications->user->name}}</a> {{$row->message}}</h3>
+
+                          <div class="timeline-body">
+                            Untuk Posisi: {{$row->applications->vacancy->name}}
+                            <br>
+                            Reschedule menjadi: {{\Carbon\Carbon::parse($row->applications->jadwalinterview)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y')}}
+                            <br>
+                            Jadwal Sebelumnya Adalah: {{\Carbon\Carbon::parse($row->applications->reschedule->date)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y')}}
+                          </div>
+
+                        </div>
+                      </div>
+                      @endforeach
+                      <!-- END timeline item -->
+                      <div>
+                        <i class="far fa-clock bg-gray"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+          </div>
+        </div>
+        <!-- /.card -->
+        @endif
         <div class="row">
             <div class="col-lg-4 col-md-12">
                 <div class="small-box bg-success">

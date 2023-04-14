@@ -6,6 +6,7 @@ use App\Models\ApplicantReference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Crypt;
 
 class ApplicantReferenceController extends Controller
 {
@@ -58,5 +59,27 @@ class ApplicantReferenceController extends Controller
     {
         ApplicantReference::find($id)->delete();
         return response()->json(['success' => 'Data telah berhasil dihapus']);
+    }
+
+    public function convert()
+    {
+        try {
+            $apply = ApplicantReference::orderBy('id')->get();
+            foreach($apply as $data){
+
+                $update = ApplicantReference::find($data->id);
+
+                $update->nama = Crypt::decryptString($data->nama);
+                $update->perusahaan = Crypt::decryptString($data->perusahaan);
+                $update->jabatan = Crypt::decryptString($data->jabatan);
+                $update->kontak = Crypt::decryptString($data->kontak);
+
+                $update->update();
+            }
+            dd('done');
+        } catch (\Throwable $e) {
+            dd([$update->id,$e->getMessage()]);
+            dd($e->getMessage());
+        }
     }
 }

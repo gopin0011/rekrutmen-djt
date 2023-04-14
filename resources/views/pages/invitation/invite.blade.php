@@ -23,4 +23,6 @@ Anda mendapatkan undangan interview dari PT. Dwida Jaya Tama:
     | Invitation code | {{ $code }}               |
 @endcomponent
 
+Silahkan klik link diatas untuk mengisi atau reschedule jadwal interview
+
 @endcomponent

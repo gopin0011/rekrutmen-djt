@@ -1,4 +1,7 @@
 .env
 /vendor
 /node_modules
+/storage/app/public
+/storage
 __MACOSX
+/app/.DS_Store

@@ -45,7 +45,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-layer-group"></i></span>
                                 </div>
-                                <select type="text" class="form-control" id="role" name="role" placeholder=""
+                                <select type="text" class="form-control" id="admin" name="admin" placeholder=""
                                     value="">
                                     {{-- <option value=1>Developer</option> --}}
                                     <option value=2>Superadmin</option>
@@ -76,7 +76,7 @@
                                 </div>
                                 <select type="text" class="form-control" id="dept" name="dept" value="">
                                     @foreach ($depts as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -180,8 +180,8 @@
                         name: 'email'
                     },
                     {
-                        data: 'role',
-                        name: 'role'
+                        data: 'admin',
+                        name: 'admin'
                     },
                     {
                         data: 'corp',
@@ -253,7 +253,7 @@
                     $("#data_id").val(data.id);
                     $("#name").val(data.name);
                     $("#email").val(data.email);
-                    $("#role").val(data.role);
+                    $("#admin").val(data.admin);
                     $("#corp").val(data.corp);
                     $("#dept").val(data.dept);
                 });

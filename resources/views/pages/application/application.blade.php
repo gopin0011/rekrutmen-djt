@@ -255,11 +255,11 @@
             @foreach ($adik as $row)
             <tr>
                 <td style="border:1pt solid #000000">Anak {{ $i++ }}</td>
-                <td style="border:1pt solid #000000">{{ $adik->nama}}</td>
-                <td style="border:1pt solid #000000">{{ $adik->gender == 'Pria' ? 'L' : 'P'}}</td>
-                <td style="border:1pt solid #000000">{{ $adik->ttl}}</td>
-                <td style="border:1pt solid #000000">{{ $adik->pendidikan}}</td>
-                <td style="border:1pt solid #000000">{{ $adik->pekerjaan}}</td>
+                <td style="border:1pt solid #000000">{{ $row->nama}}</td>
+                <td style="border:1pt solid #000000">{{ $row->gender == 'Pria' ? 'L' : 'P'}}</td>
+                <td style="border:1pt solid #000000">{{ $row->ttl}}</td>
+                <td style="border:1pt solid #000000">{{ $row->pendidikan}}</td>
+                <td style="border:1pt solid #000000">{{ $row->pekerjaan}}</td>
             </tr>
             @endforeach
         </tbody>
@@ -481,7 +481,7 @@
             <tr>
                 <td style="text-align: left">Total Gaji dan Tunjangan</td>
                 <td>:</td>
-                <td colspan="7" style="text-align: left">Rp. {{ number_format($row->gaji)}}</td>
+                <td colspan="7" style="text-align: left">Rp. {{ number_format(str_replace('.', '', $row->gaji)) }}</td>
             </tr>
             <tr>
                 <td style="text-align: left">Detail Pekerjaan</td>

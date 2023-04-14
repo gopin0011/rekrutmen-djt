@@ -6,6 +6,7 @@ use App\Models\Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class FormController extends Controller
 {

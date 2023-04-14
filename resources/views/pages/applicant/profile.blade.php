@@ -17,7 +17,7 @@
         @csrf
         <div class="card">
             <div class="card-body"><input id="data_id" name="data_id" value="{{ $data->id ?? '' }}" hidden>
-                <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->role == 0 ? Auth::user()->id : $id }}">
+                <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->admin == 0 ? Auth::user()->id : $id }}">
                 <div class="form-row">
                     <div class="input-group mb-3 col-md-4">
                         <div class="input-group-prepend">

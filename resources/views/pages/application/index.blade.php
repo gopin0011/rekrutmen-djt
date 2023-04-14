@@ -88,6 +88,32 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade bd-example-modal-lg" id="ajaxModalSchedule" arial-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalHeadingSchedule"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="dataForm2" name="dataForm2" class="form-horizontal">
+                        <input type="hidden" name="data_id" id="data_id2">
+                        <div class="form-row">
+                            <div class="input-group mb-6 col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar-day"></i></span>
+                                </div>
+                                <input type="date" class="form-control" aria-label="dateinvite" id="dateinvite" name="newdateinvite"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary" id="btnSave2" name="btnSave" value="reschedule">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('content')
@@ -98,8 +124,10 @@
                 <th>Posisi</th>
                 <th>Posisi Alternatif</th>
                 <th>Jadwal Interview</th>
+                <th>Jam</th>
                 <th>Hasil</th>
                 <th width="60px"></th>
+                <th>Reschedule</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -186,6 +214,11 @@
                         orderable: false,
                     },
                     {
+                        data: 'jadwaljam',
+                        name: 'jadwaljam',
+                        orderable: false,
+                    },
+                    {
                         data: 'hasil',
                         name: 'hasil',
                         orderable: false,
@@ -193,6 +226,12 @@
                     {
                         data: 'action',
                         name: 'action',
+                        searchable: false,
+                        orderable: false,
+                    },
+                    {
+                        data: 'reschedule',
+                        name: 'reschedule',
                         searchable: false,
                         orderable: false,
                     },
@@ -227,6 +266,30 @@
                 });
             });
 
+            $("#btnSave2").click(function(e) {
+                e.preventDefault();
+                $(this).html('Simpan');
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('applications.store') }}",
+                    data: $("#dataForm2").serialize(),
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.error) {
+                            alert(data.error);
+                        }
+                        $("#dataForm2").trigger("reset");
+                        $("#ajaxModalSchedule").modal('hide');
+                        table.draw();
+                    },
+                    error: function(data) {
+                        console.log('Error', data);
+                        $("#btnSave2").html('Simpan');
+                    }
+                });
+            });
+
             $('body').on('click', '.deleteData', function() {
                 var data_id = $(this).data("id");
                 if (confirm("Apakah Anda yakin?")) {
@@ -253,6 +316,16 @@
                     $("#data_id").val(data.id);
                     $("#name").val(data.name);
                     $("#code").val(data.code);
+                });
+            });
+
+            $('body').on('click', '.reschedule', function() {
+                var data_id = $(this).data("id");
+                $.get("{{ route('applications.index') }}" + "/" + data_id + "/edit?reschedule=1", function(data) {
+                    $("#modalHeadingSchedule").html("Reschedule");
+                    $("#ajaxModalSchedule").modal('show');
+                    $("#data_id2").val(data.id);
+                    $("#dateinvite").val(data.int);
                 });
             });
         });

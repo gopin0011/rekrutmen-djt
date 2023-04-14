@@ -22,7 +22,7 @@
                 <div class="modal-body">
                     <form id="dataForm" name="dataForm" class="form-horizontal" enctype="multipart/form-data">
                         <input type="hidden" name="data_id" id="data_id">
-                        <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->role == 0 ? Auth::user()->id : $id }}">
+                        <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->admin == 0 ? Auth::user()->id : $id }}">
                         <div class="form-group">
                             <div class="custom-file">
                                 <input id="file" type="file" name="file" accept="application/pdf">
@@ -30,6 +30,30 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary" id="btnSave" value="create">Simpan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ajaxModalAdd" arial-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalHeadingAdd"></h4>
+                </div>
+                <div class="modal-body">
+                    <form id="dataForm2" name="dataForm" class="form-horizontal" enctype="multipart/form-data">
+                        <input type="hidden" name="user_id" id="useridAdditional" value="">
+                        <input type="hidden" name="vacancy_id" id="vacancy_id" value="">
+                        <input type="hidden" name="additional_upload_id" id="additional_upload_id" value="">
+                        <div class="form-group">
+                            <div class="custom-file">
+                                <input id="file" type="file" name="file" accept="application/pdf">
+                                <p style="font-size: 8pt">(Ukuran Maksimal: 4 MB, Format: PDF)</p>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btnSave2" value="create">Simpan</button>
                     </form>
                 </div>
             </div>
@@ -46,6 +70,35 @@
             </tr>
         </thead>
         <tbody></tbody>
+    </table>
+
+    <table class="table table-striped data-table2 display nowrap" width="100%">
+        <thead>
+            <tr>
+                <th>Dokumen Pendukung</th>
+                <th width="60px"></th>
+            </tr>
+        </thead>
+        <tbody>
+        @if(count($applications))
+        @foreach($applications as $row) 
+            <tr>
+                <td>{{$row->vacancy->name}}</td>
+                <td></td>
+            </tr>
+            @if(count($row->vacancy->vacanciesAdditionalUpload))
+            @foreach($row->vacancy->vacanciesAdditionalUpload as $doc)
+            <tr>
+                <td>{{$loop->index+1}}. {{$doc->additionalUpload->text}}</td>
+                <td class="file-pendukung" data-userid="{{$row->user_id}}" data-vacancyid="{{$row->posisi}}" data-additionalupload="{{$doc->additional_upload_id}}">
+                    
+                </td>
+            </tr>
+            @endforeach
+            @endif
+        @endforeach
+        @endif
+        </tbody>
     </table>
 @stop
 
@@ -83,6 +136,90 @@
 
     <script type="text/javascript">
         $(function() {
+            $('body').on('submit', '#dataForm2', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('applicant_documents.additional.store') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: (data) => {
+                        location.reload();
+                    },
+                    error: function(data) {
+                       console.log(data);
+                    }
+                });
+            });
+
+            $('body').on('click', '.del', function() {
+                var data_id = $(this).data("id");
+                if (confirm("Apakah Anda yakin?")) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('applicant_documents.additional.delete', [':id']) }}".replace(':id', data_id),
+                        success: function(data) {
+                            location.reload();
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+            const getData = async (url) => {
+                const request = await fetch(url);
+                const d = await request.json();
+                return d;
+            };
+            
+            var additional = $(".file-pendukung");
+
+            function showModal()
+            {
+                var title = $(this).data('title');
+                $("#modalHeadingAdd").html(title);
+                var user_id = $(this).data('userid');
+                $('#useridAdditional').val(user_id);
+                var vacancy_id = $(this).data('vacancyid');
+                $('#vacancy_id').val(vacancy_id);
+                var additional_upload_id = $(this).data('additionaluploadid');
+                $('#additional_upload_id').val(additional_upload_id);
+                $("#dataForm2").trigger("reset");
+                $("#ajaxModalAdd").modal('show');
+            }
+
+            $(additional).each(function() {
+                var userid = $(this).data("userid");
+                var vacancyid = $(this).data("vacancyid");
+                var vacAdditionalUpload = $(this).data("additionalupload");
+                var url = "{{ route('applicant_documents.additional.data', [':userid', ':vacancyid', ':additionalupload']) }}".replace(':userid', userid).replace(':vacancyid', vacancyid).replace(':additionalupload', vacAdditionalUpload);
+                getData(url).then(result => {
+                    if(!result.ApplicantAdditionalDocument) {
+                        var div = $('<div>', {class: 'btn-group'});
+                        var upp = $('<a>', {'data-toggle': 'tooltip', 'data-userid': result.userid, 'data-vacancyid': result.vacancyid, 'data-additionaluploadid': result.additionaluploadid, 'data-title' : result.title, 'data-original-title' : 'Edit', 'class': 'edit btn btn-primary btn-sm upp'});
+                        var iUpp = upp.append($('<i>', {class: 'fa fa-upload'}));
+                        $(this).append(div.append(iUpp));
+                        upp.click(showModal);
+                    } 
+                    else {
+                        var url2 = "{{route('storage.doc', [':folder',':filename'])}}".replace(':folder', 'additional').replace(':filename', result.ApplicantAdditionalDocument.file+'.pdf');
+                        var div = $('<div>', {class: 'btn-group'});
+                        var see = $('<a>', {'href': url2, 'target': '_blank', 'data-toggle': 'tooltip', 'data-id': '', 'data-original-title' : 'Edit', 'class': 'edit btn btn-primary btn-sm see'});
+                        var iSee = see.append($('<i>', {class: 'fa fa-eye'}));
+                        var del = $('<a>', {'data-toggle': 'tooltip', 'data-id': result.ApplicantAdditionalDocument.id, 'data-original-title' : 'Edit', 'class': 'edit btn btn-danger btn-sm del'});
+                        var iDel = del.append($('<i>', {class: 'fa fa-trash'}));
+                        $(this).append(div.append(iSee).append(iDel));
+                    }
+                });
+            });
+            
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -114,6 +251,8 @@
                 $("#modalHeading").html("Tambah Data");
                 $("#ajaxModal").modal('show');
             });
+
+            
 
             $('body').on('submit', '#dataForm', function(e) {
                 e.preventDefault();

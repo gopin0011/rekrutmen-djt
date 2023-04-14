@@ -443,6 +443,51 @@ return [
                 // ],
             ]
         ],
+
+        // lembur
+        ['header' => 'lembur', 'can'  => ['w','e','r','t','y']],
+        [
+            'text'    => 'spl',
+            'icon'    => 'fas fa-fw fa-list',
+            'can'  => ['w','e','r','t','y'],
+            'submenu' => [
+                [
+                    'text' => 'buat_spl',
+                    'url'  => 'overtimes/create',
+                    'icon' => 'fas fa-fw fa-list',
+                    'shift'=> 'ml-4',
+                    'can'  => ['w','e','r','t','y'],
+                ],
+                [
+                    'text' => 'daftar_spl',
+                    'url'  => 'overtimes',
+                    'icon' => 'fas fa-fw fa-list',
+                    'shift'=> 'ml-4',
+                    'can'  => ['w','e','r','t','y'],
+                ],
+                [
+                    'text' => 'hariini_spl',
+                    'url'  => 'overtimes/today',
+                    'icon' => 'fas fa-fw fa-list',
+                    'shift'=> 'ml-4',
+                    'can'  => ['w','e','r','t','y'],
+                ],
+                [
+                    'text' => 'mana_spl',
+                    'url'  => 'overtimes/manager-app',
+                    'icon' => 'fas fa-fw fa-list',
+                    'shift'=> 'ml-4',
+                    'can'  => ['w','e','r','t','y'],
+                ],
+                [
+                    'text' => 'hr_spl',
+                    'url'  => 'overtimes/hr-app',
+                    'icon' => 'fas fa-fw fa-list',
+                    'shift'=> 'ml-4',
+                    'can'  => ['w','e','r','t','y'],
+                ],
+            ]
+        ],
         // [
         //     'text' => 'applicant',
         //     'url'  => 'applicants',

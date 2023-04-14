@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicantDocument;
+use App\Models\Application;
+use App\Models\ApplicantAdditionalDocument;
+use App\Models\AdditionalUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -13,7 +16,49 @@ class ApplicantDocumentController extends Controller
     public function index()
     {
         $dt = route('applicant_documents.data');
-        return view('pages.applicant.document',compact('dt'));
+        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('vacancy')->whereHas('vacancy.vacanciesAdditionalUpload')->where('user_id', Auth::user()->id)->get();
+        return view('pages.applicant.document',compact('dt','applications'));
+    }
+
+    public function showDataAdditional($userId, $vacancyId, $additionalUploadId)
+    {
+        $additionalDocument = ApplicantAdditionalDocument::with('additionalUpload')->where('user_id', $userId)->where('vacancy_id', $vacancyId)->where('additional_upload_id', $additionalUploadId)->first();
+        $data['ApplicantAdditionalDocument'] = $additionalDocument;
+        $data['status'] = 200;
+        $data['message'] = 'success';
+        $data['title'] = AdditionalUpload::find($additionalUploadId)->text;
+        $data['userid'] = $userId;
+        $data['vacancyid'] = $vacancyId;
+        $data['additionaluploadid'] = $additionalUploadId;
+
+        return response()->json($data);
+    }
+
+    public function storeAdditional(Request $request)
+    {
+        $user_id = $request->user_id;
+        $vacancy_id = $request->vacancy_id;
+        $additional_upload_id = $request->additional_upload_id;
+
+        $request->validate([
+            'file' => 'required|mimes:pdf|max:4096',
+        ]);
+
+        $file = $user_id.'-'.$vacancy_id.'-'.$additional_upload_id;
+        $fileName =  $file.'.pdf';
+
+        $request->file->move('storage/app/public/additional', $fileName);
+
+        ApplicantAdditionalDocument::Create(
+            [
+                'user_id' => $user_id,
+                'vacancy_id' => $vacancy_id,
+                'additional_upload_id' => $additional_upload_id,
+                'file' => $file
+            ]
+        );
+
+        return response()->json(['success' => 'Data telah berhasil disimpan']);
     }
 
     public function showData(Request $request)
@@ -27,9 +72,9 @@ class ApplicantDocumentController extends Controller
                     return $nama;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . 'storage/doc/' . $row->dokumen . '.pdf' . '" target="_blank" class="show btn btn-primary btn-sm showData"><i class="fa fa-eye"></i></a>';
-                    $btn .= '&nbsp;&nbsp;';
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a>';
+                    $url = route('storage.doc', ['folder' => 'doc', 'filename' => $row->dokumen.'.pdf']);
+                    $btn = '<div class="btn-group"><a href="' . $url . '" target="_blank" class="show btn btn-primary btn-sm showData"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a></div>';
                     return $btn;
                 })
                 ->rawColumns(['action','name'])
@@ -55,7 +100,7 @@ class ApplicantDocumentController extends Controller
         $date = $request->user_id;
         $fileName =  $date . '.pdf';
 
-        $request->file->move('storage/doc', $fileName);
+        $request->file->move('storage/app/public/doc', $fileName);
 
         if(count($check) == 0)
         {
@@ -72,7 +117,16 @@ class ApplicantDocumentController extends Controller
     public function destroy($id)
     {
         $data = ApplicantDocument::find($id);
-        $file = 'storage/doc/' . $data->dokumen . '.pdf';
+        $file = 'storage/app/public/doc/' . $data->dokumen . '.pdf';
+        File::delete(($file));
+        $data->delete();
+        return response()->json(['success' => 'Data telah berhasil dihapus']);
+    }
+
+    public function destroyAdditional($id)
+    {
+        $data = ApplicantAdditionalDocument::find($id);
+        $file = 'storage/app/public/additional/' . $data->file . '.pdf';
         File::delete(($file));
         $data->delete();
         return response()->json(['success' => 'Data telah berhasil dihapus']);

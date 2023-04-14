@@ -13,22 +13,38 @@
 @stop
 
 @section('content')
-    <table class="table table-striped data-table display nowrap" width="100%">
+    <table id="table" class="table table-striped data-table display nowrap" width="100%">
         <thead>
+            <tr>
+                <td colspan="9">
+                    <input type="text" placeholder="Search Name Or Email" class="form-control" id="search" aria-label="search" aria-describedby="basic-addon1">
+                </td>
+            </tr>
             <tr>
                 <th width="50px">#</th>
                 <th>Pelamar</th>
                 <th>Email</th>
-                <th><i class="fa fa-user"></i></th>
+                <th>Info</th>
+                <!-- <th><i class="fa fa-user"></i></th>
                 <th><i class="fa fa-users"></i></th>
                 <th><i class="fa fa-graduation-cap"></i></th>
                 <th><i class="fa fa-briefcase"></i></th>
                 <th><i class="fa fa-people-roof"></i></th>
                 <th><i class="fa fa-signature"></i></th>
-                <th><i class="fa fa-upload"></i></th>
+                <th><i class="fa fa-upload"></i></th> -->
             </tr>
         </thead>
         <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-right" style="text-align: right;">
+                    <div aria-label="Page navigation example">
+                        <ul class="pagination">
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 @stop
 
@@ -71,75 +87,75 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            var table = $(".data-table").DataTable({
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                ajax: '{!! route('applicants.data') !!}',
-                columnDefs: [{
-                    searchable: false,
-                    orderable: false,
-                    targets: 0,
-                }, ],
-                order: [
-                    [1, 'asc']
-                ],
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'email',
-                        name: 'email'
-                    },
-                    {
-                        data: 'profile',
-                        name: 'profile',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'family',
-                        name: 'family',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'study',
-                        name: 'study',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'career',
-                        name: 'career',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'activity',
-                        name: 'activity',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'ref',
-                        name: 'ref',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'doc',
-                        name: 'doc',
-                        searchable: false,
-                        orderable: false,
-                    },
-                ]
-            });
+            // var table = $(".data-table").DataTable({
+            //     responsive: true,
+            //     serverSide: true,
+            //     processing: true,
+            //     ajax: '{!! route('applicants.data') !!}',
+            //     columnDefs: [{
+            //         searchable: false,
+            //         orderable: false,
+            //         targets: 0,
+            //     }, ],
+            //     order: [
+            //         [1, 'asc']
+            //     ],
+            //     columns: [{
+            //             data: 'DT_RowIndex',
+            //             name: 'DT_RowIndex'
+            //         },
+            //         {
+            //             data: 'name',
+            //             name: 'name'
+            //         },
+            //         {
+            //             data: 'email',
+            //             name: 'email'
+            //         },
+            //         {
+            //             data: 'profile',
+            //             name: 'profile',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //         {
+            //             data: 'family',
+            //             name: 'family',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //         {
+            //             data: 'study',
+            //             name: 'study',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //         {
+            //             data: 'career',
+            //             name: 'career',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //         {
+            //             data: 'activity',
+            //             name: 'activity',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //         {
+            //             data: 'ref',
+            //             name: 'ref',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //         {
+            //             data: 'doc',
+            //             name: 'doc',
+            //             searchable: false,
+            //             orderable: false,
+            //         },
+            //     ]
+            // });
 
             $('body').on('click', '#editProfile', function() {
                 var data_id = $(this).data("id");
@@ -174,6 +190,202 @@
             $('body').on('click', '#editDoc', function() {
                 var data_id = $(this).data("id");
                 window.location.href = "{{ route('mod.edit') }}" + "/documents/" + data_id;
+            });
+
+            function editProfile()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/profiles/" + data_id;
+            }
+
+            function editFamily()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/families/" + data_id;
+            }
+
+            function editStudy()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/studies/" + data_id;
+            }
+
+            function editCareer()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/careers/" + data_id;
+            }
+
+            function editActivity()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/activities/" + data_id;
+            }
+
+            function editRef()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/references/" + data_id;
+            }
+
+            function editDoc()
+            {
+                var data_id = $(this).data("id");
+                window.location.href = "{{ route('mod.edit') }}" + "/documents/" + data_id;
+            }
+
+            const getData = async (url) => {
+                const request = await fetch(url);
+                const d = await request.json();
+
+                return d;
+            };
+
+            getData("{{route('applicants.data')}}").then(result => { makeStruct(result); });
+
+            var paginationFunc = function()
+            {
+                var d = JSON.parse(this.getAttribute("data-attribute"));
+
+                getData(d).then(result => { makeStruct(result); });
+
+                return false;
+            };
+
+            function makeStruct(d)
+            {
+                // add to table
+                $('#table').find('tbody').empty();
+
+                if(Object.keys(d.paginator.data).length > 0)
+                {
+                    for (const row of Object.keys(d.paginator.data))
+                    {
+                        var data = d.paginator.data[row];
+
+                        if(!data.applicant_profile) {
+                            var $profile = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm profile' });
+                        } else {
+                            var $profile = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm profile' });
+                        }
+                        var iprofile = $('<i>', { class: 'fa fa-user' });
+
+                        if(data.applicant_family.length == 0) {
+                            var $family = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm family' });
+                        } else {
+                            var $family = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm family' });
+                        }
+                        var ifamily = $('<i>', { class: 'fa fa-users' });
+
+                        if(data.applicant_study.length == 0) {
+                            var $study = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm study' });
+                        } else {
+                            var $study = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm study' });
+                        }
+                        var istudy = $('<i>', { class: 'fa fa-graduation-cap' });
+
+                        if(data.applicant_career.length == 0) {
+                            var $career = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm career' });
+                        } else {
+                            var $career = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm career' });
+                        }
+                        var icareer = $('<i>', { class: 'fa fa-briefcase' });
+
+                        if(data.applicant_activity.length == 0) {
+                            var $activity = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm activity' });
+                        } else {
+                            var $activity = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm activity' });
+                        }
+                        var iactivity = $('<i>', { class: 'fa fa-people-roof' });
+
+                        if(data.applicant_reference.length == 0) {
+                            var $ref = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm refer' });
+                        } else {
+                            var $ref = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm refer' });
+                        }
+                        var iref = $('<i>', { class: 'fa fa-signature' });
+
+                        if(data.applicant_document.length == 0) {
+                            var $doc = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-danger btn-sm doc' });
+                        } else {
+                            var $doc = $('<a>', { 'data-toggle':'tooltip', 'data-id': data.id, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm doc' });
+                        }
+                        var idoc = $('<i>', { class: 'fa fa-upload' });
+
+                        $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td>"+data.email+"</td><td id='td"+row+"'></td></tr>");
+                        $('<div>', { class: 'btn-group' }).append($profile.append(iprofile)).append($family.append(ifamily)).append($study.append(istudy)).append($career.append(icareer)).append($activity.append(iactivity)).append($ref.append(iref)).append($doc.append(idoc)).appendTo($('#td'+row));
+
+                        // var $btn_print = $('<button>', { type: 'button', 'data-id': data_id, class: 'btn btn-info btn-sm mb-2 float-right print' });
+                        // var i = $('<i>', { class: 'fas fa-print' });
+                        // var $btn_excel = $('<button>', { type: 'button', 'data-id': data_id, class: 'btn btn-success btn-sm mb-2 float-right excel' });
+                        // var i2 = $('<i>', { class: 'fas fa-file' });
+
+                        // $('#table').find('tbody').append("<tr class='tr-"+row+"' style='display: none;'><td></td><td>* "+data.items[item].name+"</td><td>"+data.items[item].exp_date+"</td><td>"+data.items[item].qty+"</td><td></td><td></td><td></td></tr>");
+                    }
+                }
+                else 
+                {
+                    $('#table').find('tbody').append("<tr><td colspan='10' class='text-center'>No Result</td></tr>");
+                }
+
+                var elements = $('.profile'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editProfile, false);
+                }
+
+                var elements = $('.family'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editFamily, false);
+                }
+
+                var elements = $('.study'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editStudy, false);
+                }
+
+                var elements = $('.career'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editCareer, false);
+                }
+
+                var elements = $('.activity'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editActivity, false);
+                }
+
+                var elements = $('.refer'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editRef, false);
+                }
+
+                var elements = $('.doc'); //document.getElementsByClassName("profile");
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', editDoc, false);
+                }
+                
+                // make pagination
+                var pagination = $('.pagination');
+                pagination.empty();
+
+                for (const row of Object.keys(d.paginator.links))
+                {
+                    var li = $('<li />', {class: 'page-item'});
+                    if(d.paginator.links[row].active) li.addClass('active');
+                    var button = $('<button />', {class: 'page-link btn-sm', type: 'button', 'data-url': d.paginator.links[row].url, 'data-attribute' : JSON.stringify(d.paginator.links[row].url)});
+                    if(!d.paginator.links[row].url) button.prop('disabled', true);
+                    button.html(d.paginator.links[row].label);
+                    pagination.append(li.append(button));
+                }
+
+                var elements = document.getElementsByClassName("page-link btn-sm");
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener('click', paginationFunc, false);
+                }
+            }
+
+            $('#search').on('keyup', function() {
+                var s = $(this).val();
+                getData("{{route('applicants.data')}}?search="+s).then(result => { makeStruct(result); });
             });
         });
     </script>

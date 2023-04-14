@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', 'HR | PT. Dwida Jaya Tama'); ?>
 
 <?php $__env->startSection('content_header'); ?>
-    <?php if(Auth::user()->role != '0'): ?>
+    <?php if(Auth::user()->admin != '0'): ?>
         <h6>HUMAN RESOURCES INTEGRATED SYSTEM</h6>
     <?php else: ?>
         <h5>Selamat datang, <b><?php echo e(Auth::user()->name); ?></b></h5>
@@ -11,7 +11,7 @@
 <?php $__env->startSection('content'); ?>
 
 
-    <?php if(Auth::user()->role != '0'): ?>
+    <?php if(Auth::user()->admin != '0'): ?>
         <div class="row">
             <div class="col-lg-4 col-md-12">
                 <div class="small-box bg-success">

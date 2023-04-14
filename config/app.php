@@ -196,6 +196,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // Goodnesskay\LaravelPdfViewer\LaravelPdfViewerServiceProvider::class,
     ],
 
     /*
@@ -212,6 +213,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'PDF' => Barryvdh\DomPDF\Facade::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'JWTHelper' => App\JWT\JWT::class,
     ])->toArray(),
 
 ];

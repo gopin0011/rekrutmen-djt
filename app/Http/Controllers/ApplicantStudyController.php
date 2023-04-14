@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Crypt;
 
 class ApplicantStudyController extends Controller
 {
@@ -67,5 +68,46 @@ class ApplicantStudyController extends Controller
     {
         ApplicantStudy::find($id)->delete();
         return response()->json(['success' => 'Data telah berhasil dihapus']);
+    }
+
+    public function convert()
+    {
+        try {
+            $apply = ApplicantStudy::orderBy('id')->get();
+            foreach($apply as $data){
+                $update = ApplicantStudy::find($data->id);
+
+                // $update->tingkat = Crypt::decryptString($data->tingkat);
+                // $update->kota = Crypt::decryptString($data->kota);
+                // $update->masuk = Crypt::decryptString($data->masuk);
+                // $update->keluar = Crypt::decryptString($data->keluar);
+
+                // $nama = Crypt::decryptString($data->nama);
+                // $update->nama = $nama;
+                // $update->sekolah = $nama;
+
+                // $jur = Crypt::decryptString($data->jurfak);
+                // $update->jurfak = $jur;
+                // $update->jurusan = $jur;
+                switch($data->tingkat_char){
+                    case 'SD' : $pendidikan = 'SD'; $study = 9; break;
+                    case 'SMP' : $pendidikan = 'SMP'; $study = 1; break;
+                    case 'SMA' : $pendidikan = 'SMA'; $study = 2; break;
+                    case 'D1' : $pendidikan = 'D1'; $study = 3; break;
+                    case 'D3' : $pendidikan = 'D3'; $study = 4; break;
+                    case 'D4' : $pendidikan = 'D4'; $study = 5; break;
+                    case 'S1' : $pendidikan = 'S1'; $study = 6; break;
+                    case 'S2' : $pendidikan = 'S2'; $study = 7; break;
+                    case 'S3' : $pendidikan = 'S3'; $study = 8; break;
+                }
+                $update->tingkat = $study;
+
+                $update->update();
+            }
+            dd('done');
+        } catch (\Throwable $e) {
+            dd([$update->id,$e->getMessage()]);
+            dd($e->getMessage());
+        }
     }
 }

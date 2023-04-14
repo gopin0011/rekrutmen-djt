@@ -52,7 +52,7 @@
                                 <select type="text" class="form-control" id="dept" name="dept"
                                     value="">
                                     @foreach ($depts as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -73,6 +73,15 @@
                                             class="fa fa-list"></i></span>
                                 </div>
                                 <textarea id="description" name="description" class="form-control" placeholder="Tulis deskripsi lowongan pekerjaan" rows="7"></textarea>
+                            </div>
+                            <div class="input-group mb-3 col-md-12">
+                                <input type="button" id="addfilePendukung" class="btn btn-success btn-sm" value="Tambah Upload File Pendukung">
+                            </div>
+
+                            <div class="input-group mb-3 col-md-12">
+                                <div id="divFilePendukung" class="form-row">
+
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary" id="btnSave" value="create">Simpan</button>
@@ -252,19 +261,77 @@
                 }
             });
 
+            var arr = {!!json_encode($addUpload->toArray())!!};
+
             $('body').on('click', '.editData', function() {
                 var data_id = $(this).data("id");
                 $.get("{{ route('vacancies.index') }}" + "/" + data_id + "/edit", function(data) {
                     $("#modalHeading").html("Ubah Data");
                     $("#ajaxModal").modal('show');
+                    $('#divFilePendukung .input-group.mb-3.col-md-12').remove();
                     $("#data_id").val(data.id);
                     $("#name").val(data.name);
                     $("#dept").val(data.dept);
                     $("#corp").val(data.corp);
                     $("#description").val(data.description);
                     $("#status").val(data.status);
+
+                    if(Object.keys(data.vacancies_additional_upload).length > 0)
+                    {
+                        for (const row of Object.keys(data.vacancies_additional_upload))
+                        {
+                            var d = data.vacancies_additional_upload[row];
+                            var sel = $('<select>', {'class' : 'form-control', 'type' : 'text', 'name' : 'pendukung['+d.id+']'});
+
+                            $(arr).each(function() {
+                                if (this.id == d.additional_upload_id) {
+                                    sel.append($("<option>").attr({'value': this.id, 'selected': 'selected'}).text(this.text));
+                                } 
+                                else {
+                                    sel.append($("<option>").attr('value',this.id).text(this.text));
+                                }
+                            });
+
+                            var div2 = $('<div>', { class: 'input-group mb-3 col-md-12', style : 'left: 0px;' });
+                            var div3 = $('<div>', { class: 'input-group-prepend' });
+                            var span = $('<span>', { class : 'input-group-text'}).append($('<i>', {class : 'fa fa-file'}));
+                            var del = $('<button>', { class: 'btn btn-sm btn-danger delete', value: 'X', type: 'button'}).text('Delete');
+                            div2.append(div3.append(span).append(sel).append('&nbsp;&nbsp;&nbsp;').append(del)).appendTo($('#divFilePendukung'));
+                        }
+                    }
+
+                    var elements = $('.delete');
+                    for (var i = 0; i < elements.length; i++) { 
+                        elements[i].addEventListener('click', funcDelete, false);
+                    }
                 });
             });
+
+            function funcDelete()
+            {
+                var ele = $(this).closest('.input-group.mb-3.col-md-12');
+                ele.remove();
+            }
+
+            $("#addfilePendukung").on("click", function(){
+                var sel = $('<select>', {'class' : 'form-control', 'type' : 'text', 'name' : 'pendukung[]'});
+
+                $(arr).each(function() {
+                    sel.append($("<option>").attr('value',this.id).text(this.text));
+                });
+
+                var div2 = $('<div>', { class: 'input-group mb-3 col-md-12', style : 'left: 0px;' });
+                var div3 = $('<div>', { class: 'input-group-prepend' });
+                var span = $('<span>', { class : 'input-group-text'}).append($('<i>', {class : 'fa fa-file'}));
+                var del = $('<button>', { class: 'btn btn-sm btn-danger delete', value: 'X', type: 'button'}).text('Delete');
+                div2.append(div3.append(span).append(sel).append('&nbsp;&nbsp;&nbsp;').append(del)).appendTo($('#divFilePendukung'));
+
+                var elements = $('.delete');
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', funcDelete, false);
+                }
+            });
+
         });
     </script>
 

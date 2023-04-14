@@ -21,10 +21,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'admin',
         'token_device',
         'corp',
         'dept',
+        'key',
+        'email_verified_at'
     ];
 
     /**
@@ -45,4 +47,39 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function applicantProfile()
+    {
+        return $this->belongsTo(ApplicantProfile::class,'id','user_id');
+    }
+
+    public function applicantFamily()
+    {
+        return $this->hasMany(ApplicantFamily::class,'user_id');
+    }
+
+    public function applicantStudy()
+    {
+        return $this->hasMany(ApplicantStudy::class,'user_id');
+    }
+
+    public function applicantCareer()
+    {
+        return $this->hasMany(ApplicantCareer::class,'user_id');
+    }
+
+    public function applicantActivity()
+    {
+        return $this->hasMany(ApplicantActivity::class,'user_id');
+    }
+
+    public function applicantReference()
+    {
+        return $this->hasMany(ApplicantReference::class,'user_id');
+    }
+
+    public function applicantDocument()
+    {
+        return $this->hasMany(ApplicantDocument::class,'user_id');
+    }
 }

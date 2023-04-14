@@ -8,9 +8,14 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Crypt;
+use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class StaffController extends Controller
 {
+    const per_page = 10;
+
     public function staffActive($id)
     {
         $x = route('staffActive.data', ['id' => $id]);
@@ -43,7 +48,7 @@ class StaffController extends Controller
                 ->addColumn('dept', function ($row) {
                     $id = $row->dept;
                     $dept = Dept::find($id);
-                    return $dept->name;
+                    return $dept->nama;
                 })
                 ->addColumn('gender', function ($row) {
                     $id = $row->gender;
@@ -134,7 +139,7 @@ class StaffController extends Controller
                 ->addColumn('dept', function ($row) {
                     $id = $row->dept;
                     $dept = Dept::find($id);
-                    return $dept->name;
+                    return $dept->nama;
                 })
                 ->addColumn('gender', function ($row) {
                     $id = $row->gender;
@@ -224,7 +229,7 @@ class StaffController extends Controller
                 ->addColumn('dept', function ($row) {
                     $id = $row->dept;
                     $dept = Dept::find($id);
-                    return $dept->name;
+                    return $dept->nama;
                 })
                 ->addColumn('gender', function ($row) {
                     $id = $row->gender;
@@ -315,7 +320,7 @@ class StaffController extends Controller
                 ->addColumn('dept', function ($row) {
                     $id = $row->dept;
                     $dept = Dept::find($id);
-                    return $dept->name;
+                    return $dept->nama;
                 })
                 ->addColumn('gender', function ($row) {
                     $id = $row->gender;
@@ -424,5 +429,213 @@ class StaffController extends Controller
     {
         Staff::find($id)->delete();
         return response()->json(['success' => 'Data telah berhasil dihapus']);
+    }
+
+    public function showStaff(Request $request)
+    {
+        $current_page = request('page') ?? 1;
+
+        $limit = self::per_page;
+        $start = ($current_page * self::per_page) - self::per_page;
+
+        $search = request('search');
+        if($search == '') {
+            // unset($search);
+        }
+
+        $q = Staff::orderBy('name');
+        if ($search != '' && $search) {
+            $q->where('name', 'like', '%'.$search.'%')->orWhere('email', 'like', '%'.$search.'%');
+        }
+        $total = $q->count();
+        
+        $q->offset($start)->limit($limit);
+
+        $data = $q->get();
+
+        $result['paginator'] = new Paginator($data, $total, self::per_page, $current_page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+
+        return $result;
+    }
+
+    public function conver00()
+    {
+        // where('id','<=', 172)->where('id','>', 172)->
+        $staff = Staff::orderBy('id')->get();
+        foreach($staff as $data){
+            switch(Crypt::decryptString($data->gender_char)){
+                case 'Pria' : $gender_char = 'Pria'; $gender = 2; break;
+                default : $gender_char = 'Wanita'; $gender = 1; break; 
+            }
+
+            switch($data->divisi){
+                case 'Business and Development' : $divisi = 'Business and Development'; $dept = 17; break;
+                case 'Comptroller' : $divisi = 'Comptroller'; $dept = 32; break;
+                case 'Elektro' : $divisi = 'Elektro'; $dept = 12; break;
+                case 'Engineering' : $divisi = 'Engineering'; $dept = 19; break;
+                case 'FAT' : $divisi = 'FAT'; $dept = 1; break;
+                case 'Finishing' : $divisi = 'Finishing'; $dept = 23; break;
+                case 'General Affairs' : $divisi = 'General Affairs'; $dept = 4; break;
+                case 'Gudang' : $divisi = 'Gudang'; $dept = 9; break;
+                case 'Handmade Panel' : $divisi = 'Handmade Panel'; $dept = 28; break;
+                case 'Human Resources' : $divisi = 'Human Resources'; $dept = 3; break;
+                case 'Injection' : $divisi = 'Injection'; $dept = 13; break;
+                case 'Kayu' : $divisi = 'Kayu'; $dept = 11; break;
+                case 'Logam' : $divisi = 'Logam'; $dept = 10; break;
+                case 'Multimedia' : $divisi = 'Multimedia'; $dept = 30; break;
+                case 'Offset Printing' : $divisi = 'Offset Printing'; $dept = 18; break;
+                case 'Operasional' : $divisi = 'Operasional'; $dept = 8; break;
+                case 'Packing dan Finish Good' : $divisi = 'Packing dan Finish Good'; $dept = 22; break;
+                case 'Pembahanaan dan Proses Panel' : $divisi = 'Pembahanaan dan Proses Panel'; $dept = 20; break;
+                case 'PPIC' : $divisi = 'PPIC'; $dept = 24; break;
+                case 'Product Development' : $divisi = 'Product Development'; $dept = 29; break;
+                case 'Product Development Engineering' : $divisi = 'Product Development Engineering'; $dept = 27; break;
+                case 'Project' : $divisi = 'Project'; $dept = 25; break;
+                case 'Purchasing' : $divisi = 'Purchasing'; $dept = 6; break;
+                case 'Quality Control' : $divisi = 'Quality Control'; $dept = 14; break;
+                case 'Research and Development' : $divisi = 'Research and Development'; $dept = 7; break;
+                case 'Set Up' : $divisi = 'Set Up'; $dept = 15; break;
+                case 'Solid dan Assembling' : $divisi = 'Solid dan Assembling'; $dept = 21; break;
+                case 'Vokasi' : $divisi = 'Vokasi'; $dept = 16; break;
+                case 'Marketing' : $divisi = 'Marketing'; $dept = 26; break;
+                case 'Produksi' : $divisi = 'Marketing'; $dept = 31; break;
+            }
+
+            switch(Crypt::decryptString($data->agama)){
+                case 'Islam' : $agama = 'Islam'; $religion = 6; break;
+                case 'Budha' : $agama = 'Budha'; $religion = 3; break;
+                case 'Katolik' : $agama = 'Katolik'; $religion = 2; break;
+                case 'Kong Hu Cu' : $agama = 'Kong Hu Cu'; $religion = 5; break;
+                case 'Kristen' : $agama = 'Kristen'; $religion = 7; break;
+                case 'Protestan' : $agama = 'Protestan'; $religion = 1; break;
+                case 'Hindu' : $agama = 'Hindu'; $religion = 4; break;
+            }
+
+            switch($data->status_char){
+                case 'Kontrak' : $status_char = 'Kontrak'; $status = 3; break;
+                case 'Tetap' : $status_char = 'Tetap'; $status = 1; break;
+                case 'TLH' : $status_char = 'TLH'; $status = 2; break;
+            }
+
+            switch(Crypt::decryptString($data->pendidikan)){
+                case 'SD' : $pendidikan = 'SD'; $study = 9; break;
+                case 'SMP' : $pendidikan = 'SMP'; $study = 1; break;
+                case 'SMA' : $pendidikan = 'SMA'; $study = 2; break;
+                case 'D1' : $pendidikan = 'D1'; $study = 3; break;
+                case 'D3' : $pendidikan = 'D3'; $study = 4; break;
+                case 'D4' : $pendidikan = 'D4'; $study = 5; break;
+                case 'S1' : $pendidikan = 'S1'; $study = 6; break;
+                case 'S2' : $pendidikan = 'S2'; $study = 7; break;
+                case 'S3' : $pendidikan = 'S3'; $study = 8; break;
+            }
+
+            $update = Staff::find($data->id);
+
+            switch($data->blahir) {
+                case 'Januari' : $bln = '01'; break;
+                case 'Februari' : $bln = '02'; break;
+                case 'Maret' : $bln = '03'; break;
+                case 'April' : $bln = '04'; break;
+                case 'Mei' : $bln = '05'; break;
+                case 'Juni' : $bln = '06'; break;
+                case 'Juli' : $bln = '07'; break;
+                case 'Agustus' : $bln = '08'; break;
+                case 'September' : $bln = '09'; break;
+                case 'Oktober' : $bln = '10'; break;
+                case 'November' : $bln = '11'; break;
+                case 'Desember' : $bln = '12'; break;
+            }
+
+            $born = $data->thahir.'-'.$bln.'-'.$data->hlahir;
+
+            $update->born = Carbon::createFromFormat('Y-m-d', $born)->toDateString();
+
+            switch($data->bjoin) {
+                case 'Januari' : $bln = '01'; break;
+                case 'Februari' : $bln = '02'; break;
+                case 'Maret' : $bln = '03'; break;
+                case 'April' : $bln = '04'; break;
+                case 'Mei' : $bln = '05'; break;
+                case 'Juni' : $bln = '06'; break;
+                case 'Juli' : $bln = '07'; break;
+                case 'Agustus' : $bln = '08'; break;
+                case 'September' : $bln = '09'; break;
+                case 'Oktober' : $bln = '10'; break;
+                case 'November' : $bln = '11'; break;
+                case 'Desember' : $bln = '12'; break;
+            }
+
+            $join = $data->thjoin.'-'.$bln.'-'.$data->hjoin;
+
+            $update->joindate = Carbon::createFromFormat('Y-m-d', $join)->toDateString();
+
+            switch($data->bjoin) {
+                case 'Januari' : $bln = '01'; break;
+                case 'Februari' : $bln = '02'; break;
+                case 'Maret' : $bln = '03'; break;
+                case 'April' : $bln = '04'; break;
+                case 'Mei' : $bln = '05'; break;
+                case 'Juni' : $bln = '06'; break;
+                case 'Juli' : $bln = '07'; break;
+                case 'Agustus' : $bln = '08'; break;
+                case 'September' : $bln = '09'; break;
+                case 'Oktober' : $bln = '10'; break;
+                case 'November' : $bln = '11'; break;
+                case 'Desember' : $bln = '12'; break;
+            }
+
+            $join = $data->thjoin.'-'.$bln.'-'.$data->hjoin;
+
+            $update->joindate = Carbon::createFromFormat('Y-m-d', $join)->toDateString();
+
+
+            $update->nama = Crypt::decryptString($data->nama);
+            $update->kk = Crypt::decryptString($data->kk);
+            $update->ktp = Crypt::decryptString($data->ktp);
+            $update->gender_char = $gender_char;
+            $update->agama = $agama;
+            $update->tmlahir = Crypt::decryptString($data->tmlahir);
+            $update->hlahir = Crypt::decryptString($data->hlahir);
+            $update->blahir = Crypt::decryptString($data->blahir);
+            $update->thahir = Crypt::decryptString($data->thahir);  
+            $update->alamat = Crypt::decryptString($data->alamat);
+            $update->jabatan = Crypt::decryptString($data->jabatan);
+            $update->masa = Crypt::decryptString($data->masa);
+            $update->gaji = Crypt::decryptString($data->gaji);
+            $update->rekening = Crypt::decryptString($data->rekening);
+            $update->npwp = Crypt::decryptString($data->npwp);
+            $update->ptkp = Crypt::decryptString($data->ptkp);
+            $update->pendidikan = $pendidikan;
+            $update->sekolah = Crypt::decryptString($data->sekolah);
+            $update->prodi = Crypt::decryptString($data->prodi);
+            $update->ijazah = Crypt::decryptString($data->ijazah);
+            $update->email = Crypt::decryptString($data->email);
+            $update->sp1 = Crypt::decryptString($data->sp1);
+            $update->sp2 = Crypt::decryptString($data->sp2);
+            $update->sp3 = Crypt::decryptString($data->sp3);
+            $update->hreward5 = $data->hreward5 ? Crypt::decryptString($data->hreward5) : null;
+            $update->breward5 = $data->breward5 ? Crypt::decryptString($data->breward5) : null;
+            $update->threward5 = $data->threward5 ? Crypt::decryptString($data->threward5) : null;
+            $update->reward5 = $data->reward5 ? Crypt::decryptString($data->reward5) : null;
+            $update->hreward10 = $data->hreward10 ? Crypt::decryptString($data->hreward10) : null;
+            $update->breward10 = $data->breward10 ? Crypt::decryptString($data->breward10) : null;
+            $update->threward10 = $data->threward10 ? Crypt::decryptString($data->threward10) : null;
+            $update->reward10 = $data->reward10 ? Crypt::decryptString($data->reward10) : null;
+            $update->hreward15 = $data->hreward15 ? Crypt::decryptString($data->hreward15) : null;
+            $update->breward15 = $data->breward15 ? Crypt::decryptString($data->breward15) : null;
+            $update->threward15 = $data->threward15 ? Crypt::decryptString($data->threward15) : null;
+            $update->reward15 = $data->reward15 ? Crypt::decryptString($data->reward15) : null;
+            $update->gender = $gender;
+            $update->dept = $dept;
+            $update->religion = $religion;
+            $update->status = $status;
+            $update->study = $study;
+            $update->update();
+        }
+        dd('done');
+        dd($staff);
     }
 }

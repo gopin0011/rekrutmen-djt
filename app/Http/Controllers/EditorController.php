@@ -9,6 +9,7 @@ use App\Models\ApplicantFamily;
 use App\Models\ApplicantProfile;
 use App\Models\ApplicantReference;
 use App\Models\ApplicantStudy;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ class EditorController extends Controller
 
     public function profile($id)
     {
-        if(Auth::user()->role != '0')
+        if(Auth::user()->admin != '0')
         {
             $x = ApplicantProfile::where('user_id',$id)->get();
             $data = ApplicantProfile::where('user_id',$id)->first();
@@ -44,7 +45,7 @@ class EditorController extends Controller
 
     public function family($id)
     {
-        if(Auth::user()->role != '0')
+        if(Auth::user()->admin != '0')
         {
             $dt = route('families.data', ['id' => $id]);
             $genders = DB::table('gender')->get();
@@ -69,7 +70,8 @@ class EditorController extends Controller
                 ->addColumn('pendidikan', function ($row) {
                     $id = $row->pendidikan;
                     $study = DB::table('studygrade')->where('id', $id)->first();
-                    return $study->name;
+                    if ($study) return $study->name;
+                    return 'Tidak Sekolah';
                 })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-primary btn-sm editData"><i class="fa fa-edit"></i></a>';
@@ -85,7 +87,7 @@ class EditorController extends Controller
 
     public function study($id)
     {
-        if(Auth::user()->role != '0')
+        if(Auth::user()->admin != '0')
         {
             $dt = route('studies.data', ['id' => $id]);
             $study = DB::table('studygrade')->get();
@@ -193,7 +195,8 @@ class EditorController extends Controller
     public function doc($id)
     {
         $dt = route('documents.data', ['id' => $id]);
-        return view('pages.applicant.document',compact('dt','id'));
+        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('vacancy')->whereHas('vacancy.vacanciesAdditionalUpload')->where('user_id', $id)->get();
+        return view('pages.applicant.document',compact('dt','id', 'applications'));
     }
 
     public function docData(Request $request, $id)
@@ -207,9 +210,13 @@ class EditorController extends Controller
                     return $nama;
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . '../../storage/doc/' . $row->dokumen . '.pdf' . '" target="_blank" class="show btn btn-primary btn-sm showData"><i class="fa fa-eye"></i></a>';
-                    $btn .= '&nbsp;&nbsp;';
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a>';
+                    if($row->dokumen) {
+                        $url = route('storage.doc', ['folder' => 'doc', 'filename' => $row->dokumen.'.pdf']);
+                    } else {
+                        $url = route('storage.old.doc', ['id' => $row->user->key]);
+                    }
+                    $btn = '<div class="btn-group"><a href="' . $url . '" target="_blank" class="show btn btn-primary btn-sm showData"><i class="fa fa-eye"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a></div>';
                     return $btn;
                 })
                 ->rawColumns(['action','name'])

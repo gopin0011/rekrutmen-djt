@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Crypt;
 
 class ApplicantFamilyController extends Controller
 {
@@ -79,5 +80,46 @@ class ApplicantFamilyController extends Controller
     {
         ApplicantFamily::find($id)->delete();
         return response()->json(['success' => 'Data telah berhasil dihapus']);
+    }
+
+    public function convert()
+    {
+        try {
+            $apply = ApplicantFamily::orderBy('id')->get();
+            foreach($apply as $data){
+                $update = ApplicantFamily::find($data->id);
+
+                // $update->nama = Crypt::decryptString($data->nama);
+                // $update->status = Crypt::decryptString($data->status);
+                // $update->gender = Crypt::decryptString($data->gender);
+                // $update->ttl = Crypt::decryptString($data->ttl);
+                // $update->pendidikan = Crypt::decryptString($data->pendidikan);
+                // $update->pekerjaan = Crypt::decryptString($data->pekerjaan);
+                switch($data->gender_char){
+                    case 'Pria' : $gender_char = 'Pria'; $gender = 2; break;
+                    default : $gender_char = 'Wanita'; $gender = 1; break; 
+                }
+                $update->gender = $gender;
+
+                switch($data->pendidikan_char){
+                    case 'SD' : $pendidikan = 'SD'; $study = 9; break;
+                    case 'SMP' : $pendidikan = 'SMP'; $study = 1; break;
+                    case 'SMA' : $pendidikan = 'SMA'; $study = 2; break;
+                    case 'D1' : $pendidikan = 'D1'; $study = 3; break;
+                    case 'D3' : $pendidikan = 'D3'; $study = 4; break;
+                    case 'D4' : $pendidikan = 'D4'; $study = 5; break;
+                    case 'S1' : $pendidikan = 'S1'; $study = 6; break;
+                    case 'S2' : $pendidikan = 'S2'; $study = 7; break;
+                    case 'S3' : $pendidikan = 'S3'; $study = 8; break;
+                }
+                $update->pendidikan = $study;
+                
+                $update->update();
+            }
+            dd('done');
+        } catch (\Throwable $e) {
+            dd([$update->id,$e->getMessage()]);
+            dd($e->getMessage());
+        }
     }
 }

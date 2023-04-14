@@ -9,4 +9,6 @@ class Form extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    protected $table = 'docs';
 }

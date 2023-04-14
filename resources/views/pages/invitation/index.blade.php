@@ -123,6 +123,7 @@
                 <th>Tautan</th>
                 <th>Inv. Code</th>
                 <th>Sender</th>
+                <th>Dibuat</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -199,9 +200,9 @@
                     orderable: false,
                     targets: 0,
                 }, ],
-                order: [
-                    [2, 'asc']
-                ],
+                // order: [
+                //     [2, 'asc']
+                // ],
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex'
@@ -251,11 +252,15 @@
                         data: 'sender',
                         name: 'sender'
                     },
-                    // {
-                    //     data: 'description',
-                    //     name: 'description'
-
-                    // },
+                    {
+                        data: 'dibuat',
+                        name: 'dibuat',
+                        type: 'num',
+                        render: {
+                            _: 'display',
+                            sort: 'timestamp'
+                        }
+                    }
                 ]
             });
 

@@ -1,0 +1,1 @@
+<iframe src ="{{ asset('/laraview/#../test.pdf') }}" width="1000px" height="600px"></iframe>

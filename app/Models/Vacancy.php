@@ -9,4 +9,10 @@ class Vacancy extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function vacanciesAdditionalUpload()
+    {
+        return $this->hasMany(VacanciesAdditionalUpload::class,'vacancies_id')->has('additionalUpload')->with('additionalUpload');
+    }
+
 }

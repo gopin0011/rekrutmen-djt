@@ -27,8 +27,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-hashtag"></i></span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Kode departemen" aria-label="code"
-                                    id="code" name="code" aria-describedby="basic-addon1">
+                                <input type="text" class="form-control" placeholder="Kode departemen" aria-label="kode"
+                                    id="kode" name="kode" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <div class="form-group">
@@ -36,8 +36,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-building"></i></span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Nama departemen" aria-label="name"
-                                    id="name" name="name" aria-describedby="basic-addon1">
+                                <input type="text" class="form-control" placeholder="Nama departemen" aria-label="nama"
+                                    id="nama" name="nama" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary" id="btnSave" value="create">Simpan</button>
@@ -183,12 +183,12 @@
                         name: 'DT_RowIndex'
                     },
                     {
-                        data: 'code',
-                        name: 'code'
+                        data: 'kode',
+                        name: 'kode'
                     },
                     {
-                        data: 'name',
-                        name: 'name'
+                        data: 'nama',
+                        name: 'nama'
                     },
                     {
                         data: 'action',
@@ -250,8 +250,8 @@
                     $("#modalHeading").html("Ubah Data");
                     $("#ajaxModal").modal('show');
                     $("#data_id").val(data.id);
-                    $("#name").val(data.name);
-                    $("#code").val(data.code);
+                    $("#nama").val(data.nama);
+                    $("#kode").val(data.kode);
                 });
             });
         });

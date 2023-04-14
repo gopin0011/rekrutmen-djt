@@ -10,6 +10,44 @@
             </div>
         </div>
     </div>
+    <div class="modal fade bd-example-modal-xl" id="ajaxModal" arial-hidden="true">
+        <input type="hidden" name="type" id="type" value="">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalHeading"></h4>
+                </div>
+                <div class="modal-body">
+                    <table id="table" class="table table-striped data-table display nowrap" width="100%">
+                        <thead>
+                            <tr>
+                                <td colspan="9">
+                                    <input type="text" placeholder="Nama atau Email Staff" class="form-control" id="search" aria-label="search" aria-describedby="basic-addon1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="50px">#</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-right" style="text-align: right;">
+                                    <div aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('content')
@@ -19,59 +57,71 @@
             <div class="card-body"><input id="data_id" name="data_id" value="{{ $data->id ?? '' }}" hidden>
                 <input type="hidden" name="application_id" id="application_id" value="{{ $id }}">
 
-                <div {{ (Auth::user()->role == 6 ? 'hidden="hidden"' : Auth::user()->role == 7) ? 'hidden="hidden"' : ''}}>
+                <div {{ (Auth::user()->admin == 6 ? 'hidden="hidden"' : Auth::user()->admin == 7) ? 'hidden="hidden"' : ''}}>
                     <div class="form-row">
                         <div class="input-group mb-3 col-md-12">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1"><i
                                         class="fa fa-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" aria-label="nama_hr" value="{{ $data->nama_hr ?? '' }}" id="nama_hr" name="nama_hr"
+                            <input type="text" class="form-control" aria-label="nama_hr" value="{{ $data->namahr ?? '' }}" id="nama_hr" name="nama_hr"
                                 aria-describedby="basic-addon1" placeholder="Nama HR">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="input-group mb-3 col-md-12">
                             <textarea rows="5" class="form-control" aria-label="interview_hr" id="interview_hr" name="interview_hr"
-                                aria-describedby="basic-addon1" placeholder="Hasil interview dengan HR">{{ $data->interview_hr ?? '' }}</textarea>
+                                aria-describedby="basic-addon1" placeholder="Hasil interview dengan HR">{{ $data->inthr ?? '' }}</textarea>
                         </div>
                     </div>
                 </div>
 
-                <div {{ Auth::user()->role == 7 ? 'hidden="hidden"' : ''}}>
+                <div {{ Auth::user()->admin == 7 ? 'hidden="hidden"' : ''}}>
                     <div class="form-row">
                         <div class="input-group mb-3 col-md-12">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1"><i
                                         class="fa fa-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" aria-label="nama_user" value="{{ $data->nama_user ?? '' }}" id="nama_user" name="nama_user"
+                            <input type="text" class="form-control" aria-label="nama_user" value="{{ $data->namauser ?? '' }}" id="nama_user" name="nama_user"
                                 aria-describedby="basic-addon1" placeholder="Nama user">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="input-group mb-3 col-md-12">
                             <textarea rows="5" class="form-control" aria-label="interview_user" id="interview_user" name="interview_user"
-                                aria-describedby="basic-addon1" placeholder="Hasil interview dengan user">{{ $data->interview_user ?? '' }}</textarea>
+                                aria-describedby="basic-addon1" placeholder="Hasil interview dengan user">{{ $data->intuser ?? '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group mb-3 col-md-12">
+                            <a data-toggle="tooltip" type="button" href="javascript:void(0)" id="share" class="edit btn btn-primary btn-sm"><i class="fa fa-share-alt"></i></a>
+                            &nbsp;*) Bagikan dengan user agar user mengisi hasil interview
                         </div>
                     </div>
                 </div>
 
-                <div {{ Auth::user()->role == 6 ? 'hidden="hidden"' : ''}}>
+                <div {{ Auth::user()->admin == 6 ? 'hidden="hidden"' : ''}}>
                     <div class="form-row">
                         <div class="input-group mb-3 col-md-12">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1"><i
                                         class="fa fa-user"></i></span>
                             </div>
-                            <input type="text" class="form-control" aria-label="nama_manajemen" value="{{ $data->nama_manajemen ?? '' }}" id="nama_manajemen" name="nama_manajemen"
+                            <input type="text" class="form-control" aria-label="nama_manajemen" value="{{ $data->namamana ?? '' }}" id="nama_manajemen" name="nama_manajemen"
                                 aria-describedby="basic-addon1" placeholder="Nama manajemen">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="input-group mb-3 col-md-12">
-                            <textarea rows="5" class="form-control" aria-label="interview_manajemen" id="interview_manajemen" name="interview_manajemen"
-                                aria-describedby="basic-addon1" placeholder="Hasil interview dengan manajemen">{{ $data->interview_manajemen ?? '' }}</textarea>
+                            <textarea rows="5" class="form-control" aria-label="interview_manajemen" id="intmana" name="interview_manajemen"
+                                aria-describedby="basic-addon1" placeholder="Hasil interview dengan manajemen">{{ $data->intmana ?? '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group mb-3 col-md-12">
+                            <a data-toggle="tooltip" type="button" href="javascript:void(0)" id="sharemana" class="edit btn btn-primary btn-sm"><i class="fa fa-share-alt"></i></a>
+                            &nbsp;*) Bagikan dengan manajemen agar manajemen mengisi hasil interview
                         </div>
                     </div>
                 </div>
@@ -111,4 +161,103 @@
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/rowreorder/1.2.8/js/dataTables.rowReorder.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("#share").click(function() {
+                $('#table').find('tbody').empty();
+                $("#dataForm").trigger("reset");
+                $("#modalHeading").html("Pilih User dari data Staff");
+                $("#type").val("user");
+                $("#ajaxModal").modal('show');
+            });
+
+            $("#sharemana").click(function() {
+                $('#table').find('tbody').empty();
+                $("#dataForm").trigger("reset");
+                $("#modalHeading").html("Pilih Manajement dari data Staff");
+                $("#type").val("mana");
+                $("#ajaxModal").modal('show');
+            });
+
+            const getData = async (url) => {
+                const request = await fetch(url);
+                const d = await request.json();
+
+                return d;
+            };
+
+            var paginationFunc = function()
+            {
+                var d = JSON.parse(this.getAttribute("data-attribute"));
+
+                getData(d).then(result => { makeStruct(result); });
+
+                return false;
+            };
+
+            function ValidateEmail(input) {
+                var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                if (input.match(validRegex)) {
+                    return true;
+                } 
+                return false;
+            }
+
+            function funcShare()
+            {
+                var user_id = $(this).data("id");
+                var email = $(this).data("email");
+                var type = $("#type").val();
+
+                if(email == '') return alert('Email user ini masih kosong, silahkan edit staff terlebih dahulu.');
+
+                if(confirm("Aksi ini tidak bisa dibatalkan, lanjut untuk kirim email ke "+email+"?")) {
+                    const send = async (act) => {
+                        const request = await fetch(act);
+                        const d = await request.json();
+                        return d;
+                    };
+
+                    var action = "{{route('interviews.share.test', [':id',':userId',':type'])}}".replace(':id', "{{$id}}").replace(':userId', user_id).replace(':type', 'type='+type);
+                    send(action).then(result => { console.log(result); alert('Tautan Telah dikirimkan ke email user'); }).catch(e => console.log(e));
+                }
+            }
+
+            function makeStruct(d)
+            {
+                // add to table
+                $('#table').find('tbody').empty();
+
+                if(Object.keys(d.paginator.data).length > 0)
+                {
+                    for (const row of Object.keys(d.paginator.data))
+                    {
+                        var data = d.paginator.data[row];
+
+                        $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td>"+data.email+"</td><td id='td"+row+"'></td></tr>");
+                        if(ValidateEmail(data.email)) {
+                            var $tautan = $('<a>', { 'href':'javascript:void(0);', 'type':'button', 'data-toggle':'tooltip', 'data-id': data.id, 'data-email': data.email, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm share' });
+                            $tautan.text('Kirim Tautan Ke Email User');
+                        } else {
+                            var $tautan = $('<a>', { 'href':'javascript:void(0);', 'data-toggle':'tooltip', 'data-original-title':'Not Valid', 'class': 'text-danger' });
+                            $tautan.text('Edit Data Email Staff Terlebih Dahulu');
+                        }
+
+                        $('<div>', { class: 'btn-group' }).append($tautan).appendTo($('#td'+row));
+
+                    }
+                }
+
+                var elements = $('.share');
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', funcShare, false);
+                }
+            }
+
+            $('#search').on('keyup', function() {
+                var s = $(this).val();
+                getData("{{route('staff.data')}}?search="+s).then(result => { makeStruct(result); });
+            });
+        });
+    </script>
 @stop

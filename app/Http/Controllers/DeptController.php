@@ -48,8 +48,8 @@ class DeptController extends Controller
         Dept::updateOrCreate(
             ['id' => $request->data_id],
             [
-                'name' => $request->name,
-                'code' => $request->code
+                'nama' => $request->nama,
+                'kode' => $request->kode
             ]
         );
         return response()->json(['success' => 'Data telah berhasil disimpan']);

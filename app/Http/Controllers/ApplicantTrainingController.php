@@ -6,6 +6,7 @@ use App\Models\ApplicantTraining;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Crypt;
 
 class ApplicantTrainingController extends Controller
 {
@@ -58,5 +59,27 @@ class ApplicantTrainingController extends Controller
     {
         ApplicantTraining::find($id)->delete();
         return response()->json(['success' => 'Data telah berhasil dihapus']);
+    }
+
+    public function convert()
+    {
+        try {
+            $apply = ApplicantTraining::orderBy('id')->get();
+            foreach($apply as $data){
+                $update = ApplicantTraining::find($data->id);
+
+                $update->kursus = Crypt::decryptString($data->kursus);
+                $update->tahun = Crypt::decryptString($data->tahun);
+                $update->durasi = Crypt::decryptString($data->durasi);
+                $update->ijazah = Crypt::decryptString($data->ijazah);
+                $update->biaya = Crypt::decryptString($data->biaya);
+
+                $update->update();
+            }
+            dd('done');
+        } catch (\Throwable $e) {
+            dd([$update->id,$e->getMessage()]);
+            dd($e->getMessage());
+        }
     }
 }

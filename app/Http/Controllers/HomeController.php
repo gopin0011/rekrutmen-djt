@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MonthlyCounter;
 use App\Models\Staff;
 use Illuminate\Http\Request;
+use App\Models\NotificationsReschedule;
 
 class HomeController extends Controller
 {
@@ -52,7 +53,11 @@ class HomeController extends Controller
             }
         }
 
+        $reschedule = NotificationsReschedule::with('applications')->where('created_at', 'like', now()->format("Y-m-d").'%')->orderBy('created_at', 'desc')->get();
+        // dd($reschedule[0]->applications->user);
 
-        return view('home', compact('countAlper', 'countLegano', 'monthlyAlper', 'monthlyLegano', 'buffAlper', 'buffLegano'));
+        return view('home', compact('countAlper', 'countLegano', 'monthlyAlper', 'monthlyLegano', 'buffAlper', 'buffLegano', 'reschedule'));
     }
+
+    
 }

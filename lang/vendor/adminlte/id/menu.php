@@ -43,4 +43,11 @@ return [
     'biodata'                       => 'Data Diri',
     'family'                        => 'Data Keluarga',
     'doc_upload'                    => 'Unggah Dokumen',
+    'lembur'                        => 'LEMBURAN',
+    'spl'                           => 'Surat Perintah Lembur',
+    'daftar_spl'                    => 'Daftar SPL',
+    'buat_spl'                      => 'Buat SPL',
+    'hariini_spl'                      => 'SPL Hari Ini',
+    'mana_spl'                      => 'SPL Disetujui Manajer',
+    'hr_spl'                      => 'SPL Disetujui HR',
 ];

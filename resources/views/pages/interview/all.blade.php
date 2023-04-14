@@ -100,6 +100,7 @@
                 <th>#</th>
                 <th></th>
                 <th>Pelamar</th>
+                <th>Interview</th>
                 <th>NIK</th>
                 <th>Posisi</th>
                 <th>Tanggal Lahir</th>
@@ -107,7 +108,7 @@
                 <th>Alamat</th>
                 <th>Kontak</th>
                 <th>Email</th>
-                <th>Pendidikan Terakhir</th>
+                <!-- <th>Pendidikan Terakhir</th>
                 <th>Sekolah</th>
                 <th>Posisi Terakhir</th>
                 <th>Perusahaan</th>
@@ -123,7 +124,7 @@
                 <th>Interview Manajemen</th>
                 <th>Hasil Akhir</th>
                 <th>Tanggal Gabung</th>
-                <th>Undangan</th>
+                <th>Undangan</th> -->
             </tr>
         </thead>
         <tbody></tbody>
@@ -256,6 +257,10 @@
                         name: 'name',
                     },
                     {
+                        data: 'jadwalinterview',
+                        name: 'jadwalinterview',
+                    },
+                    {
                         data: 'nik',
                         name: 'nik',
                     },
@@ -283,74 +288,74 @@
                         data: 'email',
                         name: 'email',
                     },
-                    {
-                        data: 'tingkat',
-                        name: 'tingkat',
-                    },
-                    {
-                        data: 'sekolah',
-                        name: 'sekolah',
-                    },
-                    {
-                        data: 'jabatan',
-                        name: 'jabatan',
-                    },
-                    {
-                        data: 'perusahaan',
-                        name: 'perusahaan',
-                    },
-                    {
-                        data: 'referensi',
-                        name: 'referensi',
-                    },
-                    {
-                        data: 'disc',
-                        name: 'disc',
-                    },
-                    {
-                        data: 'ist',
-                        name: 'ist',
-                    },
-                    {
-                        data: 'cfit',
-                        name: 'cfit',
-                    },
-                    {
-                        data: 'army',
-                        name: 'army',
-                    },
-                    {
-                        data: 'papi',
-                        name: 'papi',
-                    },
-                    {
-                        data: 'krep',
-                        name: 'krep',
-                    },
-                    {
-                        data: 'int_hr',
-                        name: 'int_hr',
-                    },
-                    {
-                        data: 'int_user',
-                        name: 'int_user',
-                    },
-                    {
-                        data: 'int_mana',
-                        name: 'int_mana',
-                    },
-                    {
-                        data: 'hasil',
-                        name: 'hasil',
-                    },
-                    {
-                        data: 'tanggalgabung',
-                        name: 'tanggalgabung',
-                    },
-                    {
-                        data: 'undangan',
-                        name: 'undangan',
-                    },
+                    // {
+                    //     data: 'tingkat',
+                    //     name: 'tingkat',
+                    // },
+                    // {
+                    //     data: 'sekolah',
+                    //     name: 'sekolah',
+                    // },
+                    // {
+                    //     data: 'jabatan',
+                    //     name: 'jabatan',
+                    // },
+                    // {
+                    //     data: 'perusahaan',
+                    //     name: 'perusahaan',
+                    // },
+                    // {
+                    //     data: 'referensi',
+                    //     name: 'referensi',
+                    // },
+                    // {
+                    //     data: 'disc',
+                    //     name: 'disc',
+                    // },
+                    // {
+                    //     data: 'ist',
+                    //     name: 'ist',
+                    // },
+                    // {
+                    //     data: 'cfit',
+                    //     name: 'cfit',
+                    // },
+                    // {
+                    //     data: 'army',
+                    //     name: 'army',
+                    // },
+                    // {
+                    //     data: 'papi',
+                    //     name: 'papi',
+                    // },
+                    // {
+                    //     data: 'krep',
+                    //     name: 'krep',
+                    // },
+                    // {
+                    //     data: 'int_hr',
+                    //     name: 'int_hr',
+                    // },
+                    // {
+                    //     data: 'int_user',
+                    //     name: 'int_user',
+                    // },
+                    // {
+                    //     data: 'int_mana',
+                    //     name: 'int_mana',
+                    // },
+                    // {
+                    //     data: 'hasil',
+                    //     name: 'hasil',
+                    // },
+                    // {
+                    //     data: 'tanggalgabung',
+                    //     name: 'tanggalgabung',
+                    // },
+                    // {
+                    //     data: 'undangan',
+                    //     name: 'undangan',
+                    // },
                 ]
             });
 
