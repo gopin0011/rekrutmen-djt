@@ -258,6 +258,17 @@
                 var s = $(this).val();
                 getData("{{route('staff.data')}}?search="+s).then(result => { makeStruct(result); });
             });
+
+            function sendWhatsAppMessage(phoneNumber, message) {
+                const encodedMessage = encodeURIComponent(message);
+                const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                window.open(url, 'WhatsApp');
+            }
+
+            // Contoh penggunaan:
+            const link = 'https://www.google.com';
+            const message = `Halo, cek link ini: ${link}`;
+            sendWhatsAppMessage('6281394420922', message);
         });
     </script>
 @stop

@@ -443,6 +443,13 @@ return [
                 // ],
             ]
         ],
+        [
+            'text' => 'reschedule',
+            'url'  => 'reschedule',
+            'icon' => 'fas fa-fw fa-folder',
+            'can'     => ['w','e','r'],
+        ],
+        
 
         // lembur
         ['header' => 'lembur', 'can'  => ['w','e','r','t','y']],

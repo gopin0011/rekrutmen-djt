@@ -103,6 +103,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar-day"></i></span>
                                 </div>
+                                <input type="hidden" name="dateorig" id="dateorig" value="">
                                 <input type="date" class="form-control" aria-label="dateinvite" id="dateinvite" name="newdateinvite"
                                     aria-describedby="basic-addon1">
                             </div>
@@ -269,6 +270,7 @@
             $("#btnSave2").click(function(e) {
                 e.preventDefault();
                 $(this).html('Simpan');
+                $("#ajaxModalSchedule").modal('hide');
 
                 $.ajax({
                     type: "POST",
@@ -280,7 +282,6 @@
                             alert(data.error);
                         }
                         $("#dataForm2").trigger("reset");
-                        $("#ajaxModalSchedule").modal('hide');
                         table.draw();
                     },
                     error: function(data) {
@@ -326,6 +327,7 @@
                     $("#ajaxModalSchedule").modal('show');
                     $("#data_id2").val(data.id);
                     $("#dateinvite").val(data.int);
+                    $("#dateorig").val(data.int);
                 });
             });
         });

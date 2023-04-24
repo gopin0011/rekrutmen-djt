@@ -53,10 +53,9 @@ class HomeController extends Controller
             }
         }
 
-        $reschedule = NotificationsReschedule::with('applications')->where('created_at', 'like', now()->format("Y-m-d").'%')->orderBy('created_at', 'desc')->get();
         // dd($reschedule[0]->applications->user);
 
-        return view('home', compact('countAlper', 'countLegano', 'monthlyAlper', 'monthlyLegano', 'buffAlper', 'buffLegano', 'reschedule'));
+        return view('home', compact('countAlper', 'countLegano', 'monthlyAlper', 'monthlyLegano', 'buffAlper', 'buffLegano'));
     }
 
     

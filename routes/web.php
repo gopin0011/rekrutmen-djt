@@ -28,6 +28,7 @@ use App\Http\Controllers\PsychotestController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VacancyController;
+use App\Http\Controllers\RescheduleController;
 
 use Illuminate\Support\Facades\Storage;
 /*
@@ -193,6 +194,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('mod-edit/documents/{id}', [EditorController::class, 'doc'])->name('documents.edit');
     Route::get('applicant_documents/data/{id}', [EditorController::class, 'docData'])->name('documents.data');
 
+    Route::get('reschedule/', [RescheduleController::class, 'index'])->name('reschedule.index');
+    Route::get('notifications', [RescheduleController::class, 'notifications'])->name('reschedule.notif');
+
     //Overtime
     Route::group(['prefix' => 'overtimes'], function() {
         Route::post('/store', [OvertimeController::class, 'store'])->name('overtimes.store');   
@@ -235,7 +239,8 @@ Route::post('user-interview-add/0/{id}', [\App\Http\Controllers\GuestController:
 
 Route::get('auto-register/{token}', [\App\Http\Controllers\GuestController::class, 'autoRegistration'])->name('auto.register');
 
-// http://localhost/rekrutmen-djt/guest-form
+Route::get('applications/all-print/{id}', [\App\Http\Controllers\GuestController::class, 'printAll'])->name('applications.printAll');
+// https://rekrutmen.djt-system.com/guest-form
 Route::get('guest-form', [\App\Http\Controllers\GuestController::class, 'forms'])->name('guest.form');
 Route::get('guest-form/data', [\App\Http\Controllers\GuestController::class, 'showDataForm'])->name('guest.form.data');
 

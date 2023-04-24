@@ -18,6 +18,20 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use App\Models\Form;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
+use PDF;
+use App\Models\Vacancy;
+use App\Models\ApplicantProfile;
+use App\Models\ApplicantTraining;
+use App\Models\ApplicantLanguage;
+use App\Models\ApplicantActivity;
+use App\Models\ApplicantReference;
+use App\Models\ApplicantCareer;
+use App\Models\ApplicantAnswer;
+use App\Models\ApplicantDocument;
+use Dompdf\Dompdf;
+use Illuminate\Support\Facades\View;
+use File;
 
 class GuestController extends Controller
 {
@@ -48,7 +62,7 @@ class GuestController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms']);
+        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll']);
     }
 
     public function formUserInterview($token)
@@ -216,6 +230,141 @@ class GuestController extends Controller
                 ->make(true);
             return $allData;
         }
+    }
+
+    public function printAll(Request $request, $id)
+    {
+        $data = Application::find($id);
+        $user = User::find($data->user_id);
+        $posisi = Vacancy::find($data->posisi)->name;
+        $posisialt = ($data->posisialt) ? Vacancy::find($data->posisialt)->name : '';
+
+        $getTanggal = Carbon::parse($data->tanggalinterview)->locale('id');
+        $getTanggal->settings(['formatFunction' => 'translatedFormat']);
+        $tanggal = $getTanggal->format('l, j F Y');
+
+        $profil = ApplicantProfile::where('user_id',$user->id)->first();
+        $gender = $profil ? DB::table('gender')->find($profil->gender)->name : '';
+        $agama = $profil ? DB::table('religion')->find($profil->agama)->name : '';
+
+        $getTanggalLahir = $profil ? Carbon::parse($profil->tanggallahir)->locale('id') : '';
+        $profil ? $getTanggalLahir->settings(['formatFunction' => 'translatedFormat']) : '';
+        $tanggallahir = $profil ? $getTanggalLahir->format('j F Y') : '';
+
+        $ayah = DB::table('applicant_families')
+        ->join('gender','gender.id','=','applicant_families.gender')
+        ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
+        ->where('applicant_families.status','=','Ayah')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
+        ->where('user_id',$user->id)->first();
+
+        $ibu = DB::table('applicant_families')
+        ->join('gender','gender.id','=','applicant_families.gender')
+        ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
+        ->where('applicant_families.status','=','Ibu')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
+        ->where('user_id',$user->id)->first();
+
+        $kakak = DB::table('applicant_families')
+        ->join('gender','gender.id','=','applicant_families.gender')
+        ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
+        ->where('applicant_families.status','=','Kakak')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
+        ->where('user_id',$user->id)->get();
+
+        $adik = DB::table('applicant_families')
+        ->join('gender','gender.id','=','applicant_families.gender')
+        ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
+        ->where('applicant_families.status','=','Adik')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
+        ->where('user_id',$user->id)->get();
+
+        $pasangan = DB::table('applicant_families')
+        ->join('gender','gender.id','=','applicant_families.gender')
+        ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
+        ->where('applicant_families.status','=','Istri')
+        ->orWhere('applicant_families.status','=','Suami')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
+        ->where('user_id',$user->id)->first();
+
+        $anak = DB::table('applicant_families')
+        ->join('gender','gender.id','=','applicant_families.gender')
+        ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
+        ->where('applicant_families.status','=','Anak')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
+        ->where('user_id',$user->id)->get();
+
+        $study = DB::table('applicant_studies')
+        ->join('studygrade','studygrade.id','=','applicant_studies.tingkat')
+        ->select('studygrade.name as tingkat', 'applicant_studies.sekolah as sekolah','applicant_studies.jurusan as jurusan','applicant_studies.masuk as masuk',
+        'applicant_studies.kota as kota','applicant_studies.keluar as keluar')
+        ->where('user_id',$user->id)->get();
+
+        $training = ApplicantTraining::where('user_id',$user->id)->get();
+        $language = ApplicantLanguage::where('user_id',$user->id)->get();
+        $activity = ApplicantActivity::where('user_id',$user->id)->get();
+        $reference = ApplicantReference::where('user_id',$user->id)->get();
+        $career = ApplicantCareer::where('user_id',$user->id)->get();
+        $quest = ApplicantAnswer::where('user_id',$user->id)->get();
+        // dd($career);
+
+        $item = [
+            'data'  => $data,
+            'user' => $user,
+            'posisi' => $posisi,
+            'posisialt' => $posisialt,
+            'tanggal' => $tanggal,
+            'profil' => $profil,
+            'gender' => $gender,
+            'agama' => $agama,
+            'tanggallahir' => $tanggallahir,
+            'ayah' => $ayah,
+            'ibu' => $ibu,
+            'kakak' => $kakak,
+            'adik' => $adik,
+            'pasangan' => $pasangan,
+            'anak' => $anak,
+            'study' => $study,
+            'training' => $training,
+            'language' => $language,
+            'activity' => $activity,
+            'reference' => $reference,
+            'career' => $career,
+            'quest' => $quest
+        ];
+
+        // Buat instance Dompdf
+        $pdf = new Dompdf();
+        
+        // Render view Blade ke dalam string
+        // $html = View::make('pages.application.applicationAll', $item)->render();
+        $html = view('pages.application.applicationAll')->with(compact('item'))->render();
+
+        // Buat objek dompdf
+        $dompdf = new Dompdf();
+
+        // Convert HTML ke dalam PDF
+        $dompdf->loadHtml($html);
+
+        // Render PDF ke dalam output buffer
+        $dompdf->render();
+
+        // Output PDF sebagai binary string
+        $pdfContent = $dompdf->output();
+
+        // Tulis binary string ke file PDF
+        file_put_contents(public_path('storage/file.pdf'), $pdfContent);
+
+        $cv = public_path('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+        if (!File::exists($cv)) {
+            $doc = ApplicantDocument::where('user_id', $user->id)->first();
+            $CVpath = asset('storage/doc/'.$doc->dokumen.'.pdf');
+        }
+        else {
+            $CVpath = asset('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+        }
+
+        return view('pages.application.printAllFile', ['pdfUrl' => asset('storage/file.pdf'), 'CVpath' => $CVpath]);
     }
 
     public function forms()

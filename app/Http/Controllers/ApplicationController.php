@@ -203,6 +203,9 @@ class ApplicationController extends Controller
                     $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-secondary btn-sm editData"><i class="fa fa-gear"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
                     $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a>';
+                    $btn .= '&nbsp;&nbsp;';
+                    $url4 = route('applications.printAll', ['id' => $row->id]);
+                    $btn .= '<a target="_blank" href="' . $url4 . '" data-toggle="tooltip" data-original-title="All File" class="file btn btn-primary btn-sm AllFile"><i class="fa fa-file"></i></a>';
                     return $btn;
                 })
                 ->addColumn('name', function ($row){
@@ -414,8 +417,12 @@ class ApplicationController extends Controller
         }
 
         if ($request->newdateinvite && $request->newdateinvite != "") {
+            $dateOrig = $request->dateorig;
+            $datePlusOneWeek = date('Y-m-d', strtotime($dateOrig . ' + 1 week'));
+
             $validator = Validator::make($request->all(), [
-                'newdateinvite' => ['required', 'date', 'before:+1 week']
+                'newdateinvite' => 'required|date|before_or_equal:' . $datePlusOneWeek,
+                'dateorig' => 'required|date',
             ]);
 
             if ($validator->fails()) {

@@ -43,6 +43,7 @@ return [
     'biodata'                       => 'Data Diri',
     'family'                        => 'Data Keluarga',
     'doc_upload'                    => 'Unggah Dokumen',
+    'reschedule'                    => 'Reschedule',
     'lembur'                        => 'LEMBURAN',
     'spl'                           => 'Surat Perintah Lembur',
     'daftar_spl'                    => 'Daftar SPL',

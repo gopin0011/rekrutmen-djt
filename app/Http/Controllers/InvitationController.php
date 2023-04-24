@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Models\Vacancy;
+use App\Models\InvitationToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -111,7 +112,7 @@ class InvitationController extends Controller
 
         if($request->data_id == '')
         {
-            Invitation::Create(
+            $invitation = Invitation::Create(
                 [
                     'name' => $request->name,
                     'email' => $request->email,
@@ -126,7 +127,8 @@ class InvitationController extends Controller
                 ]
             );
         }else{
-            Invitation::find($request->data_id)->update(
+            $invitation = Invitation::find($request->data_id);
+            $invitation->update(
                 [
                     'name' => $request->name,
                     'email' => $request->email,
@@ -172,6 +174,13 @@ class InvitationController extends Controller
 
         $url = route('auto.register', ['token' => $token]);
 
+        InvitationToken::Create(
+            [
+                'invitation_id' => $invitation->id,
+                'token' => $token,
+            ]
+        );
+
         Mail::to($email)->send(
             new invit( $name, $email, $phone, $date, $time, $vacancy, $type, $online_url, $url, $code, $sender)
         );
@@ -188,6 +197,7 @@ class InvitationController extends Controller
     public function sendMessage($id)
     {
         $data = Invitation::find($id);
+        // dd($data->invitationToken->token);
 
         $vacancy = Vacancy::find($data->vacancy)->name;
 
@@ -204,7 +214,9 @@ class InvitationController extends Controller
             $type = 'Online';
         }
 
-        return redirect('https://api.whatsapp.com/send/?phone=62'.Str::substr($data->phone, 1).'&text=Anda+mendapat+undangan+interview+dari+*PT.+Dwida+Jaya+Tama*%0aPosisi++++++++++++++++++:+*'.$vacancy.'*%0aHari++++++++++++++++++++++:+*'.$date.'*%0aPukul+++++++++++++++++++:+*'.$data->time.'+WIB*%0aBertemu+dengan:+'.$sender.'%0aInterview+secara:+'.$type.'%0aLink+meeting++++++:+'.$data->online_url.'%0aInvitation+code+++:+*'.$data->code.'*%0aDaftarkan+akun+Anda+di+https://rekrutmen.djt-system.com/register&type=phone_number&app_absent=0');
+        $url = route('auto.register', ['token' => $data->invitationToken->token]);
+
+        return redirect('https://api.whatsapp.com/send/?phone=62'.Str::substr($data->phone, 1).'&text=Anda+mendapat+undangan+interview+dari+*PT.+Dwida+Jaya+Tama*%0aPosisi++++++++++++++++++:+*'.$vacancy.'*%0aHari++++++++++++++++++++++:+*'.$date.'*%0aPukul+++++++++++++++++++:+*'.$data->time.'+WIB*%0aBertemu+dengan:+'.$sender.'%0aInterview+secara:+'.$type.'%0aLink+meeting++++++:+'.$data->online_url.'%0aInvitation+code+++:+*'.$data->code.'*%0aDaftarkan+akun+Anda+di+'.$url.'');
     }
 
     public function convert()
