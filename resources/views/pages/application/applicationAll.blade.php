@@ -79,7 +79,7 @@
     <header>
         <table>
             <tr>
-                <td style="text-align: left"><img src="logo.png" width="250"></td>
+                <td style="text-align: left"><img src="data:image/{{ $item['logo_type'] }};base64,{{ $item['logo'] }}" width="250"></td>
                 <td><h2>APLIKASI PELAMAR</h2></td>
             </tr>
         </table>

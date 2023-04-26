@@ -308,6 +308,10 @@ class GuestController extends Controller
         $quest = ApplicantAnswer::where('user_id',$user->id)->get();
         // dd($career);
 
+        $logoExt = pathinfo(url('public/logo.png'), PATHINFO_EXTENSION);
+        $contentLogo = file_get_contents(url('public/logo.png'));
+        $base64String = base64_encode($contentLogo);
+
         $item = [
             'data'  => $data,
             'user' => $user,
@@ -330,8 +334,12 @@ class GuestController extends Controller
             'activity' => $activity,
             'reference' => $reference,
             'career' => $career,
-            'quest' => $quest
+            'quest' => $quest,
+            'logo' => $base64String,
+            'logo_type' => $logoExt,
         ];
+        
+
 
         // Buat instance Dompdf
         $pdf = new Dompdf();

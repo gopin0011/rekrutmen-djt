@@ -1,6 +1,8 @@
 // Deklarasi variabel jumlahNotifikasi sebelumnya dan idTerakhir
 var jumlahNotifikasiSebelumnya = sessionStorage.getItem('jumlahNotifikasiSebelumnya') || 0;
 var idTerakhir = sessionStorage.getItem('idTerakhir') || '';
+var message = sessionStorage.getItem('message') || '[]';
+message = JSON.parse(message);
 
 async function getNotifications() {
   try {
@@ -17,6 +19,8 @@ async function getNotifications() {
       // Tambahkan jumlah notifikasi baru dengan jumlah notifikasi sebelumnya
       var jumlahNotifikasi = jumlahNotifikasiSebelumnya + jumlahNotifikasiBaru;
       
+      message.push(notifications);
+      
       // Dapatkan id terakhir dari array notifikasi
       idTerakhir = notifications[notifications.length - 1].id;
       
@@ -29,6 +33,8 @@ async function getNotifications() {
   
       sessionStorage.setItem('jumlahNotifikasiSebelumnya', jumlahNotifikasiSebelumnya);
       sessionStorage.setItem('idTerakhir', idTerakhir);
+      var messageString = JSON.stringify(message);
+      sessionStorage.setItem('message', messageString);
     }
   } catch (error) {
     // Tangani kesalahan yang terjadi saat mengambil data dari API
