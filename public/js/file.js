@@ -8,7 +8,7 @@ async function getNotifications() {
   try {
     // Tambahkan query parameter dengan idTerakhir
     // var url = 'https://api.example.com/notifications?id=' + idTerakhir;
-    const API_URL = '/rekrutmen-djt/notifications?id=';
+    const API_URL = '/rekrutmen-djt/notifications?notifiable_id=';
     var url = API_URL + idTerakhir;
     var response = await fetch(url);
     var notifications = await response.json();
@@ -24,7 +24,7 @@ async function getNotifications() {
       });
       
       // Dapatkan id terakhir dari array notifikasi
-      idTerakhir = notifications[notifications.length - 1].id;
+      idTerakhir = notifications[notifications.length - 1].notifiable_id;
       
       // Lakukan sesuatu dengan data notifikasi yang diambil dari API
       console.log('Jumlah notifikasi: ' + jumlahNotifikasi);
@@ -38,8 +38,9 @@ async function getNotifications() {
       var messageString = JSON.stringify(message);
       sessionStorage.setItem('message', messageString);
 
-      $('.badge-notif').text(jumlahNotifikasiSebelumnya);
+      // $('.badge-notif').text(jumlahNotifikasiSebelumnya);
     }
+    $('.badge-notif').text(jumlahNotifikasiSebelumnya);
   } catch (error) {
     // Tangani kesalahan yang terjadi saat mengambil data dari API
     console.log(error);

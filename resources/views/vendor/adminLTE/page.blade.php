@@ -56,7 +56,7 @@
 @stack('js')
 <script src="{{ asset('js/file.js') }}"></script>
 <script type="text/javascript">
-
+getNotifications();
 const role = ["1", "2", "3", "5"];
     var user = {!! json_encode(Auth::user()) !!};
     if(role.includes(user.admin)) {
