@@ -448,13 +448,18 @@ class ApplicationController extends Controller
                 ]
             );
 
-            NotificationsReschedule::create(
-                [
-                    'from' => $applicant->user_id,
-                    'message' => self::notifReschedule,
-                    'applications_id' => $applicant->id,
-                ]
-            );
+            $users = User::where('is_rekrutmen', 1)->get();
+            foreach($users as $user) {
+                $user->notify(new NotificationsReschedule($applicant->user->name, $applicant->vacancy->name, $jadwalinterview, $applicant->jadwalinterview));
+            }
+
+            // NotificationsReschedule::create(
+            //     [
+            //         'from' => $applicant->user_id,
+            //         'message' => self::notifReschedule,
+            //         'applications_id' => $applicant->id,
+            //     ]
+            // );
         }
         else {
             Application::updateOrCreate(

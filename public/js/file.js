@@ -18,8 +18,10 @@ async function getNotifications() {
     
       // Tambahkan jumlah notifikasi baru dengan jumlah notifikasi sebelumnya
       var jumlahNotifikasi = jumlahNotifikasiSebelumnya + jumlahNotifikasiBaru;
-      
-      message.push(notifications);
+
+      notifications.forEach(function(value) {
+        message.push(value);
+      });
       
       // Dapatkan id terakhir dari array notifikasi
       idTerakhir = notifications[notifications.length - 1].id;
@@ -35,6 +37,8 @@ async function getNotifications() {
       sessionStorage.setItem('idTerakhir', idTerakhir);
       var messageString = JSON.stringify(message);
       sessionStorage.setItem('message', messageString);
+
+      $('.badge-notif').text(jumlahNotifikasiSebelumnya);
     }
   } catch (error) {
     // Tangani kesalahan yang terjadi saat mengambil data dari API

@@ -112,7 +112,7 @@ class InvitationController extends Controller
 
         if($request->data_id == '')
         {
-            $invitation = Invitation::Create(
+            $inv = Invitation::Create(
                 [
                     'name' => $request->name,
                     'email' => $request->email,
@@ -127,8 +127,8 @@ class InvitationController extends Controller
                 ]
             );
         }else{
-            $invitation = Invitation::find($request->data_id);
-            $invitation->update(
+            $inv = Invitation::find($request->data_id);
+            $inv->update(
                 [
                     'name' => $request->name,
                     'email' => $request->email,
@@ -176,7 +176,7 @@ class InvitationController extends Controller
 
         InvitationToken::Create(
             [
-                'invitation_id' => $invitation->id,
+                'invitation_id' => $inv->id,
                 'token' => $token,
             ]
         );

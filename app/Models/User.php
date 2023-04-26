@@ -82,4 +82,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(ApplicantDocument::class,'user_id');
     }
+
+    public function divisi()
+    {
+        return $this->belongsTo(Dept::class,'dept','id');
+    }
+
+    public function hrDivisi()
+    {
+        return $this->belongsTo(Dept::class,'dept','id')->where('is_hr', 1);
+    }
 }

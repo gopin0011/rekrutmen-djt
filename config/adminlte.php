@@ -448,6 +448,7 @@ return [
             'url'  => 'reschedule',
             'icon' => 'fas fa-fw fa-folder',
             'can'     => ['w','e','r'],
+            'label' => '0',
         ],
         
 
