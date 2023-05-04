@@ -41,7 +41,7 @@ class ApplicationController extends Controller
         $posisi = Vacancy::find($data->posisi)->name;
         $posisialt = ($data->posisialt) ? Vacancy::find($data->posisialt)->name : '';
 
-        $getTanggal = Carbon::parse($data->tanggalinterview)->locale('id');
+        $getTanggal = Carbon::parse($data->jadwalinterview)->locale('id');
         $getTanggal->settings(['formatFunction' => 'translatedFormat']);
         $tanggal = $getTanggal->format('l, j F Y');
 
@@ -153,39 +153,13 @@ class ApplicationController extends Controller
             if ($id == 'all') {
                 $data = DB::table('applications')
                 ->select('applications.id', 'applications.jadwalinterview', 'users.id as uid', 'users.key as ukey', 'users.name', 'users.email', 'applications.posisi', 'applications.posisi_char', 'applicant_profiles.tanggallahir as lahir', 'applicant_profiles.nik', 'applicant_profiles.alamat', 'applicant_profiles.kontak', 'vacancies.name as posisi_name')
-                // ->select('applications.user_id as id', 'applicant_studies.tingkat as tingkat')
-                // ->leftJoin('applicant_studies', function ($join) {
-                //     $join->on('applicant_studies.user_id', '=', 'applications.user_id')
-                //          ->whereRaw('applicant_studies.created_at = (select min(created_at) from applicant_studies)');
-                // })
-                // ->leftJoin('applicant_careers', function ($join) {
-                //     $join->on('applicant_careers.user_id', '=', 'applications.user_id')
-                //          ->whereRaw('applicant_careers.created_at = (select min(created_at) from applicant_careers)');
-                // })
-                // ->leftJoin('applicant_references', function ($join) {
-                //     $join->on('applicant_references.user_id', '=', 'applications.user_id')
-                //          ->whereRaw('applicant_references.created_at = (select min(created_at) from applicant_references)');
-                // })
-                ->leftJoin('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
-                ->leftJoin('users','users.id','=','applications.user_id')
-                ->leftJoin('vacancies','vacancies.id','=','applications.posisi')
-                // ->leftJoin('applicant_documents','applicant_documents.user_id','=','applications.user_id')
-                // ->leftJoin('interviews','interviews.application_id','=','applications.id')
-                // ->leftJoin('psychotests','psychotests.user_id','=','applications.user_id')
-                // ->select('applications.id as id','applications.info as info','applications.kerabat as kerabat','applicant_profiles.panggilan as panggilan','interviews.application_id as int_id','psychotests.user_id as psy_id','applicant_documents.user_id as doc_id','users.name as name','applicant_profiles.nik as nik','applications.posisi as posisi','applications.posisi_char as posisi_char','applications.posisialt as posisialt','applicant_profiles.tanggallahir as lahir','applicant_profiles.alamat as alamat', 'applicant_profiles.kontak as kontak','users.email as email','applicant_studies.tingkat as tingkat','applicant_studies.sekolah as sekolah','applicant_careers.jabatan as jabatan','applicant_careers.perusahaan as perusahaan','applicant_references.nama as referensi', 'interviews.interview_hr as int_hr', 'interviews.interview_user as int_user', 'interviews.interview_manajemen as int_mana', 'psychotests.disctest as disc', 'psychotests.ist as ist', 'psychotests.cfit as cfit', 'psychotests.armyalpha as army', 'psychotests.papikostik as papi', 'psychotests.kreplin as krep', 'applications.jadwalinterview as tanggalinterview', 'applications.hasil as hasil', 'applications.jadwalgabung as tanggalgabung', 'applications.undangan as undangan','users.id as uid', 'users.admin as admin', 'users.key as ukey')
+                ->join('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
+                ->join('users','users.id','=','applications.user_id')
+                ->join('vacancies','vacancies.id','=','applications.posisi')
                 ->where('admin', 0)
                 ->whereNotNull('jadwalinterview')
                 ->orderBy('applications.jadwalinterview','desc')
-                // ->offset($start)->limit($limit)
                 ->get();
-                // dd($data);
-
-                // return response()->json([
-                //     "draw" => intval(request('draw')),  
-                //     "recordsTotal"    => intval(User::count()),  
-                //     "recordsFiltered" => intval(0),
-                //     "data" => $data
-                // ]);
 
                 $allData = DataTables::of($data)
                 ->addIndexColumn()
@@ -420,13 +394,39 @@ class ApplicationController extends Controller
             $dateOrig = $request->dateorig;
             $datePlusOneWeek = date('Y-m-d', strtotime($dateOrig . ' + 1 week'));
 
+            $messages = [
+                'newdateinvite.required' => 'Waktu undangan harus diisi',
+                'newdateinvite.date' => 'Waktu undangan harus berupa tanggal',
+                'newdateinvite.before_or_equal' => 'Waktu undangan tidak boleh melebihi 1 minggu dari tanggal sekarang',
+                'newdateinvite.date_format' => 'Waktu undangan harus memiliki format YYYY-MM-DD HH:II',
+                'newdateinvite.custom_time' => 'Waktu pengisian undangan harus di antara 08:00 dan 17:00',
+                'dateorig.required' => 'Tanggal undangan harus diisi',
+                'dateorig.date' => 'Tanggal undangan harus berupa tanggal',
+            ];
+
             $validator = Validator::make($request->all(), [
-                'newdateinvite' => 'required|date|before_or_equal:' . $datePlusOneWeek,
+                'newdateinvite' => [
+                    'required',
+                    'date',
+                    'before_or_equal:' . $datePlusOneWeek,
+                    'date_format:Y-m-d H:i',
+                    function ($attribute, $value, $fail) {
+                        // Konversi waktu menjadi detik
+                        $time = time();
+                        $minTime = strtotime('08:00');
+                        $maxTime = strtotime('17:00');
+            
+                        // Periksa apakah waktu berada di antara rentang yang diperbolehkan
+                        if ($time < $minTime || $time > $maxTime) {
+                            $fail(__('validation.custom_time'));
+                        }
+                    }
+                ],
                 'dateorig' => 'required|date',
-            ]);
+            ], $messages);
 
             if ($validator->fails()) {
-                return response()->json(['error' => 'Maksimal 1 minggu']);
+                return response()->json(['error' => $validator->errors()->first()]);
             }
             
             $applicant = Application::find($request->data_id);

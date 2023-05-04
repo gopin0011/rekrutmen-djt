@@ -32,6 +32,8 @@ use App\Models\ApplicantDocument;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\View;
 use File;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+use App\Models\InvitationToken;
 
 class GuestController extends Controller
 {
@@ -62,7 +64,7 @@ class GuestController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll']);
+        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile']);
     }
 
     public function formUserInterview($token)
@@ -138,6 +140,11 @@ class GuestController extends Controller
     public function autoRegistration(Request $request, $token)
     {
         try {
+            $invitationToken = InvitationToken::where('token', $token)->first();
+            if($invitationToken && $invitationToken->has_applied == '1') {
+                return die('sudah applied');
+            }
+
             $data = JWTHelper::decode($token, JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
 
             if (!$data->invite) { 
@@ -192,6 +199,8 @@ class GuestController extends Controller
                 'jadwaljam' => $data->invite->timeinvite
             ]);
 
+            $invitationToken->update(['has_applied' => 1]);
+
             Auth::loginUsingId($user->id);
             
             // $request->authenticate();
@@ -239,7 +248,7 @@ class GuestController extends Controller
         $posisi = Vacancy::find($data->posisi)->name;
         $posisialt = ($data->posisialt) ? Vacancy::find($data->posisialt)->name : '';
 
-        $getTanggal = Carbon::parse($data->tanggalinterview)->locale('id');
+        $getTanggal = Carbon::parse($data->jadwalinterview)->locale('id');
         $getTanggal->settings(['formatFunction' => 'translatedFormat']);
         $tanggal = $getTanggal->format('l, j F Y');
 
@@ -338,8 +347,6 @@ class GuestController extends Controller
             'logo' => $base64String,
             'logo_type' => $logoExt,
         ];
-        
-
 
         // Buat instance Dompdf
         $pdf = new Dompdf();
@@ -366,13 +373,54 @@ class GuestController extends Controller
         $cv = public_path('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
         if (!File::exists($cv)) {
             $doc = ApplicantDocument::where('user_id', $user->id)->first();
-            $CVpath = asset('storage/doc/'.$doc->dokumen.'.pdf');
+            $CVpath = isset($doc->dokumen) ? asset('storage/doc/'.$doc->dokumen.'.pdf') : null;
+            $CVPath2 = isset($doc->dokumen) ? public_path('storage/doc/'.$doc->dokumen.'.pdf') : null;
         }
         else {
             $CVpath = asset('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+            $CVPath2 = public_path('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
         }
 
-        return view('pages.application.printAllFile', ['pdfUrl' => asset('storage/file.pdf'), 'CVpath' => $CVpath]);
+        if($request->get('share') == '1') {
+            $pdf = PDFMerger::init();
+
+            $paths = [
+                public_path('storage/file.pdf')
+            ];
+
+            if ($CVPath2 != null) {
+                array_push($paths, $CVPath2);
+            }
+            foreach ($paths as $value) {
+                $pdf->addPDF($value, 'all');
+            }
+
+            $fileName = 'merger.pdf';
+            $pdf->merge();
+            $pdf->save(public_path('storage/'.$fileName));
+
+            if (file_exists(public_path('storage/'.$fileName))) {
+                if ($this->isMobile()) {
+                    $pdfUrl = url('public/storage/merger.pdf');
+                    $embedUrl = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", $pdfUrl);
+                    return view('pages.application.viewpdf', ['embed_url' => $embedUrl]);
+                }
+                return response()->file(public_path('storage/'.$fileName));
+            } else {
+                return response()->json(['message' => 'File not found.'], 404);
+            }
+        }
+
+        $thisUrl = route('applications.printAll', ['id' => $id, 'share' => 1]);
+
+        return view('pages.application.printAllFile', ['pdfUrl' => asset('storage/file.pdf'), 'CVpath' => $CVpath, 'thisUrl' => $thisUrl, 'user' => $user, 'posisi' => $posisi]);
+    }
+
+    private function isMobile()
+    {
+        // Deteksi user agent menggunakan package "jenssegers/agent"
+        $agent = new \Jenssegers\Agent\Agent();
+        return $agent->isMobile();
     }
 
     public function forms()

@@ -105,13 +105,21 @@
                                 <input type="text" class="form-control" placeholder="Alamat domisili"
                                     aria-label="address" id="address" name="address" aria-describedby="basic-addon1">
                             </div>
-                            <div class="input-group mb-3 col-md-6">
+                            <div class="input-group mb-3 col-md-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-envelope"></i></span>
                                 </div>
                                 <input type="text" class="form-control" placeholder="Alamat email" aria-label="email"
                                     id="email" name="email" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-phone"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Kontak" aria-label="kontak"
+                                    id="kontak" name="kontak" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <hr>
@@ -597,6 +605,7 @@
                     $("#ktp").val(data.ktp);
                     $("#address").val(data.address);
                     $("#email").val(data.email);
+                    $("#kontak").val(data.kontak);
                     $("#certi").val(data.certi);
                     $("#place").val(data.place);
                     $("#born").val(data.born);

@@ -22,7 +22,7 @@
                         <thead>
                             <tr>
                                 <td colspan="9">
-                                    <input type="text" placeholder="Nama atau Email Staff" class="form-control" id="search" aria-label="search" aria-describedby="basic-addon1">
+                                    <input type="text" placeholder="Nama, email atau kontak staff" class="form-control" id="search" aria-label="search" aria-describedby="basic-addon1">
                                 </td>
                             </tr>
                             <tr>
@@ -268,7 +268,7 @@
             // Contoh penggunaan:
             const link = 'https://www.google.com';
             const message = `Halo, cek link ini: ${link}`;
-            sendWhatsAppMessage('6281394420922', message);
+            // sendWhatsAppMessage('6281394420922', message);
         });
     </script>
 @stop

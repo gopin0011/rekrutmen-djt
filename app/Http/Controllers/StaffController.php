@@ -407,6 +407,7 @@ class StaffController extends Controller
                 'ktp' => $request->ktp,
                 'address' => $request->address,
                 'email' => $request->email,
+                'kontak' => $request->kontak,
                 'certi' => $request->certi,
                 'place' => $request->place,
                 'born' => $request->born,
@@ -445,7 +446,9 @@ class StaffController extends Controller
 
         $q = Staff::orderBy('name');
         if ($search != '' && $search) {
-            $q->where('name', 'like', '%'.$search.'%')->orWhere('email', 'like', '%'.$search.'%');
+            $q->where('name', 'like', '%'.$search.'%')
+            ->orWhere('email', 'like', '%'.$search.'%')
+            ->orWhere('kontak', 'like', '%'.$search.'%');
         }
         $total = $q->count();
         

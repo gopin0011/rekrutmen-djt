@@ -1,0 +1,1 @@
+<iframe src="{{$embed_url}}" style="width: 100%; height: 100vh;"></iframe>

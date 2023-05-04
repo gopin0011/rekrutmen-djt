@@ -126,7 +126,7 @@
                 <th>Posisi Alternatif</th>
                 <th>Jadwal Interview</th>
                 <th>Jam</th>
-                <th>Hasil</th>
+                <!-- <th>Hasil</th> -->
                 <th width="60px"></th>
                 <th>Reschedule</th>
             </tr>
@@ -217,11 +217,6 @@
                     {
                         data: 'jadwaljam',
                         name: 'jadwaljam',
-                        orderable: false,
-                    },
-                    {
-                        data: 'hasil',
-                        name: 'hasil',
                         orderable: false,
                     },
                     {
