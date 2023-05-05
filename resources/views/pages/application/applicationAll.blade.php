@@ -569,6 +569,32 @@
              @endforeach
         </tbody>
     </table>
+    <div class="page-break"></div>
+    <table>
+        <tbody style="border:1pt solid #000000">
+            <tr>
+                <td style="text-align: center; border:1pt solid #000000;background:lightgray"><h4>HASIL INTERVIEW</h4></td>
+            </tr>
+            <tr>
+                <td style="text-align: left; width:200px"><strong>{{$item['data']->namahr}}</strong></td>
+            </tr>
+            <tr>
+                <td style="text-align: left">{{ $item['data']->inthr }}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; width:200px"><strong>{{$item['data']->namauser}}</strong></td>
+            </tr>
+            <tr>
+                <td style="text-align: left">{{ $item['data']->intuser }}</td>
+            </tr>
+            <tr>
+                <td style="text-align: left; width:200px"><strong>{{$item['data']->namamana}}</strong></td>
+            </tr>
+            <tr>
+                <td style="text-align: left">{{ $item['data']->intmana }}</td>
+            </tr>
+        </tbody>
+    </table>
 
 </object>
 </body>

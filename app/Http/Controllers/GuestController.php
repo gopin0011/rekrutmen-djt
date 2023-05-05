@@ -253,9 +253,11 @@ class GuestController extends Controller
         $getTanggal->settings(['formatFunction' => 'translatedFormat']);
         $tanggal = $getTanggal->format('l, j F Y');
 
-        $profil = ApplicantProfile::where('user_id',$user->id)->first();
-        $gender = $profil ? DB::table('gender')->find($profil->gender)->name : '';
-        $agama = $profil ? DB::table('religion')->find($profil->agama)->name : '';
+        $profil = ApplicantProfile::with(['jk', 'religi'])->where('user_id',$user->id)->first();
+        $gender = $profil->jk->name;
+        $agama = $profil->religi->name;
+        // $gender = $profil ? DB::table('gender')->find($profil->gender)->name : '';
+        // $agama = $profil ? DB::table('religion')->find($profil->agama)->name : '';
 
         $getTanggalLahir = $profil ? Carbon::parse($profil->tanggallahir)->locale('id') : '';
         $profil ? $getTanggalLahir->settings(['formatFunction' => 'translatedFormat']) : '';

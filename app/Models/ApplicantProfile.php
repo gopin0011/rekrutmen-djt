@@ -14,4 +14,14 @@ class ApplicantProfile extends Model
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
+
+    public function jk()
+    {
+        return $this->belongsTo(Gender::class,'gender','id');
+    }
+
+    public function religi()
+    {
+        return $this->belongsTo(Religion::class,'agama','id');
+    }
 }
