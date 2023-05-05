@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\View;
 use File;
 // use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 use App\Models\InvitationToken;
-// use Libraries\PDFMerger;
+use PDFMerger;
 
 class GuestController extends Controller
 {
@@ -391,10 +391,29 @@ class GuestController extends Controller
 
         // dd([$rekrutmen_pdf,$cv_url]);
         if($request->get('share') == '1') {
-            if ($this->isMobile()) {
-                return view('pages.application.viewpdf', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path]);
+            $paths = [
+                public_path('storage/file.pdf')
+            ];
+            if($cv_url != null) {
+                array_push($paths, public_path($cv_path));
             }
-            return view('pages.application.viewpdf', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path]);
+
+            $merger = \PDFMerger::init();
+            
+            foreach($paths as $path) {
+                $merger->addPathToPDF($path, 'all', 'P');
+            }
+
+            $merger->merge();
+            $merger->save(base_path('/public/storage/merger.pdf'));
+
+            $gdocs = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", url('public/storage/merger.pdf'));
+
+            if ($this->isMobile()) {
+                return view('pages.application.mobile.viewpdf', ['rekrutmen_pdf' => $gdocs, 'cv_url' => null]);
+            }
+
+            return view('pages.application.viewpdf', ['rekrutmen_pdf' => $gdocs, 'cv_url' => null]);
         }
 
         $thisUrl = route('applications.printAll', ['id' => $id, 'share' => 1]);

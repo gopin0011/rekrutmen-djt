@@ -47,7 +47,8 @@ class ApplicantDocumentController extends Controller
         $file = $user_id.'-'.$vacancy_id.'-'.$additional_upload_id;
         $fileName =  $file.'.pdf';
 
-        $request->file->move('storage/app/public/additional', $fileName);
+        // $request->file->move('storage/app/public/additional', $fileName);
+        $request->file->storeAs('additional', $fileName);
 
         ApplicantAdditionalDocument::Create(
             [
@@ -91,27 +92,34 @@ class ApplicantDocumentController extends Controller
 
     public function store(Request $request)
     {
-        $check = ApplicantDocument::where('user_id', $request->user_id)->get();
+        try {
+            $check = ApplicantDocument::where('user_id', $request->user_id)->get();
 
-        $request->validate([
-            'file' => 'required|mimes:pdf|max:4096',
-        ]);
-
-        $date = $request->user_id;
-        $fileName =  $date . '.pdf';
-
-        $request->file->move('storage/app/public/doc', $fileName);
-
-        if(count($check) == 0)
-        {
-            ApplicantDocument::Create(
-                [
-                    'user_id' => $request->user_id,
-                    'dokumen' => $date
-                ]
-            );
+            $request->validate([
+                'file' => 'required|mimes:pdf|max:4096',
+            ]);
+    
+            $date = $request->user_id;
+            $fileName =  $date . '.pdf';
+    
+            // $request->file->move('storage/app/public/doc', $fileName);
+            $request->file->storeAs('doc', $fileName);
+    
+            if(count($check) == 0)
+            {
+                ApplicantDocument::Create(
+                    [
+                        'user_id' => $request->user_id,
+                        'dokumen' => $date
+                    ]
+                );
+            }
+            return response()->json(['success' => 'Data telah berhasil disimpan']);
         }
-        return response()->json(['success' => 'Data telah berhasil disimpan']);
+        catch (\Exception $e)
+        {
+            
+        }
     }
 
     public function destroy($id)
