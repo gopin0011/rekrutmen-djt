@@ -32,8 +32,9 @@ use App\Models\ApplicantDocument;
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\View;
 use File;
-use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+// use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 use App\Models\InvitationToken;
+// use Libraries\PDFMerger;
 
 class GuestController extends Controller
 {
@@ -370,50 +371,33 @@ class GuestController extends Controller
         // Tulis binary string ke file PDF
         file_put_contents(public_path('storage/file.pdf'), $pdfContent);
 
+        // $rekrutmen_pdf = url('public/storage/file.pdf');
+        $rekrutmen_pdf = 'storage/file.pdf';
         $cv = public_path('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+        $cv_url = url('public/storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+        // $cv_path = asset('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+        $cv_path = 'storage/pelamar/'.$user->key.'/rekrutmen.pdf';
+
         if (!File::exists($cv)) {
             $doc = ApplicantDocument::where('user_id', $user->id)->first();
-            $CVpath = isset($doc->dokumen) ? asset('storage/doc/'.$doc->dokumen.'.pdf') : null;
-            $CVPath2 = isset($doc->dokumen) ? public_path('storage/doc/'.$doc->dokumen.'.pdf') : null;
-        }
-        else {
-            $CVpath = asset('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
-            $CVPath2 = public_path('storage/pelamar/'.$user->key.'/rekrutmen.pdf');
+            $cv_url = isset($doc->dokumen) ? url('public/storage/doc/'.$doc->dokumen.'.pdf') : null;
+            $cv_path = isset($doc->dokumen) ? 'storage/doc/'.$doc->dokumen.'.pdf' : null;
         }
 
+        // $rekrutmen_pdf = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", $rekrutmen_pdf);
+        // $cv_url = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", $cv_url);
+
+        // dd([$rekrutmen_pdf,$cv_url]);
         if($request->get('share') == '1') {
-            $pdf = PDFMerger::init();
-
-            $paths = [
-                public_path('storage/file.pdf')
-            ];
-
-            if ($CVPath2 != null) {
-                array_push($paths, $CVPath2);
+            if ($this->isMobile()) {
+                return view('pages.application.viewpdf', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path]);
             }
-            foreach ($paths as $value) {
-                $pdf->addPDF($value, 'all');
-            }
-
-            $fileName = 'merger.pdf';
-            $pdf->merge();
-            $pdf->save(public_path('storage/'.$fileName));
-
-            if (file_exists(public_path('storage/'.$fileName))) {
-                if ($this->isMobile()) {
-                    $pdfUrl = url('public/storage/merger.pdf');
-                    $embedUrl = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", $pdfUrl);
-                    return view('pages.application.viewpdf', ['embed_url' => $embedUrl]);
-                }
-                return response()->file(public_path('storage/'.$fileName));
-            } else {
-                return response()->json(['message' => 'File not found.'], 404);
-            }
+            return view('pages.application.viewpdf', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path]);
         }
 
         $thisUrl = route('applications.printAll', ['id' => $id, 'share' => 1]);
 
-        return view('pages.application.printAllFile', ['pdfUrl' => asset('storage/file.pdf'), 'CVpath' => $CVpath, 'thisUrl' => $thisUrl, 'user' => $user, 'posisi' => $posisi]);
+        return view('pages.application.printAllFile', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path, 'thisUrl' => $thisUrl, 'user' => $user, 'posisi' => $posisi]);
     }
 
     private function isMobile()

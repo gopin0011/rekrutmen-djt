@@ -197,7 +197,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         // Goodnesskay\LaravelPdfViewer\LaravelPdfViewerServiceProvider::class,
-        Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
+        GrofGraf\LaravelPDFMerger\Providers\PDFMergerServiceProvider::class
     ],
 
     /*
@@ -215,7 +215,7 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'JWTHelper' => App\JWT\JWT::class,
-        'PDFMerger' => Webklex\PDFMerger\Facades\PDFMergerFacade::class,
+        'PDFMerger' => GrofGraf\LaravelPDFMerger\Facades\PDFMergerFacade::class
     ])->toArray(),
 
 ];

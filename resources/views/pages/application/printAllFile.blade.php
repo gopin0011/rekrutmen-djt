@@ -45,11 +45,11 @@
     </a>
 </div>
 <div class="row mt-3">
-    <iframe src="{{ $pdfUrl }}#view=FitH" width="100%" height="600"></iframe>
+    <iframe src ="{{ asset('/laraview/#../'.$rekrutmen_pdf) }}" style="width: 100vw; height: 100vh;"></iframe>
 </div>
-@if($CVpath)
+@if($cv_url)
 <div class="row">
-    <iframe src="{{ $CVpath }}#view=FitH" width="100%" height="600"></iframe>
+    <iframe src ="{{ asset('/laraview/#../'.$cv_url) }}" style="width: 100vw; height: 100vh;"></iframe>
 </div>
 @endif
 
@@ -135,7 +135,7 @@
 
                 if(confirm("Aksi ini tidak bisa dibatalkan, lanjut untuk kirim Whatsapp ke "+kontak+"?")) {
                     const link = thisUrl;
-                    const message = `Bpk/Ibu Yth, berikut info kandidat ${user.name} melamar di posisi ${posisi} PT. Dwida Jaya Tama : ${link}`;
+                    const message = `Kepada Yth. Bapak/Ibu Pimpinan Departemen, berikut kandidat atas nama ${user.name} untuk Posisi ${posisi} PT Dwida Jaya Tama: ${link}`;
                     var phoneNumber = replacePhonePrefix(kontak);
                     sendWhatsAppMessage(phoneNumber, message);
                 }

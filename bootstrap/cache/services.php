@@ -46,7 +46,7 @@
     42 => 'App\\Providers\\AuthServiceProvider',
     43 => 'App\\Providers\\EventServiceProvider',
     44 => 'App\\Providers\\RouteServiceProvider',
-    45 => 'Webklex\\PDFMerger\\Providers\\PDFMergerServiceProvider',
+    45 => 'GrofGraf\\LaravelPDFMerger\\Providers\\PDFMergerServiceProvider',
   ),
   'eager' => 
   array (
@@ -80,7 +80,7 @@
     27 => 'App\\Providers\\AuthServiceProvider',
     28 => 'App\\Providers\\EventServiceProvider',
     29 => 'App\\Providers\\RouteServiceProvider',
-    30 => 'Webklex\\PDFMerger\\Providers\\PDFMergerServiceProvider',
+    30 => 'GrofGraf\\LaravelPDFMerger\\Providers\\PDFMergerServiceProvider',
   ),
   'deferred' => 
   array (
