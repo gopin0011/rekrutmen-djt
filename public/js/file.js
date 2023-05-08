@@ -8,7 +8,7 @@ async function getNotifications() {
   try {
     // Tambahkan query parameter dengan idTerakhir
     // var url = 'https://api.example.com/notifications?id=' + idTerakhir;
-    const API_URL = '/rekrutmen-djt/notifications?notifiable_id=';
+    const API_URL = 'http://localhost/php8/rekrutmen-djt/notifications?notifiable_id=';
     var url = API_URL + idTerakhir;
     var response = await fetch(url);
     var notifications = await response.json();

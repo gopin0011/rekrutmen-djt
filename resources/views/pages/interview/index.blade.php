@@ -28,6 +28,7 @@
                             <tr>
                                 <th width="50px">#</th>
                                 <th>Nama</th>
+                                <th>Kontak</th>
                                 <th>Email</th>
                                 <th>Aksi</th>
                             </tr>
@@ -163,6 +164,9 @@
     <script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript">
         $(function() {
+            var user = {!! json_encode($user) !!};
+            var posisi = '{!!$posisi!!}';
+
             $("#share").click(function() {
                 $('#table').find('tbody').empty();
                 $("#dataForm").trigger("reset");
@@ -223,6 +227,38 @@
                 }
             }
 
+            function validatePhone(phone) {
+                // Format nomor telepon yang diizinkan adalah 0xx-xxxxxxx atau 0xxx-xxxxxxx
+                const phoneRegex = /^(0\d{2,3})-?\d{7,8}$/;
+                return phoneRegex.test(phone);
+            }
+
+            function replacePhonePrefix(phone) {
+            // Cek apakah nomor telepon diawali dengan "0"
+                if (phone.startsWith('0')) {
+                    // Ganti "0" dengan "62"
+                    return phone.replace(/^0/, '62');
+                }
+                // Jika tidak, kembalikan nomor telepon yang sama
+                return phone;
+            }
+
+            function funcShareWa()
+            {
+                var user_id = $(this).data("id");
+                var kontak = $(this).data("kontak");
+                var type = $("#type").val();
+
+                if(kontak == '') return alert('Kontak user ini masih kosong, silahkan edit staff terlebih dahulu.');
+
+                if(confirm("Aksi ini tidak bisa dibatalkan, lanjut untuk kirim Whatsapp ke "+kontak+"?")) {
+                    const link = "{{route('interviews.share.test', [':id',':userId',':type'])}}".replace(':id', "{{$id}}").replace(':userId', user_id).replace(':type', 'type='+type);
+                    const message = `Kepada Yth. Bapak/Ibu Pimpinan Departemen, berikut isian hasil interview kandidat atas nama ${user.name} untuk Posisi ${posisi}: ${link}`;
+                    var phoneNumber = replacePhonePrefix(kontak);
+                    sendWhatsAppMessage(phoneNumber, message);
+                }
+            }
+
             function makeStruct(d)
             {
                 // add to table
@@ -234,7 +270,7 @@
                     {
                         var data = d.paginator.data[row];
 
-                        $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td>"+data.email+"</td><td id='td"+row+"'></td></tr>");
+                        $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td id='td-wa"+row+"'></td><td>"+data.email+"</td><td id='td"+row+"'></td></tr>");
                         if(ValidateEmail(data.email)) {
                             var $tautan = $('<a>', { 'href':'javascript:void(0);', 'type':'button', 'data-toggle':'tooltip', 'data-id': data.id, 'data-email': data.email, 'data-original-title':'Edit', 'class': 'edit btn btn-primary btn-sm share' });
                             $tautan.text('Kirim Tautan Ke Email User');
@@ -243,7 +279,16 @@
                             $tautan.text('Edit Data Email Staff Terlebih Dahulu');
                         }
 
+                        if(validatePhone(data.kontak)) {
+                            var $tautan2 = $('<a>', { 'href':'javascript:void(0);', 'type':'button', 'data-toggle':'tooltip', 'data-id': data.id, 'data-kontak': data.kontak, 'data-original-title':'Edit', 'class': 'edit btn btn-success btn-sm share-wa' });
+                            $tautan2.text(data.kontak);
+                        } else {
+                            var $tautan2 = $('<a>', { 'href':'javascript:void(0);', 'data-toggle':'tooltip', 'data-original-title':'Not Valid', 'class': 'text-danger' });
+                            $tautan2.text('');
+                        }
+
                         $('<div>', { class: 'btn-group' }).append($tautan).appendTo($('#td'+row));
+                        $('<div>', { class: 'btn-group' }).append($tautan2).appendTo($('#td-wa'+row));
 
                     }
                 }
@@ -251,6 +296,11 @@
                 var elements = $('.share');
                 for (var i = 0; i < elements.length; i++) { 
                     elements[i].addEventListener('click', funcShare, false);
+                }
+
+                var elements2 = $('.share-wa');
+                for (var i = 0; i < elements2.length; i++) { 
+                    elements2[i].addEventListener('click', funcShareWa, false);
                 }
             }
 

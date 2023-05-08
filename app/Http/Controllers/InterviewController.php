@@ -19,8 +19,9 @@ class InterviewController extends Controller
     {
         // $data = Interview::where('application_id',$id)->first();
         $data = Application::find($id);
-        // dd($data);
-        return view('pages.interview.index', compact('data','id'));
+        $user = $data->user;
+        $posisi = $data->vacancy->name;
+        return view('pages.interview.index', compact('data','id', 'user', 'posisi'));
     }
 
     public function store(Request $request)
