@@ -27,12 +27,13 @@ class ApplicantProfileController extends Controller
         $darah = count($x) == 1 ? $data->darah : '';
         $mustUpload = false;
 
-        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('document','vacancy')->whereHas('vacancy.vacanciesAdditionalUpload')->where('user_id', Auth::user()->id)->first();
-        if(!$applications->document) {
+        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('document','vacancy')->where('user_id', Auth::user()->id)->first();
+        // dd($applications->vacancy);
+        if(!$applications && !$applications->document) {
             $mustUpload = true;
         }
 
-        if($applications->vacancy->vacanciesAdditionalUpload) {
+        if($applications->vacancy && $applications->vacancy->vacanciesAdditionalUpload) {
             foreach($applications->vacancy->vacanciesAdditionalUpload as $add) {
                 $response = app()->call('\App\Http\Controllers\ApplicantDocumentController@showDataAdditional', [
                     'userId' => Auth::user()->id,
