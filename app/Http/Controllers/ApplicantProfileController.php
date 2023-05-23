@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicantProfile;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +25,28 @@ class ApplicantProfileController extends Controller
         $agama = count($x) == 1 ? $data->agama : '';
         $status = count($x) == 1 ? $data->status : '';
         $darah = count($x) == 1 ? $data->darah : '';
+        $mustUpload = false;
 
-        return view('pages.applicant.profile', compact('data','genders','religions','gender','wn','agama','status','darah'));
+        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('document','vacancy')->whereHas('vacancy.vacanciesAdditionalUpload')->where('user_id', Auth::user()->id)->first();
+        if(!$applications->document) {
+            $mustUpload = true;
+        }
+
+        if($applications->vacancy->vacanciesAdditionalUpload) {
+            foreach($applications->vacancy->vacanciesAdditionalUpload as $add) {
+                $response = app()->call('\App\Http\Controllers\ApplicantDocumentController@showDataAdditional', [
+                    'userId' => Auth::user()->id,
+                    'vacancyId' => $add->vacancies_id,
+                    'additionalUploadId' => $add->additional_upload_id,
+                ]);
+                if(!json_decode($response->getContent())->ApplicantAdditionalDocument) {
+                    $mustUpload = true;
+                    break;
+                }
+            }
+        }
+
+        return view('pages.applicant.profile', compact('mustUpload', 'data','genders','religions','gender','wn','agama','status','darah'));
     }
 
     public function store(Request $request)

@@ -569,6 +569,7 @@
              @endforeach
         </tbody>
     </table>
+    @if($item['forUser'] != '1')
     <div class="page-break"></div>
     <table>
         <tbody style="border:1pt solid #000000">
@@ -595,7 +596,7 @@
             </tr>
         </tbody>
     </table>
-
+    @endif
 </object>
 </body>
 

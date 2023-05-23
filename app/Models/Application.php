@@ -15,6 +15,11 @@ class Application extends Model
         return $this->hasOne(ApplicantProfile::class, 'user_id', 'user_id')->with('user');
     }
 
+    public function document()
+    {
+        return $this->hasOne(ApplicantDocument::class, 'user_id', 'user_id');
+    }
+
     public function vacancy()
     {
         return $this->belongsTo(Vacancy::class, 'posisi', 'id')->with('vacanciesAdditionalUpload');

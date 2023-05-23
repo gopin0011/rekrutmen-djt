@@ -351,6 +351,7 @@ class GuestController extends Controller
             'quest' => $quest,
             'logo' => $base64String,
             'logo_type' => $logoExt,
+            'forUser' => $request->get('forUser'),
         ];
 
         // Buat instance Dompdf
@@ -359,7 +360,7 @@ class GuestController extends Controller
         // Render view Blade ke dalam string
         // $html = View::make('pages.application.applicationAll', $item)->render();
         $html = view('pages.application.applicationAll')->with(compact('item'))->render();
-
+        
         // Buat objek dompdf
         $dompdf = new Dompdf();
 
@@ -393,6 +394,7 @@ class GuestController extends Controller
 
         // dd([$rekrutmen_pdf,$cv_url]);
         if($request->get('share') == '1') {
+
             $paths = [
                 public_path('storage/file.pdf')
             ];

@@ -20,6 +20,7 @@
                             <th width="50px">#</th>
                             <th>Nama</th>
                             <th>Kontak</th>
+                            <th>Untuk User</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -130,11 +131,19 @@
             function funcShare()
             {
                 var kontak = $(this).data("kontak");
+                var id = $(this).data("id");
+                var checkUser = $('#forUser'+id).is(":checked");
 
                 if(kontak == '') return alert('Kontak user ini masih kosong, silahkan edit staff terlebih dahulu.');
 
                 if(confirm("Aksi ini tidak bisa dibatalkan, lanjut untuk kirim Whatsapp ke "+kontak+"?")) {
-                    const link = thisUrl;
+                    var link = thisUrl;
+                    if(checkUser == true) {
+                        link += "&forUser=1";
+                    }
+                    else {
+                        link += "&forUser=0";
+                    }
                     const message = `Kepada Yth. Bapak/Ibu Pimpinan Departemen, berikut kandidat atas nama ${user.name} untuk Posisi ${posisi} PT Dwida Jaya Tama: ${link}`;
                     var phoneNumber = replacePhonePrefix(kontak);
                     sendWhatsAppMessage(phoneNumber, message);
@@ -152,13 +161,13 @@
                     {
                         var data = d.paginator.data[row];
 
-                        $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td>"+data.kontak+"</td><td id='td"+row+"'></td></tr>");
+                        $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td>"+data.kontak+"</td><td><input type='checkbox' name='forUser[]' id='forUser"+data.id+"'></td><td id='td"+row+"'></td></tr>");
                         if(validatePhone(data.kontak)) {
                             var $tautan = $('<a>', { 'href':'javascript:void(0);', 'type':'button', 'data-toggle':'tooltip', 'data-id': data.id, 'data-kontak': data.kontak, 'data-original-title':'Edit', 'class': 'edit btn btn-success btn-sm share' });
-                            $tautan.text('Kirim Tautan Ke Whatsapp User');
+                            $tautan.text('Whatsapp');
                         } else {
                             var $tautan = $('<a>', { 'href':'javascript:void(0);', 'data-toggle':'tooltip', 'data-original-title':'Not Valid', 'class': 'text-danger' });
-                            $tautan.text('Edit Data Kontak Staff Terlebih Dahulu');
+                            $tautan.text(' ');
                         }
 
                         $('<div>', { class: 'btn-group' }).append($tautan).appendTo($('#td'+row));
