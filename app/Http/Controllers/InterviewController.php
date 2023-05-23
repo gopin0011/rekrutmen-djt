@@ -41,62 +41,66 @@ class InterviewController extends Controller
         return redirect(route('applications.today'));
     }
 
-    public function shareHasilInterview(Request $request, $id, $userId)
-    {
-        try {
-            $type = $request->type;
+    // public function shareHasilInterview(Request $request, $id, $userId, $type)
+    // {
+    //     try {
+    //         // $type = $request->type;
 
-            $application = Application::find($id);
+    //         $application = Application::find($id);
 
-            $staff = Staff::find($userId);
+    //         $staff = Staff::find($userId);
 
-            switch($staff->jk->name) {
-                case 'Wanita' : $dear = 'Ibu'; break;
-                default: $dear = 'Bapak'; break;
-            }
+    //         switch($staff->jk->name) {
+    //             case 'Wanita' : $dear = 'Ibu'; break;
+    //             default: $dear = 'Bapak'; break;
+    //         }
 
-            $app['id'] = $application->id;
-            $app['posisi'] = $application->posisi;
-            $app['posisiChar'] = $application->posisi_char;
+    //         $app['id'] = $application->id;
+    //         $app['posisi'] = $application->posisi;
+    //         $app['posisiChar'] = $application->posisi_char;
 
-            $user['id'] = $staff->id;
-            $user['email'] = $staff->email;
-            $user['name'] = $staff->name;
+    //         $user['id'] = $staff->id;
+    //         $user['email'] = $staff->email;
+    //         $user['name'] = $staff->name;
 
-            $data = new \stdClass();
-            $data->app = $app;
-            $data->staff = $user;
-            $data->type = $type;
-            $data->created_at = Carbon::now()->format('Y-m-d H:i:s');
-            $data->token = JWTHelper::encode(['data' => $data], JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
+    //         $data = new \stdClass();
+    //         $data->app = $app;
+    //         $data->staff = $user;
+    //         $data->type = $type;
+    //         $data->created_at = Carbon::now()->format('Y-m-d H:i:s');
+    //         $data->token = JWTHelper::encode(['data' => $data], JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
 
-            $stafToken = EmployeToken::Create(
-                [
-                    'employe_id' => $staff->id,
-                    'token' => $data->token
-                ]
-            );
+    //         $stafToken = EmployeToken::Create(
+    //             [
+    //                 'employe_id' => $staff->id,
+    //                 'token' => $data->token
+    //             ]
+    //         );
 
-            $data->action = route('user.form.add.interview', ['token' => $data->token, 'type' => $type]);
+    //         $data->action = route('user.form.add.interview', ['token' => $data->token, 'type' => $type]);
 
-            $text = "Dear, ".$dear." ".$staff->name."<br><br>Anda Diminta Untuk Mengisi Hasil Interview Dengan Kandidat:";
+    //         if($request->whatsapp == '1') {
+    //             return redirect($data->action);
+    //         }
 
-            $send = Mail::to($staff->email)->send(
-                new UserInterview($application->user->name, $application->jadwalinterview, $application->vacancy->name, $text, $data->action)
-            );
+    //         $text = "Dear, ".$dear." ".$staff->name."<br><br>Anda Diminta Untuk Mengisi Hasil Interview Dengan Kandidat:";
 
-            $result['status'] = true;
-            $result['code'] = 200;
-            $result['data'] = $data;
+    //         $send = Mail::to($staff->email)->send(
+    //             new UserInterview($application->user->name, $application->jadwalinterview, $application->vacancy->name, $text, $data->action)
+    //         );
 
-            return response()->json($result);
-        } catch (\Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-            dd([$e->getMessage()]);
-        }
+    //         $result['status'] = true;
+    //         $result['code'] = 200;
+    //         $result['data'] = $data;
+
+    //         return response()->json($result);
+    //     } catch (\Throwable $e) {
+    //         return response()->json(['error' => $e->getMessage()]);
+    //         dd([$e->getMessage()]);
+    //     }
         
 
-    }
+    // }
 
     
 }

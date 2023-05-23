@@ -34,7 +34,9 @@ use Illuminate\Support\Facades\View;
 use File;
 // use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 use App\Models\InvitationToken;
+use App\Models\Staff;
 use PDFMerger;
+use App\Mail\UserInterview;
 
 class GuestController extends Controller
 {
@@ -65,7 +67,7 @@ class GuestController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile']);
+        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview']);
     }
 
     public function formUserInterview($token)
@@ -419,6 +421,67 @@ class GuestController extends Controller
         $thisUrl = route('applications.printAll', ['id' => $id, 'share' => 1]);
 
         return view('pages.application.printAllFile', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path, 'thisUrl' => $thisUrl, 'user' => $user, 'posisi' => $posisi]);
+    }
+
+    public function shareHasilInterview(Request $request, $id, $userId, $type)
+    {
+        try {
+            // $type = $request->type;
+
+            $application = Application::find($id);
+
+            $staff = Staff::find($userId);
+
+            switch($staff->jk->name) {
+                case 'Wanita' : $dear = 'Ibu'; break;
+                default: $dear = 'Bapak'; break;
+            }
+
+            $app['id'] = $application->id;
+            $app['posisi'] = $application->posisi;
+            $app['posisiChar'] = $application->posisi_char;
+
+            $user['id'] = $staff->id;
+            $user['email'] = $staff->email;
+            $user['name'] = $staff->name;
+
+            $data = new \stdClass();
+            $data->app = $app;
+            $data->staff = $user;
+            $data->type = $type;
+            $data->created_at = Carbon::now()->format('Y-m-d H:i:s');
+            $data->token = JWTHelper::encode(['data' => $data], JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
+
+            $stafToken = EmployeToken::Create(
+                [
+                    'employe_id' => $staff->id,
+                    'token' => $data->token
+                ]
+            );
+
+            $data->action = route('user.form.add.interview', ['token' => $data->token, 'type' => $type]);
+
+            if($request->whatsapp == '1') {
+                return redirect($data->action);
+            }
+
+            $text = "Dear, ".$dear." ".$staff->name."<br><br>Anda Diminta Untuk Mengisi Hasil Interview Dengan Kandidat:";
+
+            $send = Mail::to($staff->email)->send(
+                new UserInterview($application->user->name, $application->jadwalinterview, $application->vacancy->name, $text, $data->action)
+            );
+
+            $result['status'] = true;
+            $result['code'] = 200;
+            $result['data'] = $data;
+
+            return response()->json($result);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+            dd([$e->getMessage()]);
+        }
+        
+
     }
 
     private function isMobile()

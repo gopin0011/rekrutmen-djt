@@ -120,7 +120,6 @@ Route::group(['middleware' => ['auth']], function () {
     // INTERVIEW
     Route::get('interviews/0/{id}', [InterviewController::class, 'index'])->name('interviews.show');
     Route::post('interviews/0/{id}', [InterviewController::class, 'store'])->name('interviews.store');
-    Route::get('interviews/share/{id}/{userId}', [InterviewController::class, 'shareHasilInterview'])->name('interviews.share.test');
 
     // PSYCHOTEST
     Route::get('psychotests/0/{id}', [PsychotestController::class, 'index'])->name('psychotests.show');
@@ -276,5 +275,8 @@ Route::get('docs/{id}/rekrutmen.pdf', function ($id)
 
     return $response;
 })->name('storage.old.doc');
+
+Route::get('interviews/share/{id}/{userId}/{type}', [\App\Http\Controllers\GuestController::class, 'shareHasilInterview'])->name('interviews.share.test');
+
 
 // Route::get('test', [\App\Http\Controllers\GuestController::class, 'test'])->name('test');

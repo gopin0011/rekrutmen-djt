@@ -252,7 +252,7 @@
                 if(kontak == '') return alert('Kontak user ini masih kosong, silahkan edit staff terlebih dahulu.');
 
                 if(confirm("Aksi ini tidak bisa dibatalkan, lanjut untuk kirim Whatsapp ke "+kontak+"?")) {
-                    const link = "{{route('interviews.share.test', [':id',':userId',':type'])}}".replace(':id', "{{$id}}").replace(':userId', user_id).replace(':type', 'type='+type);
+                    const link = "{{route('interviews.share.test', [':id',':userId',':type', 'whatsapp' => '1'])}}".replace(':id', "{{$id}}").replace(':userId', user_id).replace(':type', type);
                     const message = `Kepada Yth. Bapak/Ibu Pimpinan Departemen, berikut isian hasil interview kandidat atas nama ${user.name} untuk Posisi ${posisi}: ${link}`;
                     var phoneNumber = replacePhonePrefix(kontak);
                     sendWhatsAppMessage(phoneNumber, message);
