@@ -68,6 +68,9 @@
 @stop
 
 @section('content')
+@if($mustUpload)
+Silahkan Unggah CV / Berkas Terlebih Dahulu
+@else
     <table class="table table-striped data-table display nowrap" width="100%">
         <thead>
             <tr>
@@ -83,6 +86,7 @@
     </table>
     <p>1. Referensi dapat diisi dengan menuliskan kontak rekan kerja/atasan di perusahaan sebelumnya yang dapat dihubungi.</p>
     <p>2. Jika belum pernah memiliki pengalaman kerja mohon tuliskan kontak keluarga/kerabat dekat yang dapat dihubungi, dengan nama perusahaan dikosongkan dan jabatan diisi dengan status hubungan kerabat/keluarga.</p>
+@endif    
 @stop
 
 @section('css')

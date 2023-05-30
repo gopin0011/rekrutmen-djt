@@ -117,6 +117,9 @@
 @stop
 
 @section('content')
+@if($mustUpload)
+Silahkan Unggah CV / Berkas Terlebih Dahulu
+@else
     <table class="table table-striped data-table display nowrap" width="100%">
         <thead>
             <tr>
@@ -136,6 +139,7 @@
         <tbody></tbody>
     </table>
     <p>* Masukkan dari yang paling terakhir</p>
+@endif
 @stop
 
 @section('css')

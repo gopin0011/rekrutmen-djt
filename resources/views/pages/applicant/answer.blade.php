@@ -13,6 +13,9 @@
 @stop
 
 @section('content')
+@if($mustUpload)
+Silahkan Unggah CV / Berkas Terlebih Dahulu
+@else
     <form method="POST" action="{{ route('applicant_answers.store') }}">
         @csrf
         <div class="card">
@@ -69,6 +72,7 @@
         </div>
     </form>
     {{-- @include('sweetalert::alert') --}}
+@endif    
 @stop
 
 @section('css')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApplicantFamily;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,28 @@ class ApplicantFamilyController extends Controller
         $dt = route('applicant_families.data');
         $genders = DB::table('gender')->get();
         $study = DB::table('studygrade')->get();
-        return view('pages.applicant.family', compact('genders','study','dt'));
+        $mustUpload = false;
+
+        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('document','vacancy')->where('user_id', Auth::user()->id)->first();
+        // dd($applications->vacancy);
+        if(!$applications && !$applications->document) {
+            $mustUpload = true;
+        }
+
+        if($applications->vacancy && $applications->vacancy->vacanciesAdditionalUpload) {
+            foreach($applications->vacancy->vacanciesAdditionalUpload as $add) {
+                $response = app()->call('\App\Http\Controllers\ApplicantDocumentController@showDataAdditional', [
+                    'userId' => Auth::user()->id,
+                    'vacancyId' => $add->vacancies_id,
+                    'additionalUploadId' => $add->additional_upload_id,
+                ]);
+                if(!json_decode($response->getContent())->ApplicantAdditionalDocument) {
+                    $mustUpload = true;
+                    break;
+                }
+            }
+        }
+        return view('pages.applicant.family', compact('mustUpload','genders','study','dt'));
     }
 
     public function showData(Request $request)

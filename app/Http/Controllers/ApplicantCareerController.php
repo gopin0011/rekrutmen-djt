@@ -8,13 +8,35 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Crypt;
+use App\Models\Application;
 
 class ApplicantCareerController extends Controller
 {
     public function index()
     {
         $dt = route('applicant_careers.data');
-        return view('pages.applicant.career', compact('dt'));
+        $mustUpload = false;
+
+        $applications = Application::groupBy('posisi', 'user_id')->select('posisi', 'user_id')->with('document','vacancy')->where('user_id', Auth::user()->id)->first();
+        // dd($applications->vacancy);
+        if(!$applications && !$applications->document) {
+            $mustUpload = true;
+        }
+
+        if($applications->vacancy && $applications->vacancy->vacanciesAdditionalUpload) {
+            foreach($applications->vacancy->vacanciesAdditionalUpload as $add) {
+                $response = app()->call('\App\Http\Controllers\ApplicantDocumentController@showDataAdditional', [
+                    'userId' => Auth::user()->id,
+                    'vacancyId' => $add->vacancies_id,
+                    'additionalUploadId' => $add->additional_upload_id,
+                ]);
+                if(!json_decode($response->getContent())->ApplicantAdditionalDocument) {
+                    $mustUpload = true;
+                    break;
+                }
+            }
+        }
+        return view('pages.applicant.career', compact('mustUpload','dt'));
     }
 
     public function showData(Request $request)
