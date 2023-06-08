@@ -293,7 +293,7 @@
             {{ $x = 1; }}
             @foreach ($item['anak'] as $row)
             <tr>
-                <td style="border:1pt solid #000000">item['anak'] {{ $x++ }}</td>
+                <td style="border:1pt solid #000000">anak {{ $x++ }}</td>
                 <td style="border:1pt solid #000000">{{ $row->nama}}</td>
                 <td style="border:1pt solid #000000">{{ $row->gender == 'Pria' ? 'L' : 'P'}}</td>
                 <td style="border:1pt solid #000000">{{ $row->ttl}}</td>

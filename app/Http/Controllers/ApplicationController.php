@@ -82,12 +82,16 @@ class ApplicationController extends Controller
         ->where('user_id',$user->id)->get();
 
         $pasangan = DB::table('applicant_families')
+        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
         ->join('gender','gender.id','=','applicant_families.gender')
         ->leftJoin('studygrade','studygrade.id','=','applicant_families.pendidikan')
-        ->where('applicant_families.status','=','Istri')
-        ->orWhere('applicant_families.status','=','Suami')
-        ->select('applicant_families.nama as nama','applicant_families.status as status', 'gender.name as gender', 'studygrade.name as pendidikan','applicant_families.ttl as ttl', 'applicant_families.pekerjaan as pekerjaan')
-        ->where('user_id',$user->id)->first();
+        // ->where('applicant_families.status','=','Istri')
+        // ->orWhere('applicant_families.status','=','Suami')
+        ->where('applicant_families.user_id',$user->id)
+        ->whereIn('applicant_families.status',['Istri','Suami'])
+        ->first();
+
+        // dd($pasangan);
 
         $anak = DB::table('applicant_families')
         ->join('gender','gender.id','=','applicant_families.gender')

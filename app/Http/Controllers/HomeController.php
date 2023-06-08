@@ -48,8 +48,8 @@ class HomeController extends Controller
                 $buffAlper = $monthlyAlper[$i]['amount'];
                 $buffLegano = $monthlyLegano[$i]['amount'];
             }else{
-                $buffAlper = $buffAlper .','. $monthlyAlper[$i]['amount'];
-                $buffLegano = $buffLegano .','. $monthlyLegano[$i]['amount'];
+                $buffAlper = (isset($monthlyAlper[$i]['amount'])) ? $buffAlper .','. $monthlyAlper[$i]['amount'] : $buffAlper .',0';
+                $buffLegano = (isset($monthlyLegano[$i]['amount'])) ? $buffLegano .','. $monthlyLegano[$i]['amount'] : $buffLegano .',0';
             }
         }
 

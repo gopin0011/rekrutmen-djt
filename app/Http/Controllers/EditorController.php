@@ -25,6 +25,7 @@ class EditorController extends Controller
     {
         if(Auth::user()->admin != '0')
         {
+            $mustUpload = false;
             $x = ApplicantProfile::where('user_id',$id)->get();
             $data = ApplicantProfile::where('user_id',$id)->first();
 
@@ -37,7 +38,7 @@ class EditorController extends Controller
             $status = count($x) == 1 ? $data->status : '';
             $darah = count($x) == 1 ? $data->darah : '';
 
-            return view('pages.applicant.profile', compact('data','genders','religions','gender','wn','agama','status','darah', 'id'));
+            return view('pages.applicant.profile', compact('data','genders','religions','gender','wn','agama','status','darah', 'id','mustUpload'));
         }else{
             return redirect('home');
         }
@@ -47,10 +48,11 @@ class EditorController extends Controller
     {
         if(Auth::user()->admin != '0')
         {
+            $mustUpload = false;
             $dt = route('families.data', ['id' => $id]);
             $genders = DB::table('gender')->get();
             $study = DB::table('studygrade')->get();
-            return view('pages.applicant.family', compact('genders','study','id','dt'));
+            return view('pages.applicant.family', compact('genders','study','id','dt','mustUpload'));
         }else{
             return redirect('home');
         }
@@ -89,9 +91,10 @@ class EditorController extends Controller
     {
         if(Auth::user()->admin != '0')
         {
+            $mustUpload = false;
             $dt = route('studies.data', ['id' => $id]);
             $study = DB::table('studygrade')->get();
-            return view('pages.applicant.study', compact('study','id','dt'));
+            return view('pages.applicant.study', compact('study','id','dt','mustUpload'));
         }else{
             return redirect('home');
         }
@@ -122,8 +125,9 @@ class EditorController extends Controller
 
     public function career($id)
     {
+        $mustUpload = false;
         $dt = route('careers.data', ['id' => $id]);
-        return view('pages.applicant.career', compact('dt','id'));
+        return view('pages.applicant.career', compact('dt','id','mustUpload'));
     }
 
     public function careerData(Request $request,$id)
@@ -146,8 +150,9 @@ class EditorController extends Controller
 
     public function activity($id)
     {
+        $mustUpload = false;
         $dt = route('activities.data', ['id' => $id]);
-        return view('pages.applicant.activity', compact('dt','id'));
+        return view('pages.applicant.activity', compact('dt','id','mustUpload'));
     }
 
     public function activityData(Request $request,$id)
@@ -170,8 +175,9 @@ class EditorController extends Controller
 
     public function ref($id)
     {
+        $mustUpload = false;
         $dt = route('references.data', ['id' => $id]);
-        return view('pages.applicant.reference',compact('dt','id'));
+        return view('pages.applicant.reference',compact('dt','id','mustUpload'));
     }
 
     public function refData(Request $request, $id)

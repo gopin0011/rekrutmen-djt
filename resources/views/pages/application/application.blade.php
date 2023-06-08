@@ -481,7 +481,7 @@
             <tr>
                 <td style="text-align: left">Total Gaji dan Tunjangan</td>
                 <td>:</td>
-                <td colspan="7" style="text-align: left">Rp. {{ number_format(str_replace('.', '', $row->gaji)) }}</td>
+                <td colspan="7" style="text-align: left">Rp. {{$row->gaji}}</td>
             </tr>
             <tr>
                 <td style="text-align: left">Detail Pekerjaan</td>
