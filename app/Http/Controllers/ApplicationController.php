@@ -413,7 +413,7 @@ class ApplicationController extends Controller
                     'required',
                     'date',
                     'before_or_equal:' . $datePlusOneWeek,
-                    'date_format:Y-m-d H:i',
+                    'date_format:Y-m-d',
                     function ($attribute, $value, $fail) {
                         // Konversi waktu menjadi detik
                         $time = time();

@@ -145,6 +145,10 @@ class GuestController extends Controller
         try {
             $invitationToken = InvitationToken::where('token', $token)->first();
             if($invitationToken && $invitationToken->has_applied == '1') {
+                echo"Link Undangan sudah digunakan, untuk login gunakan email dan password yang dikirimkan melalui email";
+                echo"<br>";
+                echo "<a href='".route('home')."'>".route('home')."</a>";
+                die();
                 return die('sudah applied');
             }
 
