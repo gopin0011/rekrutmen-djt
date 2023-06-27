@@ -46,8 +46,8 @@ class ApplicationController extends Controller
         $tanggal = $getTanggal->format('l, j F Y');
 
         $profil = ApplicantProfile::with(['jk', 'religi'])->where('user_id',$user->id)->first();
-        $gender = $profil->jk->name;
-        $agama = $profil->religi->name;
+        $gender = ($profil) ? $profil->jk->name : '';
+        $agama = ($profil) ? $profil->religi->name : '';
 
         $getTanggalLahir = $profil ? Carbon::parse($profil->tanggallahir)->locale('id') : '';
         $profil ? $getTanggalLahir->settings(['formatFunction' => 'translatedFormat']) : '';
@@ -157,9 +157,9 @@ class ApplicationController extends Controller
             if ($id == 'all') {
                 $data = DB::table('applications')
                 ->select('applications.id', 'applications.jadwalinterview', 'users.id as uid', 'users.key as ukey', 'users.name', 'users.email', 'applications.posisi', 'applications.posisi_char', 'applicant_profiles.tanggallahir as lahir', 'applicant_profiles.nik', 'applicant_profiles.alamat', 'applicant_profiles.kontak', 'vacancies.name as posisi_name')
-                ->join('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
                 ->join('users','users.id','=','applications.user_id')
                 ->join('vacancies','vacancies.id','=','applications.posisi')
+                ->leftJoin('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
                 ->where('admin', 0)
                 ->whereNotNull('jadwalinterview')
                 ->orderBy('applications.jadwalinterview','desc')

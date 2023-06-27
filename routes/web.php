@@ -50,6 +50,10 @@ Route::get('/', [HomeController::class, 'index']);
 Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {
+    // IMPORT KANDIDAT
+    Route::get('/import', [HomeController::class, 'formImport']);
+    Route::post('/import-xls', [HomeController::class, 'importXlsKandidat'])->name('doUploadKandidat');
+
     // HOME
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 

@@ -48,6 +48,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $table = 'users';
+
     public function applicantProfile()
     {
         return $this->belongsTo(ApplicantProfile::class,'id','user_id');
