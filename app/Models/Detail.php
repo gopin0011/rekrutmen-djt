@@ -11,4 +11,6 @@ class Detail extends Model
     protected $guarded = [];
 
     protected $table = 'details';
+
+    
 }

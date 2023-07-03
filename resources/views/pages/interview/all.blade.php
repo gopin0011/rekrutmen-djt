@@ -230,6 +230,7 @@
                 responsive: true,
                 serverSide: true,
                 processing: true,
+                'iDisplayLength': 10,
                 ajax: '{{ $x }}',
                 buttons: [{
                     extend: 'excel',

@@ -156,8 +156,8 @@
                 <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->pekerjaan }}</td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->spk }}</td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->nospk }}</td>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->hasil }}</td>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->persen }}</td>
+                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->hasil2 }}</td>
+                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->persen2 }}</td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->hasil }}</td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->persen }}</td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $row->mulai }}</td>
@@ -181,10 +181,10 @@
                 <th></th>
             </tr>
             <tr>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $overtime->pemohon }}</td>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $overtime->nmmanajer }}</td>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $overtime->nmhr }}</td>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt">
+                <td style="border: 1px solid #aaaaaa; font-size:8pt; height: 60px;vertical-align: bottom;">{{ $overtime->pemohon }}</td>
+                <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">{{ $overtime->nmmanajer }}</td>
+                <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">{{ $overtime->nmhr }}</td>
+                <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">
                     <table style="border:0px solid #333;border-collapse:collapse;">
                         <tr>
                             <td colspan="2"></td>

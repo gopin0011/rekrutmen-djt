@@ -163,19 +163,27 @@
                                     <table id="example4" class="table table-bordered table-striped table-responsive w-100 d-block">
                                     <thead>
                                     <tr>
-                                        <th>NIK</th>
-                                        <th>Nama</th>
-                                        <th>Jabatan</th>
-                                        <th>Uraian Pekerjaan</th>
-                                        <th>SPK</th>
-                                        <th>No. SPK</th>
+                                        <th rowspan="2">NIK</th>
+                                        <th rowspan="2">Nama</th>
+                                        <th rowspan="2">Jabatan</th>
+                                        <th rowspan="2">Uraian Pekerjaan</th>
+                                        <th rowspan="2">SPK</th>
+                                        <th rowspan="2">No. SPK</th>
+                                        <th colspan="2">2 Hari Sebelumnya</th>
+                                        <th colspan="2">1 Hari Sebelumnya</th>
+                                        <!-- <th>Hasil</th>
+                                        <th style="width: 50px">%</th> -->
+                                        <th rowspan="2">Mulai</th>
+                                        <th rowspan="2">Akhir</th>
+                                        <th rowspan="2">Total</th>
+                                        <th rowspan="2">Makan</th>
+                                        <th rowspan="2">Aksi</th>
+                                    </tr>
+                                    <tr>
                                         <th>Hasil</th>
-                                        <th style="width: 50px">%</th>
-                                        <th>Mulai</th>
-                                        <th>Akhir</th>
-                                        <th>Total</th>
-                                        <th>Makan</th>
-                                        <th>Aksi</th>
+                                        <th>Persen</th>
+                                        <th>Hasil</th>
+                                        <th>Persen</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -187,6 +195,8 @@
                                             <td>{{ $item->pekerjaan }}</td>
                                             <td>{{ $item->spk }}</td>
                                             <td>{{ $item->nospk }}</td>
+                                            <td>{{ $item->hasil2 }}</td>
+                                            <td>{{ $item->persen2 }}</td>
                                             <td>{{ $item->hasil }}</td>
                                             <td>{{ $item->persen }}</td>
                                             <td>{{ $item->mulai }}</td>
@@ -213,6 +223,8 @@
                                             <td><input name="pekerjaan" placeholder="Pekerjaan" type="text" class="form-control" oninput="setCustomValidity('')"></td>
                                             <td><input name="spk" placeholder="SPK" type="text" class="form-control" oninput="setCustomValidity('')"></td>
                                             <td><input name="nospk" placeholder="Nomor SPK" type="text" class="form-control" oninput="setCustomValidity('')"></td>
+                                            <td><input name="hasil2" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')"></td>
+                                            <td><input name="persen2" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')"></td>
                                             <td><input name="hasil" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')"></td>
                                             <td><input name="persen" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')"></td>
                                             <td><input type="time" class="form-control" aria-label="mulai" id="mulai" name="mulai"

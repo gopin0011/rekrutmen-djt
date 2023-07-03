@@ -8,15 +8,16 @@ use App\Models\Staff;
 use App\Models\Overtime;
 use App\Models\Corp;
 use App\Models\User;
-use App\Notifications\ApproveNotification;
+use App\Mail\AdminSPLNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use \Illuminate\Support\Facades\DB;
 use PDF;
-use Notification;
+// use Notification;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class OvertimeController extends Controller
 {
@@ -377,8 +378,8 @@ class OvertimeController extends Controller
     public function edit(Request $request,$id)
     {
         $data = Overtime::find($id);
-        $emailadmin = User::where([['divisi',$request->divisi],['bisnis',$request->bisnis]])->get('email')->first();
-        $emailmanajer = User::where([['divisi',$request->divisi],['bisnis',$request->bisnis]])->get('email')->last();
+        $emailadmin = User::where([['divisi',$request->divisi],['bisnis',$request->bisnis],['admin',5]])->get('email')->first();
+        $emailmanajer = User::where([['divisi',$request->divisi],['bisnis',$request->bisnis],['admin',4]])->get('email')->first();
         //$emailhr = 'triacahyaramadhan@hotmail.com';
 
         try {
@@ -397,12 +398,13 @@ class OvertimeController extends Controller
                 // 'thspl'   => $request->thspl,
             ]);
 
+            $peoples = Detail::where('splid', $data->nomor)->get();
             //$user = $emailhr;
 
             $details = [
                 'greeting'  => 'SPL ' . $request->nomor,
                 'head'      => 'Surat Perintah Lembur (SPL) ini telah diproses dengan status:',
-                'line1'     => 'Hari Lembur     : ' . $request->hari . ', ' . $request->hspl . ' '. $request->bspl. ' '. $request->thspl ,
+                'line1'     => 'Hari Lembur     : ' . $request->date,
                 'line2'     => 'Approve Manager : ' . $request->manajer,
                 'line3'     => 'Approve HR      : ' . $request->hr,
                 'line4'     => 'Status SPL      : ' . $request->status,
@@ -410,16 +412,23 @@ class OvertimeController extends Controller
                 'footnote'  =>
                 'Note :
                 Jika SPL ditolak, maka departemen pemohon yang bersangkutan, harus membuat SPL baru.',
-                'actionText' => 'Buka',
-                'actionURL' => url('http://103.152.243.49/hris/login'),
-                'order_id' => 102
+                // 'order_id' => 102
             ];
-            
+
+            // dd($peoples);
+
+            Mail::to($emailadmin->email)->send(
+                new AdminSPLNotification($details, $peoples)
+            );
+
+            // Notification::route('mail', 'gopin.ipin@gmail.com')->notify(new ApproveNotification($details));
             // Notification::route('mail', $emailadmin->email)->notify(new ApproveNotification($details));
             // Notification::route('mail', $emailmanajer->email)->notify(new ApproveNotification($details));
 
+            // dd('send');
             return redirect(route('overtimes.index'));   
         } catch (\Exception $e) {
+            // dd($e->getMessage());
             return redirect()->back()->with(['error' => $e->getMessage()]);
         }
     }
@@ -485,6 +494,8 @@ class OvertimeController extends Controller
                     'pekerjaan' => $request->pekerjaan,
                     'spk'       => $request->spk,
                     'nospk'     => $request->nospk,
+                    'hasil2'     => $request->hasil2,
+                    'persen2'    => $request->persen2,
                     'hasil'     => $request->hasil,
                     'persen'    => $request->persen,
                     'mulai'     => $request->mulai,
@@ -502,6 +513,8 @@ class OvertimeController extends Controller
                     'pekerjaan' => $request->pekerjaan,
                     'spk'       => $request->spk,
                     'nospk'     => $request->nospk,
+                    'hasil2'     => $request->hasil2,
+                    'persen2'    => $request->persen2,
                     'hasil'     => $request->hasil,
                     'persen'    => $request->persen,
                     'mulai'     => $request->mulai,
