@@ -29,9 +29,12 @@ use PDF;
 use Illuminate\Support\Facades\Crypt;
 use File;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Http\Response;
 
 class ApplicationController extends Controller
 {
+    const per_page = 10;
     const notifReschedule = "Telah melakukan reschedule";
 
     public function print($id)
@@ -137,6 +140,57 @@ class ApplicationController extends Controller
         $x = route('applications.data', ['id' => 'all']);
         $vacancy = Vacancy::all();
         return view('pages.interview.all', compact('x','vacancy'));
+        // return view('pages.interview.all-2', compact('x','vacancy'));
+    }
+
+    public function getDataAll(Request $request)
+    {
+        $current_page = request('page') ?? 1;
+
+        $limit = self::per_page;
+        $start = ($current_page * self::per_page) - self::per_page;
+
+        $search = request('search');
+        if($search == '') {
+            // unset($search);
+        }
+
+        $q = Application::with(['user', 'vacancy', 'profile']);
+        if ($search != '' && $search) {
+            $q->where('users.name', 'like', '%'.$search.'%')->orWhere('users.email', $search);
+        }
+
+        $total = $q->count();
+        
+        $q->offset($start)->limit($limit);
+        $q->orderBy('applications.jadwalinterview','desc');
+
+        $data = $q->get();
+
+        $result['paginator'] = new Paginator($data, $total, self::per_page, $current_page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+
+        return $result;
+        
+        if ($request->ajax()) {
+
+            $total=User::where('admin','0')->count();
+
+            $result['paginator'] = new Paginator($data, $total, self::per_page, $current_page, [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]);
+
+
+            return response()->json([
+                "draw" => intval(request('draw')),  
+                "recordsTotal"    => intval(User::where('admin','0')->count()),  
+                "recordsFiltered" => intval(0),
+                "data" => $data
+            ]);
+        }
     }
 
     public function showPdf($id)
@@ -153,84 +207,154 @@ class ApplicationController extends Controller
             // ALL INTERVIEWS
             $limit = request('length');
             $start = request('start');
-            // dd([$limit, $start]);
+            $draw = request('draw');
+            $search = request('search')['value'];
+            $page = ($start / $limit) + 1;
+
+            // dd($search['value']);
+            // dd([$limit, $start, $search]);
+            
+            // start=20&length=10
             if ($id == 'all') {
-                $data = DB::table('applications')
-                ->select('applications.id', 'applications.jadwalinterview', 'users.id as uid', 'users.key as ukey', 'users.name', 'users.email', 'applications.posisi', 'applications.posisi_char', 'applicant_profiles.tanggallahir as lahir', 'applicant_profiles.nik', 'applicant_profiles.alamat', 'applicant_profiles.kontak', 'vacancies.name as posisi_name')
-                ->join('users','users.id','=','applications.user_id')
-                ->join('vacancies','vacancies.id','=','applications.posisi')
-                ->leftJoin('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
-                ->where('admin', 0)
-                ->whereNotNull('jadwalinterview')
-                ->orderBy('applications.jadwalinterview','desc')
-                ->get();
+                // $data = DB::table('applications')
+                // ->select('applications.id', 'applications.jadwalinterview', 'users.id as uid', 'users.key as ukey', 'users.name', 'users.email', 'applications.posisi', 'applications.posisi_char', 'applicant_profiles.tanggallahir as lahir', 'applicant_profiles.nik', 'applicant_profiles.alamat', 'applicant_profiles.kontak', 'vacancies.name as posisi_name', 'applications.is_lock_for_view')
+                // ->join('users','users.id','=','applications.user_id')
+                // ->join('vacancies','vacancies.id','=','applications.posisi')
+                // ->leftJoin('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
+                // ->where('admin', 0)
+                // ->whereNotNull('jadwalinterview')
+                // ->orderBy('applications.jadwalinterview','desc')
+                // ->limit(10)
+                // ->get();
+
+                $data = Application::with(['user', 'vacancy', 'profile'])
+                        ->whereNotNull('jadwalinterview')
+                        ->whereHas('user', function ($query) {
+                            $query->where('admin', 0);
+                        });
+                            
+                if(!$search) {
+                    $data->where('jadwalinterview', '<=', Carbon::now()->addDay(1)->format('Y-m-d'));
+                }
+                else {
+                    $data->whereHas('user', function ($query) use ($search) {
+                        $query->where(function ($query) use ($search) {
+                                $query->where('name', 'like', '%'.$search.'%')
+                                    ->orWhere('email', 'like', '%'.$search.'%');
+                            });
+                    });
+                    // $data->where(function ($query) use ($search) {
+                    //     $query->whereHas('profile', function ($subQuery) use ($search) {
+                    //         $subQuery->where('kontak', 'like', "%$search%");
+                    //     });
+                    // });
+                }
+
+                $totalData = $data->count();
+                // dd($data);
+                $data
+                    ->skip($start)->take($limit)
+                    ->orderBy('jadwalinterview','desc')
+                    ->get();
 
                 $allData = DataTables::of($data)
                 ->addIndexColumn()
 
                 ->addColumn('action', function ($row) {
-                    $url1 = route('interviews.show', ['id' => $row->id]);
-                    $btn = '<a href="' . $url1 . '" data-toggle="tooltip" data-original-title="Interview" class="interview btn btn-success btn-sm interview"><i class="fa fa-comments"></i></a>';
+                    // dd($row->vacancy);
+                    $url1 = route('interviews.show', ['id' => $row['id']]);
+                    $btn = '<div class="btn-group" role="group"><a href="' . $url1 . '" data-toggle="tooltip" data-original-title="Interview" class="interview btn btn-success btn-sm interview"><i class="fa fa-comments"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
-                    $url2 = route('psychotests.show', ['id' => $row->uid]);
+                    $url2 = route('psychotests.show', ['id' => $row->user['id']]);
                     $btn .= '<a href="' . $url2 . '" data-toggle="tooltip" data-original-title="Psychotest" class="psychotest btn btn-primary btn-sm psychotest"><i class="fa fa-head-side-virus"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
-                    $url3 = route('applications.print', ['id' => $row->id]);
-                    $btn .= '<a href="' . $url3 . '" data-toggle="tooltip" data-original-title="FIle" class="file btn btn-warning btn-sm file"><i class="fa fa-file"></i></a>';
+                    $url3 = route('applications.print', ['id' => $row['id']]);
+                    $btn .= '<a href="' . $url3 . '" data-toggle="tooltip" data-original-title="FIle" class="file btn btn-warning btn-sm file" target="_blank"><i class="fa fa-file"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-secondary btn-sm editData"><i class="fa fa-gear"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row['id'] . '" data-original-title="Edit" class="edit btn btn-secondary btn-sm editData"><i class="fa fa-gear"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a>';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row['id'] . '" data-original-title="Delete" class="delete btn btn-danger btn-sm deleteData"><i class="fa fa-trash"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
-                    $url4 = route('applications.printAll', ['id' => $row->id]);
+                    $url4 = route('applications.printAll', ['id' => $row['id']]);
                     $btn .= '<a target="_blank" href="' . $url4 . '" data-toggle="tooltip" data-original-title="All File" class="file btn btn-primary btn-sm AllFile"><i class="fa fa-file"></i></a>';
+                    $btn .= '&nbsp;&nbsp;';
+                    $btn .= '<label class="switch"><input type="checkbox" class="is-lock" '.($row['is_lock_for_view'] == "1" ? 'checked':'').' data-id="'.$row['id'].'" /><span class="slider"></span></label></div>';
                     return $btn;
                 })
                 ->addColumn('name', function ($row){
-                    $id = $row->ukey;
+                    $id = $row->user['key'];
 
                     $path = storage_path('app/public/pelamar/'.$id.'/rekrutmen.pdf');
                     if (File::exists($path)) {
                         $url = route('storage.old.doc', ['id' => $id]);
-                        return '<a href="' . $url . '" target="_blank">'. $row->name .'</a>';
+                        return '<a href="' . $url . '" target="_blank">'. $row->user['name'] .'</a>';
                     }
                     else {
-                        $path = storage_path('app/public/doc/'.$row->uid.'.pdf');
+                        $path = storage_path('app/public/doc/'.$row->user['id'].'.pdf');
                         if (File::exists($path)) {
-                            $url = route('applications.showpdf', ['id' => $row->uid]);
-                            return '<a href="' . $url . '" target="_blank">'. $row->name .'</a>';
+                            $url = route('applications.showpdf', ['id' => $row->user['id']]);
+                            return '<a href="' . $url . '" target="_blank">'. $row->user['name'] .'</a>';
                         }
-                        return $row->name;
+                        return $row->user['name'];
                     }
                     // return $name;
                 })
                 ->addColumn('posisi', function ($row){
                     // if ($row->posisi) $posisi = Vacancy::find($row->posisi)->name;
-                    if($row->posisi_name) $posisi = $row->posisi_name;
-                    else $posisi = $row->posisi_char;
+                    if($row->vacancy && $row->vacancy['name']) $posisi = $row->vacancy['name'];
+                    else $posisi = $row['posisi_char'];
                     return $posisi;
                 })
                 ->addColumn('lahir', function ($row) {
-                    if ($row->lahir != '') {
-                        $born = date('d F Y', strtotime($row->lahir));
-                    } else {
-                        $born = '';
+                    $born = '';
+                    if($row->profile) {
+                        $born = date('d F Y', strtotime($row->profile['tanggallahir']));
                     }
                     return $born;
                 })
                 ->addColumn('jadwalinterview', function ($row) {
-                    if ($row->jadwalinterview != '') {
-                        $jadwalinterview = date('d F Y', strtotime($row->jadwalinterview));
+                    if ($row['jadwalinterview'] != '') {
+                        $jadwalinterview = date('d F Y', strtotime($row['jadwalinterview']));
                     } else {
                         $jadwalinterview = '';
                     }
                     return $jadwalinterview;
                 })
                 ->addColumn('usia', function ($row){
-                    $years = now()->diffInYears($row->lahir);
+                    $years = '';
+                    if($row->profile) {
+                        $years = now()->diffInYears($row->profile['tanggallahir']);
+                    }
                     return $years;
                 })
+                ->addColumn('alamat', function ($row){
+                    $alamat = '';
+                    if($row->profile) {
+                        $alamat = $row->profile['alamat'];
+                    }
+                    return $alamat;
+                })
+                ->addColumn('kontak', function ($row){
+                    $kontak = '';
+                    if($row->profile) {
+                        $kontak = $row->profile['kontak'];
+                    }
+                    return $kontak;
+                })
+                ->addColumn('nik', function ($row){
+                    $nik = '';
+                    if($row->profile) {
+                        $nik = $row->profile['nik'];
+                    }
+                    return $nik;
+                })
                 ->rawColumns(['action','usia','name','email'])
+                ->with([
+                    'page' => $page,
+                    'recordsTotal' => $totalData,
+                    'draw' => $draw,
+               ])
+                ->setFilteredRecords($totalData)
                 ->make(true);
             } elseif($id == 'today'){
                 // TODAY INTERVIEWS
@@ -686,6 +810,37 @@ class ApplicationController extends Controller
         } catch (\Throwable $e) {
             dd([['apply' => $data],$e->getMessage()]);
             dd($e->getMessage());
+        }
+    }
+
+    public function lockApp(Request $request)
+    {
+        try {
+            $jsonData = $request->json()->all();
+            $id = $jsonData['id'];
+            $lock = $jsonData['lock'];
+
+            $data = Application::find($id)->update([
+                'is_lock_for_view' => $lock,
+                'lock_date' => null,
+            ]);
+
+            $responseData = [
+                'message' => 'Success',
+                'data' => [
+                    'id' => $id,
+                ]
+            ];
+
+            return response()->json($responseData, Response::HTTP_OK);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Error',
+                'data' => [
+                    'id' => $id,
+                ]
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 }

@@ -85,7 +85,7 @@
         <table class="table">
             <tr>
                 <td style="text-align: left"><strong>SURAT PERINTAH LEMBUR</strong></td>
-                <td style="text-align: right"><img src="{{asset('dwida.png')}}" width="200"></td>
+                <td style="text-align: right"><img src="{{asset('logo.png')}}" width="200"></td>
             </tr>
             
         </table>
@@ -99,20 +99,16 @@
                 <td colspan="13">
                     <table>
                         <tr>
-                            <td style="text-align: left;font-size:8pt">Nomor SPL</td>
-                            <td style="text-align: right;font-size:8pt">Departemen/Divisi</td>
+                            <td style="text-align: left;font-size:8pt">Tanggal SPL    : <strong>{{ \Carbon\Carbon::parse($overtime->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y') }}</strong></td>
+                            <td style="text-align: right;font-size:8pt"></td>
                         </tr>
                         <tr>
-                            <td style="text-align: left"><strong>{{ $overtime->nomor }}</strong></td>
-                            <td style="text-align: right"><strong>{{ $overtime->bisnis }}/{{ $overtime->divisi }}</strong></td>
+                            <td style="text-align: left;font-size:8pt">Nomor SPL    : <strong>{{ $overtime->nomor }}</strong></td>
+                            <td style="text-align: right;font-size:8pt">Departemen/Divisi   : <strong>{{ $overtime->bisnis }}/{{ $overtime->divisi }}</strong></td>
                         </tr>
                         <tr>
-                            <td style="text-align: left;font-size:8pt">Tanggal Lembur</td>
-                            <td style="text-align: right;font-size:8pt">Waktu Lembur</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left"><strong>{{ \Carbon\Carbon::parse($overtime->tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}</strong></td>
-                            <td style="text-align: right"><strong>{{ $overtime->waktu }}</strong></td>
+                            <td style="text-align: left;font-size:8pt">Tanggal Lembur   : <strong>{{ \Carbon\Carbon::parse($overtime->tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}</strong></td>
+                            <td style="text-align: right;font-size:8pt">Waktu Lembur    : <strong>{{ $overtime->waktu }}</strong></td>
                         </tr>
                     </table>
                 </td>
@@ -124,8 +120,8 @@
                 <th rowspan="2" style="font-size:8pt">Pekerjaan</th>
                 <th rowspan="2" style="font-size:8pt">SPK</th>
                 <th rowspan="2" style="font-size:8pt">No. SPK</th>
-                <th colspan="2" style="font-size:8pt">2 Hari Sebelumnya</th>
-                <th colspan="2" style="font-size:8pt">1 Hari Sebelumnya</th>
+                <th colspan="2" style="font-size:8pt">{{$tglSplSebelumnya['2hari']}}</th>
+                <th colspan="2" style="font-size:8pt">{{$tglSplSebelumnya['1hari']}}</th>
                 <th colspan="2" style="font-size:8pt">Jam Lembur</th>
                 <th style="font-size:8pt">Total Jam</th>
                 <!-- <th style="font-size:8pt">Berakhir</th> -->

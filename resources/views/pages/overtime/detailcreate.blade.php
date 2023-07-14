@@ -169,8 +169,8 @@
                                         <th rowspan="2">Uraian Pekerjaan</th>
                                         <th rowspan="2">SPK</th>
                                         <th rowspan="2">No. SPK</th>
-                                        <th colspan="2">2 Hari Sebelumnya</th>
-                                        <th colspan="2">1 Hari Sebelumnya</th>
+                                        <th colspan="2">{{$tglSplSebelumnya['2hari']}}</th>
+                                        <th colspan="2">{{$tglSplSebelumnya['1hari']}}</th>
                                         <!-- <th>Hasil</th>
                                         <th style="width: 50px">%</th> -->
                                         <th rowspan="2">Mulai</th>
@@ -187,7 +187,29 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                        @php 
+                                            $tempPekerjaan = '';
+                                            $tempSpk = '';
+                                            $tempNoSpk = '';
+                                            $tempHasil2 = '';
+                                            $tempPersen2 = '';
+                                            $tempHasil = '';
+                                            $tempPersen = '';
+                                            $tempMulai = '';
+                                            $tempAkhir = '';
+                                        @endphp
                                         @foreach ($data as $item)
+                                        @php 
+                                            $tempPekerjaan = $item->pekerjaan;
+                                            $tempSpk = $item->spk;
+                                            $tempNoSpk = $item->nospk;
+                                            $tempHasil2 = $item->hasil2;
+                                            $tempPersen2 = $item->persen2;
+                                            $tempHasil = $item->hasil;
+                                            $tempPersen = $item->persen;
+                                            $tempMulai = $item->mulai;
+                                            $tempAkhir = $item->akhir;
+                                        @endphp
                                         <tr>
                                             <td>{{ $item->nik }}</td>
                                             <td>{{ $item->nama }}</td>
@@ -220,27 +242,34 @@
                                                     @endforeach
                                                 </select>
                                             </td>
-                                            <td><input name="pekerjaan" placeholder="Pekerjaan" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input name="spk" placeholder="SPK" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input name="nospk" placeholder="Nomor SPK" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input name="hasil2" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input name="persen2" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input name="hasil" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input name="persen" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')"></td>
-                                            <td><input type="time" class="form-control" aria-label="mulai" id="mulai" name="mulai"
+                                            <td><input name="pekerjaan" placeholder="Pekerjaan" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPekerjaan}}"></td>
+                                            <td><input name="spk" placeholder="SPK" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempSpk}}"></td>
+                                            <td><input name="nospk" placeholder="Nomor SPK" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempNoSpk}}"></td>
+                                            <td><input name="hasil2" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempHasil2}}"></td>
+                                            <td><input name="persen2" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPersen2}}"></td>
+                                            <td><input name="hasil" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempHasil}}"></td>
+                                            <td><input name="persen" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPersen}}"></td>
+                                            <td><input type="time" class="form-control" aria-label="mulai" id="mulai" name="mulai" value="{{$tempMulai}}" 
                                     aria-describedby="basic-addon1"></td>
-                                            <td><input type="time" class="form-control" aria-label="akhir" id="akhir" name="akhir"
+                                            <td><input type="time" class="form-control" aria-label="akhir" id="akhir" name="akhir" value="{{$tempAkhir}}" 
                                     aria-describedby="basic-addon1"></td>
                                             <td colspan="2">
-                                                <select name="makan" class="form-control">
-                                                    <option value="Nasi Padang">Nasi Padang</option>
-                                                    <option value="Ayam Bakar">Ayam Bakar</option>
-                                                    <option value="Ayam Geprek">Ayam Geprek</option>
-                                                    <option value="Pecel Lele">Pecel Lele</option>
-                                                    <option value="Pecel Ayam">Pecel Ayam</option>
+                                                <select name="makan" class="form-control menu-makan">
+                                                    <optgroup label="Padang">
+                                                        <option value="Padang-Rendang">Rendang</option>
+                                                        <option value="Padang-Ayam Bakar">Ayam Bakar</option>
+                                                        <option value="Padang-Ikan">Ikan</option>
+                                                        <option value="Padang-Telur">Telur</option>
+                                                    </optgroup>
+                                                    <optgroup label="Pecel">
+                                                        <option value="Pecel-Ayam">Ayam</option>
+                                                        <option value="Pecel-Lele">Lele</option>
+                                                    </optgroup>
                                                     <option value="Mie Goreng">Mie Goreng</option>
                                                     <option value="Nasi Goreng">Nasi Goreng</option>
                                                     <option value="Kwetiau">Kwetiau</option>
+                                                    <option value="Ayam Bakar">Ayam Bakar</option>
+                                                    <option value="Ayam Geprek">Ayam Geprek</option>
                                                 </select>
                                             </td>
                                             

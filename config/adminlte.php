@@ -494,6 +494,13 @@ return [
                     'shift'=> 'ml-4',
                     'can'  => ['w','e','r','t','y'],
                 ],
+                [
+                    'text' => 'spl_form',
+                    'url'  => 'overtimes/spl-form',
+                    'icon' => 'fas fa-fw fa-list',
+                    'shift'=> 'ml-4',
+                    'can'  => ['w','e','r'],
+                ],
             ]
         ],
         // [

@@ -450,6 +450,19 @@
               4 => 'y',
             ),
           ),
+          5 => 
+          array (
+            'text' => 'spl_form',
+            'url' => 'overtimes/spl-form',
+            'icon' => 'fas fa-fw fa-list',
+            'shift' => 'ml-4',
+            'can' => 
+            array (
+              0 => 'w',
+              1 => 'e',
+              2 => 'r',
+            ),
+          ),
         ),
       ),
       14 => 

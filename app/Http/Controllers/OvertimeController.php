@@ -9,6 +9,8 @@ use App\Models\Overtime;
 use App\Models\Corp;
 use App\Models\User;
 use App\Mail\AdminSPLNotification;
+use App\Models\PengajuanDana;
+use App\Models\PengajuanDanaDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -18,6 +20,10 @@ use PDF;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use DateTime;
+// use Matrix\Operators\Division;
+use App\Models\Division;
+use Illuminate\Support\Facades\Validator;
 
 class OvertimeController extends Controller
 {
@@ -290,6 +296,49 @@ class OvertimeController extends Controller
         }
     }
 
+    public function totalJamLembur($jamMulai, $jamAkhir)
+    {
+        $total = 0;
+
+        $mulai = Carbon::createFromFormat('H:i', $jamMulai);
+        $akhir = Carbon::createFromFormat('H:i', $jamAkhir);
+
+        $jamMulai = strtotime($jamMulai);
+        $jamAkhir = strtotime($jamAkhir);
+
+        $range1_start = strtotime('12:00');
+        $range1_end = strtotime('13:00');
+
+        if ($range1_start >= $jamMulai && $range1_end <= $jamAkhir) {
+            $total++;
+        }
+
+        $range2_start = strtotime('18:00');
+        $range2_end = strtotime('19:00');
+
+        if ($range2_start >= $jamMulai && $range2_end <= $jamAkhir) {
+            $total++;
+        }
+
+        $range3_start = strtotime('00:00');
+        $range3_end = strtotime('01:00');
+
+        if ($range3_start >= $jamMulai && $range3_end <= $jamAkhir) {
+            $total++;
+        }
+        
+        $range4_start = strtotime('04:00');
+        $range4_end = strtotime('05:00');
+
+        if ($range4_start >= $jamMulai && $range4_end <= $jamAkhir) {
+            $total++;
+        }
+
+        $totalJam = ($akhir->diffInHours($mulai)) - $total;
+
+        return ($totalJam * 60);
+    }
+
     public function detailcreate($id, Request $request)
     {
         $withAction = $request->withAction;
@@ -297,16 +346,21 @@ class OvertimeController extends Controller
         $data = Detail::where('splid', $id)->get();
         $employee = Staff::where([['dept', Auth::user()->dept],['corp',Auth::user()->corp]])->get();
         $idovertime = $id;
+
+        $tanggal = Carbon::parse($overtime[0]->tanggalspl);
+        $tglSplSebelumnya['1hari'] = $tanggal->subDay()->isoFormat('D MMMM YYYY');
+        $tglSplSebelumnya['2hari'] = $tanggal->subDay(1)->isoFormat('D MMMM YYYY');
+
         if(Auth::user()->admin == self::headDep){
             $datas = Overtime::where([['hr',null],['manajer',null],['corp', Auth::user()->corp],['dept', Auth::user()->dept]])->get();
             $a = $datas->count();
-            return view('pages.overtime.detailcreate', compact('overtime', 'data', 'employee', 'idovertime','a', 'withAction'));
+            return view('pages.overtime.detailcreate', compact('overtime', 'data', 'employee', 'idovertime','a', 'withAction', 'tglSplSebelumnya'));
         }elseif(Auth::user()->admin == self::hrStaff || Auth::user()->admin == self::superAdmin){
             $datas = Overtime::where([['hr',null],['manajer','diterima'],['status',null]])->get();
             $b = $datas->count();
-            return view('pages.overtime.detailcreate', compact('overtime', 'data', 'employee', 'idovertime','b', 'withAction'));
+            return view('pages.overtime.detailcreate', compact('overtime', 'data', 'employee', 'idovertime','b', 'withAction', 'tglSplSebelumnya'));
         }else{
-            return view('pages.overtime.detailcreate', compact('overtime', 'data', 'employee', 'idovertime', 'withAction'));
+            return view('pages.overtime.detailcreate', compact('overtime', 'data', 'employee', 'idovertime', 'withAction', 'tglSplSebelumnya'));
         }    
     }
 
@@ -334,6 +388,7 @@ class OvertimeController extends Controller
             $id = $request->nomor;
             return redirect(route('overtimes.detailcreate', ['id' => $id]));
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()->with(['error' => $e->getMessage()]);
         }
     }
@@ -452,7 +507,12 @@ class OvertimeController extends Controller
             $makan[$row->makan] = isset($makan[$row->makan]) ? $makan[$row->makan] + 1 : 1;
         }
         // dd($makan);
-        $pdf = PDF::loadView('pages.overtime.print', compact('overtime','detail', 'makan'))->setPaper('a4', 'landscape');
+        // dd($overtime);
+        $tanggal = Carbon::parse($overtime[0]->tanggalspl);
+        $tglSplSebelumnya['1hari'] = $tanggal->subDay()->isoFormat('dddd, D MMMM YYYY');
+        $tglSplSebelumnya['2hari'] = $tanggal->subDay(1)->isoFormat('dddd, D MMMM YYYY');
+
+        $pdf = PDF::loadView('pages.overtime.print', compact('overtime','detail', 'makan', 'tglSplSebelumnya'))->setPaper('a4', 'landscape');
         // return view('pages.overtime.print', compact('overtime','detail'));
         return $pdf->stream();
     }
@@ -468,42 +528,44 @@ class OvertimeController extends Controller
         $mulai = explode(':',$request->mulai);
         $akhir = explode(':',$request->akhir);
 
-        if($akhir[0] > $mulai[0])
-        {
-            $menitawal = $mulai[1];
-            $menitakhir = $akhir[1];
-            $jamawal = $mulai[0] * 60 + $menitawal;
-            $jamakhir = $akhir[0] * 60 + $menitakhir;
-            $total = $jamakhir - $jamawal;
-        }else{
-            $menitawal = $mulai[1];
-            $menitakhir = $akhir[1];
-            $jamawal = (24 - $mulai[0]) * 60 - $menitawal;
-            $jamakhir = $akhir[0] * 60 + $menitakhir;
-            $total = $jamakhir + $jamawal;
-        }
+        // if($akhir[0] > $mulai[0])
+        // {
+        //     $menitawal = $mulai[1];
+        //     $menitakhir = $akhir[1];
+        //     $jamawal = $mulai[0] * 60 + $menitawal;
+        //     $jamakhir = $akhir[0] * 60 + $menitakhir;
+        //     $total = $jamakhir - $jamawal;
+        // }else{
+        //     $menitawal = $mulai[1];
+        //     $menitakhir = $akhir[1];
+        //     $jamawal = (24 - $mulai[0]) * 60 - $menitawal;
+        //     $jamakhir = $akhir[0] * 60 + $menitakhir;
+        //     $total = $jamakhir + $jamawal;
+        // }
+
+        $total = $this->totalJamLembur($request->mulai, $request->akhir);
         
         try {
-            if($total >= 240){
-                Detail::create([
-                    'splid'     => $request->nomor,
-                    'nama'      => $employee->name,
-                    'nik'       => $request->nik,
-                    'pekerjaan' => $request->pekerjaan,
-                    'jabatan'   => $employee->jabatan,
-                    'pekerjaan' => $request->pekerjaan,
-                    'spk'       => $request->spk,
-                    'nospk'     => $request->nospk,
-                    'hasil2'     => $request->hasil2,
-                    'persen2'    => $request->persen2,
-                    'hasil'     => $request->hasil,
-                    'persen'    => $request->persen,
-                    'mulai'     => $request->mulai,
-                    'akhir'     => $request->akhir,
-                    'total'     => $total,
-                    'makan'     => $request->makan
-                ]);
-            }else{
+            // if($total >= 240){
+            //     Detail::create([
+            //         'splid'     => $request->nomor,
+            //         'nama'      => $employee->name,
+            //         'nik'       => $request->nik,
+            //         'pekerjaan' => $request->pekerjaan,
+            //         'jabatan'   => $employee->jabatan,
+            //         'pekerjaan' => $request->pekerjaan,
+            //         'spk'       => $request->spk,
+            //         'nospk'     => $request->nospk,
+            //         'hasil2'     => $request->hasil2,
+            //         'persen2'    => $request->persen2,
+            //         'hasil'     => $request->hasil,
+            //         'persen'    => $request->persen,
+            //         'mulai'     => $request->mulai,
+            //         'akhir'     => $request->akhir,
+            //         'total'     => $total,
+            //         'makan'     => $request->makan
+            //     ]);
+            // }else{
                 Detail::create([
                     'splid'     => $request->nomor,
                     'nama'      => $employee->name,
@@ -522,7 +584,7 @@ class OvertimeController extends Controller
                     'total'     => $total,
                     'makan'     => $request->makan, // ''
                 ]);
-            }
+            // }
 
             // alert()->toast('Data karyawan pada SPL telah berhasil ditambahkan','success');
             return redirect()->back();
@@ -538,12 +600,12 @@ class OvertimeController extends Controller
         try
         {
             $data->delete();
-                alert()->toast('Data karyawan pada SPL telah dihapus','warning');
+                // alert()->toast('Data karyawan pada SPL telah dihapus','warning');
                 return redirect()->back();
         }
         catch (\Exception $e)
         {
-            alert()->toast('Data tidak ditemukan','error');
+            // alert()->toast('Data tidak ditemukan','error');
             return redirect()->back();
         }
     }
@@ -562,6 +624,131 @@ class OvertimeController extends Controller
         catch (\Exception $e)
         {
             // alert()->toast('Data tidak ditemukan','error');
+            return redirect()->back();
+        }
+    }
+
+    public function formSpl(Request $request)
+    {
+        if (!$request->date) {
+            $now = Carbon::now();
+            $date = $now->format('Y-m-d');
+        } 
+        else {
+            $date = $request->date;
+        }
+
+        // $date = '2023-06-27';
+
+        $data = Overtime::with(['detail','division','pengajuanDana.detail'])->whereHas('detail')->where('tanggalspl', $date)->get();
+
+        $detail = Overtime::getCount($data);
+        // dd($detail);
+
+        return view('pages.overtime.form', compact('data','detail','date'));
+    }
+
+    public function insertPengajuanDana(Request $request, $id)
+    {
+        $validate = $request->validate([
+            'keterangan' => ['required'],
+            'jumlah' => ['required', 'integer'],
+        ]);
+
+        if (!$validate) {
+            return redirect()->back();
+        }
+        
+        if($id === '0') {
+            $pengajuan = PengajuanDana::create(
+            [
+                'tanggal' => $request->tanggal,
+            ]);
+
+            $id = $pengajuan->id;
+        }
+
+        PengajuanDanaDetail::create(
+        [
+            'id_pengajuan_dana' => $id,
+            'keterangan' => $request->keterangan,
+            'jumlah' => $request->jumlah,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function viewFormPengajuan(Request $request, $tanggalspl)
+    {
+        $data = Overtime::with(['detail','division','pengajuanDana.detail'])->whereHas('detail')->where('tanggalspl', $tanggalspl)->get();
+        $detail = Overtime::getCount($data);
+
+        // dd($detail);
+        $pdf = PDF::loadView('pages.overtime.print-pengajuan', compact('detail','tanggalspl'))->setPaper('a4', 'landscape');
+
+        return $pdf->stream();
+    }
+
+    public function viewFormDetail(Request $request, $tanggalspl)
+    {
+        // $data = Overtime::with(['detail','division','pengajuanDana.detail'])->whereHas('detail')->where('tanggalspl', $tanggalspl)->get();
+        $data = Division::with(['overtime' => function ($query) use ($tanggalspl) {
+            $query->where('tanggalspl', '=', $tanggalspl);
+        }])
+        ->has('overtime.detail', '>', 0)
+        ->get();    
+
+        return view('pages.overtime.form-detail', compact('data', 'tanggalspl'));
+    }
+
+    public function viewPrintDetail(Request $request, $tanggalspl)
+    {
+        // $data = Overtime::with(['detail','division','pengajuanDana.detail'])->whereHas('detail')->where('tanggalspl', $tanggalspl)->get();
+        $data = Division::with(['overtime' => function ($query) use ($tanggalspl) {
+            $query->where('tanggalspl', '=', $tanggalspl);
+        }])
+        ->has('overtime.detail', '>', 0)
+        ->get();    
+
+        $pdf = PDF::loadView('pages.overtime.print-detail', compact('data','tanggalspl'))
+            ->setPaper('a4', 'potrait');
+
+        return $pdf->stream();
+    }
+
+    public function postFormDetail(Request $request)
+    {
+        // dd($request);
+        $people = $request->id;
+
+        $rules = [];
+
+        foreach ($people as $person => $id) {
+            $rules['masuk.' . $id] = 'nullable|date_format:H:i:s';
+            $rules['pulang.' . $id] = 'nullable|date_format:H:i:s';
+
+            $detail[$id] = Detail::find($id);
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            // Validation failed, handle the error
+            $errors = $validator->errors();
+            return redirect()->back();
+        } else {
+            foreach ($detail as $key => $value) {
+                $masuk = $request->input('masuk.' . $key);
+                $pulang = $request->input('pulang.' . $key);
+                $is_umak_cut = $request->input('is_umak_cut.' . $key);
+
+                $value->update([
+                    'masuk' => $masuk,
+                    'pulang' => $pulang,
+                    'is_umak_cut' => $is_umak_cut
+                ]);
+            }
+
             return redirect()->back();
         }
     }

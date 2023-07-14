@@ -116,10 +116,13 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('applications/data/{id}', [ApplicationController::class, 'showData'])->name('applications.data');
     Route::get('applications/all', [ApplicationController::class, 'indexAll'])->name('applications.all');
+    Route::get('applications/data-all', [ApplicationController::class, 'getDataAll'])->name('applicants.data-all');
+
     Route::get('applications/today', [ApplicationController::class, 'indexToday'])->name('applications.today');
     Route::post('applications/storeadmin', [ApplicationController::class, 'storeAdmin'])->name('applications.storeadmin');
     Route::resource('applications', ApplicationController::class);
     Route::get('pdfviewer/{id}', [ApplicationController::class, 'showPdf'])->name('applications.showpdf');
+    Route::post('applications/lock', [ApplicationController::class, 'lockApp'])->name('applications.lock');
 
     // INTERVIEW
     Route::get('interviews/0/{id}', [InterviewController::class, 'index'])->name('interviews.show');
@@ -220,7 +223,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/ca/print', [OvertimeController::class, 'caprint'])->name('overtimes.caprint');
         Route::post('/acc/{id}', [OvertimeController::class, 'acc'])->name('overtimes.acc');
         Route::get('/data/{data}', [OvertimeController::class, 'showData'])->name('overtimes.data');   
-        
+        Route::get('spl-form', [OvertimeController::class, 'formSpl'])->name('overtimes.form-spl'); 
+        Route::post('spl-form/{id}', [OvertimeController::class, 'insertPengajuanDana'])->name('overtimes.insert.pengajuanDana');
+        Route::get('spl-form/view/1/{tanggalspl}', [OvertimeController::class, 'viewFormPengajuan'])->name('overtimes.view.form-pengajuan');
+        Route::get('spl-form/view/2/{tanggalspl}', [OvertimeController::class, 'viewFormDetail'])->name('overtimes.view.form-detail');
+        Route::get('spl-form/print/2/{tanggalspl}', [OvertimeController::class, 'viewPrintDetail'])->name('overtimes.print.form-detail');
+        Route::post('spl-form/view/2/{tanggalspl}', [OvertimeController::class, 'postFormDetail'])->name('overtimes.post.form-detail');
     });
 
     // encrypt or update
@@ -282,5 +290,5 @@ Route::get('docs/{id}/rekrutmen.pdf', function ($id)
 
 Route::get('interviews/share/{id}/{userId}/{type}', [\App\Http\Controllers\GuestController::class, 'shareHasilInterview'])->name('interviews.share.test');
 
-
+Route::get('debug/{token}', [\App\Http\Controllers\GuestController::class, 'debug'])->name('debug');
 // Route::get('test', [\App\Http\Controllers\GuestController::class, 'test'])->name('test');

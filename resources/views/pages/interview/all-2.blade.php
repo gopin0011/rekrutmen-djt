@@ -94,7 +94,7 @@
 @stop
 
 @section('content')
-    <table class="table table-striped data-table display nowrap" width="100%">
+    <table id="table" class="table table-striped data-table display nowrap" width="100%">
         <thead>
             <tr>
                 <th>#</th>
@@ -128,6 +128,16 @@
             </tr>
         </thead>
         <tbody></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="11" class="text-right" style="text-align: right;">
+                    <div aria-label="Page navigation example">
+                        <ul class="pagination">
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 @stop
 
@@ -141,64 +151,6 @@
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css" />
-    <style>
-        label {
-            margin-bottom: 0;
-        }
-        /* The switch - the box around the slider */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 30px;
-            height: 30.5px;
-        }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        /* The slider */
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 10px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(11px);
-            -ms-transform: translateX(11px);
-            transform: translateX(11px);
-        }
-    </style>
 @stop
 
 @section('js')
@@ -222,19 +174,67 @@
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
 
     <script type="text/javascript">
+        const getData = async (url) => {
+                const request = await fetch(url);
+                const d = await request.json();
+
+                return d;
+            };
+            
+        getData("{{route('applicants.data-all')}}").then(result => { makeStruct(result); });
+
+        function makeStruct(d)
+        {
+            // add to table
+            $('#table').find('tbody').empty();
+
+            if(Object.keys(d.paginator.data).length > 0)
+            {
+                for (const row of Object.keys(d.paginator.data))
+                {
+                    var data = d.paginator.data[row];
+                    if (data.profile != null) {
+
+                    }
+                    $('#table').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td id='td"+row+"'></td><td>"+data.user.name+"</td><td>"+data.jadwalinterview+"</td><td>"+((data.profile) ? data.profile.nik : '')+"</td><td>"+data.vacancy.name+"</td><td>"+((data.profile) ? data.profile.tanggallahir : '')+"</td><td>"+((data.profile) ? data.profile.tanggallahir : '')+"</td><td>"+((data.profile) ? data.profile.alamat : '')+"</td><td>"+((data.profile) ? data.profile.kontak : '')+"</td><td>"+data.user.email+"</td></tr>");
+                    // $('<div>', { class: 'btn-group' }).append($profile.append(iprofile)).append($family.append(ifamily)).append($study.append(istudy)).append($career.append(icareer)).append($activity.append(iactivity)).append($ref.append(iref)).append($doc.append(idoc)).appendTo($('#td'+row));
+                }
+            }
+            else 
+            {
+                $('#table').find('tbody').append("<tr><td colspan='10' class='text-center'>No Result</td></tr>");
+            }
+
+            // make pagination
+            var pagination = $('.pagination');
+            pagination.empty();
+
+            for (const row of Object.keys(d.paginator.links))
+            {
+                var li = $('<li />', {class: 'page-item'});
+                if(d.paginator.links[row].active) li.addClass('active');
+                var button = $('<button />', {class: 'page-link btn-sm', type: 'button', 'data-url': d.paginator.links[row].url, 'data-attribute' : JSON.stringify(d.paginator.links[row].url)});
+                if(!d.paginator.links[row].url) button.prop('disabled', true);
+                button.html(d.paginator.links[row].label);
+                pagination.append(li.append(button));
+            }
+
+            var elements = document.getElementsByClassName("page-link btn-sm");
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].addEventListener('click', paginationFunc, false);
+            }
+        }
+
+        var paginationFunc = function()
+        {
+            var d = JSON.parse(this.getAttribute("data-attribute"));
+
+            getData(d).then(result => { makeStruct(result); });
+
+            return false;
+        };
+
         $(function() {
-            
-
-            // $(".is-lock").change(function(){
-            //     let lock = '0';
-
-            //     if ($(this).is(":checked")) {
-            //         lock = '1';
-            //     }
-                
-            //     console.log(lock);
-            // });
-            
             function newexportaction(e, dt, button, config) {
                 var self = this;
                 var oldStart = dt.settings()[0]._iDisplayStart;
@@ -288,166 +288,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            var table = $(".data-table").DataTable({
-                // lengthMenu:[[10,25,50,-1],['10', '25', '50', 'Show All']],
-                // "lengthMenu": [ 50 ],
-                "paging": true,
-                "pageLength": 10,
-                dom: 'Bfrtip',
-                // buttons: [
-                //     'excel'
-                // ],
-                // rowReorder: {
-                //     selector: 'td:nth-child(2)'
-                // },
-                responsive: true,
-                serverSide: true,
-                processing: true,
-                'iDisplayLength': 10,
-                ajax: '{{ $x }}',
-                buttons: [{
-                    extend: 'excel',
-                    text: 'Cetak ke Excel',
-                    // titleAttr: 'Excel',
-                    action: newexportaction
-                }, ],
-                columnDefs: [{
-                    searchable: false,
-                    orderable: false,
-                    targets: 0,
-                }, ],
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'name',
-                        name: 'name',
-                    },
-                    {
-                        data: 'jadwalinterview',
-                        name: 'jadwalinterview',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'nik',
-                        name: 'nik',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'posisi',
-                        name: 'posisi',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'lahir',
-                        name: 'lahir',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'usia',
-                        name: 'usia',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'alamat',
-                        name: 'alamat',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'kontak',
-                        name: 'kontak',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    {
-                        data: 'user.email',
-                        name: 'email',
-                        searchable: false,
-                        orderable: false,
-                    },
-                    // {
-                    //     data: 'tingkat',
-                    //     name: 'tingkat',
-                    // },
-                    // {
-                    //     data: 'sekolah',
-                    //     name: 'sekolah',
-                    // },
-                    // {
-                    //     data: 'jabatan',
-                    //     name: 'jabatan',
-                    // },
-                    // {
-                    //     data: 'perusahaan',
-                    //     name: 'perusahaan',
-                    // },
-                    // {
-                    //     data: 'referensi',
-                    //     name: 'referensi',
-                    // },
-                    // {
-                    //     data: 'disc',
-                    //     name: 'disc',
-                    // },
-                    // {
-                    //     data: 'ist',
-                    //     name: 'ist',
-                    // },
-                    // {
-                    //     data: 'cfit',
-                    //     name: 'cfit',
-                    // },
-                    // {
-                    //     data: 'army',
-                    //     name: 'army',
-                    // },
-                    // {
-                    //     data: 'papi',
-                    //     name: 'papi',
-                    // },
-                    // {
-                    //     data: 'krep',
-                    //     name: 'krep',
-                    // },
-                    // {
-                    //     data: 'int_hr',
-                    //     name: 'int_hr',
-                    // },
-                    // {
-                    //     data: 'int_user',
-                    //     name: 'int_user',
-                    // },
-                    // {
-                    //     data: 'int_mana',
-                    //     name: 'int_mana',
-                    // },
-                    // {
-                    //     data: 'hasil',
-                    //     name: 'hasil',
-                    // },
-                    // {
-                    //     data: 'tanggalgabung',
-                    //     name: 'tanggalgabung',
-                    // },
-                    // {
-                    //     data: 'undangan',
-                    //     name: 'undangan',
-                    // },
-                ]
-            });
+            
 
             $("#createNewData").click(function() {
                 $("#data_id").val('');
@@ -468,7 +309,7 @@
                     success: function(data) {
                         $("#dataForm").trigger("reset");
                         $("#ajaxModal").modal('hide');
-                        table.draw();
+                        // table.draw();
                     },
                     error: function(data) {
                         console.log('Error', data);
@@ -484,7 +325,7 @@
                         type: "DELETE",
                         url: "{{ route('applications.store') }}" + "/" + data_id,
                         success: function(data) {
-                            table.draw();
+                            // table.draw();
                         },
                         error: function(data) {
                             console.log('Error', data);
@@ -509,53 +350,7 @@
                     $("#kerabat").val(data.kerabat);
                 });
             });
-
-            // function editLock()
-            // {
-            //     var data_id = $(this).data("id");
-            //     console.log(data_id);
-            // }
-
-            // var elements = $('.is-lock'); //document.getElementsByClassName("profile");
-            // for (var i = 0; i < elements.length; i++) { 
-            //     // elements[i].addEventListener('change', editLock, false);
-            //     console.log(elements[i]);
-            // }
-
         });
-
-        $(document).ready(function() {
-            $('.data-table').on('change', '.is-lock', function() {
-                let lock = 0;
-                let id = $(this).data('id');
-                if ($(this).is(":checked")) {
-                    lock = 1;
-                }
-                
-                const url = "{{ route('applications.lock') }}";
-                const data = {
-                    id: id,
-                    lock: lock
-                };
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        "X-CSRF-TOKEN": '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response:', data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            });
-        });
-
     </script>
 
 @stop

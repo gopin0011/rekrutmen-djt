@@ -51,4 +51,5 @@ return [
     'hariini_spl'                      => 'SPL Hari Ini',
     'mana_spl'                      => 'SPL Disetujui Manajer',
     'hr_spl'                      => 'SPL Disetujui HR',
+    'spl_form'                      => 'Form SPL',
 ];

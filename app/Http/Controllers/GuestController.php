@@ -67,7 +67,7 @@ class GuestController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview']);
+        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview', 'debug']);
     }
 
     public function formUserInterview($token)
@@ -398,6 +398,9 @@ class GuestController extends Controller
 
         // dd([$rekrutmen_pdf,$cv_url]);
         if($request->get('share') == '1') {
+            if ($request->get('forUser') == '1' && $data->is_lock_for_view == '1') {
+                return die('View Has Expired');
+            }
 
             $paths = [
                 public_path('storage/file.pdf')
@@ -435,6 +438,10 @@ class GuestController extends Controller
             // $type = $request->type;
 
             $application = Application::find($id);
+
+            if ($type == 'user' && $application->is_lock_for_view == '1') {
+                return die('View Has Expired');
+            }
 
             $staff = Staff::find($userId);
 
@@ -500,5 +507,13 @@ class GuestController extends Controller
     public function forms()
     {
         return view('pages.form.guest');
+    }
+
+    public function debug(Request $request, $token)
+    {
+        // $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpbnZpdGUiOnsibmFtYSI6IlN1cHJpeWF0bmEiLCJlbWFpbCI6InN1cHJpeWF0bmEwNDA4MDdAZ21haWwuY29tIiwidmFjYW5jeSI6IkRlc2FpbiBJbnRlcmlvciIsInBvc2lzaSI6IjE5IiwiZGF0ZSI6IjIwMjMtMDYtMjEiLCJ0aW1laW52aXRlIjoiMDk6MDAiLCJkYXRlaW52aXRlIjoiMjAyMy0wNi0yMSIsImludkNvZGUiOiIxS0h2YyJ9fQ.U83u9gf8lFpB_pbUYP6BMmw4XsotMyDsKwwmnVYkxaM';
+        $request = JWTHelper::decode($token, JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
+
+        dd($request);
     }
 }

@@ -8,9 +8,9 @@
             <div class="col float-left">
                 <h5><i class="fa fa-magnifying-glass"></i> <strong>Pilih Pekerjaan</strong></h5>
             </div>
-            <div class="col">
+            <!-- <div class="col">
                 <a type="button" href="javascript:void(0)" id="createNewData" class="btn btn-primary float-right">+ Tambah</a>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="modal fade bd-example-modal-lg" id="ajaxModal" arial-hidden="true">

@@ -68,7 +68,7 @@
                                     </div>
                                     <select class="form-control" id="bisnis" name="bisnis">
                                         @foreach($unit as $item)
-                                            <option value="{{ $item->nama }}">{{ $item->nama }}</option>
+                                            <option value="{{ $item->name }}">{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                     <select class="form-control" id="divisi" name="divisi">
