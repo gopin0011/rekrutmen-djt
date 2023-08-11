@@ -12,9 +12,11 @@ class Division extends Model
 
     protected $table = 'divisions';
 
+    protected $fillable = ['id', 'nama', 'kode', 'created_at', 'updated_at', 'is_hr'];
+
     public function overtime()
     {
-        return $this->hasMany(Overtime::class,'dept')->with('detail');
+        return $this->hasMany(Overtime::class,'dept')->with('detail')->where(['manajer' => 'diterima', 'hr' => 'diterima']);
     }
 
 }

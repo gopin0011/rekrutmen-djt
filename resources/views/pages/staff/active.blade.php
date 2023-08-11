@@ -71,13 +71,20 @@
                                 <input type="text" class="form-control" placeholder="Tempat lahir" aria-label="place"
                                     id="place" name="place" aria-describedby="basic-addon1">
                             </div>
-                            <div class="input-group mb-3 col-md-6">
+                            <div class="input-group mb-3 col-md-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-calendar-day"></i></span>
                                 </div>
                                 <input type="date" class="form-control" aria-label="born" id="born" name="born"
                                     aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-birthday-cake"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Usia" aria-label="age"
+                                    id="age" name="age" aria-describedby="basic-addon1" readonly>
                             </div>
                         </div>
                         <div class="form-row">
@@ -122,10 +129,66 @@
                                     id="kontak" name="kontak" aria-describedby="basic-addon1">
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">BPJS Kes</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="BPJS Kesehatan" aria-label="bpjs_kes"
+                                    id="bpjs_kes" name="bpjs_kes" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">BPJS Tk</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="BPJS TK" aria-label="bpjs_tk"
+                                    id="bpjs_tk" name="bpjs_tk" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Ijazah dititipkan</span>
+                                </div>
+                                <select type="text" class="form-control" id="titip_ijazah" name="titip_ijazah" value="">
+                                    <option value=""></option>
+                                    <option value="1">Ya</option>
+                                    <option value="2">Tidak</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 1</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Vaksin 1" aria-label="vaksin1"
+                                    id="vaksin1" name="vaksin1" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 2</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Vaksin 2" aria-label="vaksin2"
+                                    id="vaksin2" name="vaksin2" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 3</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Vaksin 3" aria-label="vaksin3"
+                                    id="vaksin3" name="vaksin3" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 4</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Vaksin 4" aria-label="vaksin4"
+                                    id="vaksin4" name="vaksin4" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
                         <hr>
                         <h5>Data Pekerjaan</h5>
                         <div class="form-row">
-                            <div class="input-group mb-3 col-md-6">
+                            <div class="input-group mb-3 col-md-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-id-badge"></i></span>
@@ -133,7 +196,23 @@
                                 <input type="text" class="form-control" placeholder="NIK" aria-label="nik"
                                     id="nik" name="nik" aria-describedby="basic-addon1">
                             </div>
-                            <div class="input-group mb-3 col-md-3">
+                            <div class="input-group mb-3 col-md-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-right-to-bracket"></i></span>
+                                </div>
+                                <input type="date" class="form-control" aria-label="joindate" id="joindate"
+                                    name="joindate" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-2">
+                                <!-- <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i
+                                            class="fa fa-id-badge"></i></span>
+                                </div> -->
+                                <input type="text" class="form-control" placeholder="masa Kerja" aria-label="masa_kerja"
+                                    id="masa_kerja" name="masa_kerja" aria-describedby="basic-addon1" readonly>
+                            </div>
+                            <div class="input-group mb-3 col-md-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-square-check"></i></span>
@@ -150,8 +229,8 @@
                                     <span class="input-group-text" id="basic-addon1"><i
                                             class="fa fa-right-to-bracket"></i></span>
                                 </div>
-                                <input type="date" class="form-control" aria-label="joindate" id="joindate"
-                                    name="joindate" aria-describedby="basic-addon1">
+                                <input type="date" class="form-control" aria-label="end_contract" id="end_contract"
+                                    name="end_contract" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <div class="form-row">
@@ -181,12 +260,23 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="input-group mb-3 col-md-6">
+                            <div class="input-group mb-3 col-md-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-sitemap"></i></span>
                                 </div>
                                 <input type="text" class="form-control" placeholder="Jabatan" aria-label="position"
                                     id="position" name="position" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-sitemap"></i></span>
+                                </div>
+                                <select type="text" class="form-control" id="role" name="role"
+                                    value="">
+                                    <option value="0">--Role--</option>
+                                    <option value="3">Admin</option>
+                                    <option value="4">Atasan</option>
+                                </select>
                             </div>
                             <div class="input-group mb-3  col-md-6">
                                 <select type="text" class="form-control" id="opsiresign" name="opsiresign">
@@ -195,6 +285,29 @@
                                 </select>
                                 <input type="date" class="form-control" aria-label="resign" id="resign"
                                     name="resign" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">SP 1</span>
+                                </div>
+                                <input type="date" class="form-control" aria-label="sp1" id="sp1" name="sp1"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">SP 2</span>
+                                </div>
+                                <input type="date" class="form-control" aria-label="sp2" id="sp2" name="sp2"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">SP 3</span>
+                                </div>
+                                <input type="date" class="form-control" aria-label="sp3" id="sp3" name="sp3"
+                                    aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <hr>
@@ -244,7 +357,7 @@
                                     id="certi" name="certi" aria-describedby="basic-addon1">
                             </div>
                         </div>
-
+                        
                         <hr>
                         <h5>Data Keuangan & Pajak</h5>
                         <div class="form-row">
@@ -599,6 +712,7 @@
                     $("#corp").val(data.corp);
                     $("#dept").val(data.dept);
                     $("#position").val(data.position);
+                    $("#role").val(data.role);
                     $("#gender").val(data.gender);
                     $("#religion").val(data.religion);
                     $("#kk").val(data.kk);
@@ -619,6 +733,22 @@
                     $("#prodi").val(data.prodi);
                     $("#ijazah").val(data.ijazah);
                     $("#resign").val(data.resign);
+                    $("#age").val(data.age+" Thn");
+                    $("#masa_kerja").val(data.masaKerja+" Thn");
+                    $("#bpjs_kes").val(data.bpjs_kesehatan);
+                    $("#bpjs_tk").val(data.bpjs_tk);
+                    const is_titip_ijazah = (data.is_titip_ijazah == null) ? "0" : data.is_titip_ijazah;
+                    $("#titip_ijazah").val(is_titip_ijazah);
+                    $("#vaksin1").val(data.vaksin1);
+                    $("#vaksin2").val(data.vaksin2);
+                    $("#vaksin3").val(data.vaksin3);
+                    $("#vaksin4").val(data.vaksin4);
+                    $("#end_contract").val(data.end_contract);
+                    $("#sp1").val(data.sp1);
+                    $("#sp2").val(data.sp2);
+                    $("#sp3").val(data.sp3);
+                    const role = (data.role == null) ? "0" : data.role;
+                    $("#role").val(role);
                 });
             });
 
@@ -632,6 +762,31 @@
 
             $('body').on('click', '#showAll', function() {
                 window.location.href = '{{ route('staffActive.all', ['id' => 'all']) }}';
+            });
+
+            function calculateAge(dateOfBirth) {
+                const today = new Date();
+                const birthDate = new Date(dateOfBirth);
+
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                // Jika tanggal lahir belum lewat, kurangi umur satu tahun
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                return age;
+            }
+
+            $("#born").on('change', function(){
+                const age = calculateAge($(this).val());
+                $("#age").val(age+" Thn");
+            });
+
+            $("#joindate").on('change', function(){
+                const age = calculateAge($(this).val());
+                $("#masa_kerja").val(age+" Thn");
             });
         });
     </script>

@@ -115,7 +115,7 @@
                         <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">{{ \Carbon\Carbon::parse($value->tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l') }}</td>
                         <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">{{$people->masuk}}</td>
                         <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">{{$people->pulang}}</td>
-                        <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">{{$people->is_umak_cut == "0" ? "Tidak" : "Ya"}}</td>
+                        <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">{{$people->is_umak_cut == "0" ? "Tidak" : ($people->is_umak_cut == "1" ? "Ya" : "")}}</td>
                     </tr>
                     @endforeach
                 @endforeach

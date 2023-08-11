@@ -17,6 +17,7 @@
                     </div>
                     <input type="date" class="form-control" aria-label="date" id="date" name="date" value="{{$date}}"
                         aria-describedby="basic-addon1">
+                        &nbsp;&nbsp;<input type="submit" value="Cari" class="btn btn-primary">
                 </div>
             </div>
         </div>
@@ -40,7 +41,8 @@
               </div>
               <div class="card-footer p-0">
                 <ul class="nav flex-column">
-                  @foreach($detail['dept'] as $key => $row)
+                @foreach($detail as $key => $r)
+                  @foreach($r['dept'] as $key => $row)
                   <li class="nav-item">
                     <small class="nav-link">
                       {{$key}} [{{$row['kegiatan']}}] <span class="float-right badge bg-primary">{{count($row['people'])}}</span>
@@ -48,22 +50,18 @@
                   </li>
                   @endforeach
 
-                  @foreach($detail['pengajuanDana']['detail'] as $key => $row)
+                  @foreach($r['pengajuanDana']['detail'] as $key => $row)
                   <li class="nav-item">
                     <small class="nav-link">
                       {{$row[0]}} <span class="float-right badge bg-primary">Rp. {{ number_format(str_replace('.', '', $row[1])) }}</span>
                     </small>
                   </li>
                   @endforeach
+                @endforeach
 
+<!--
                   <li class="nav-item">
-                    <!-- <a href="#" class="nav-link">
-                      Tasks <span class="float-right badge bg-info">5</span>
-                    </a> -->
-                    @php
-                    $id = ($detail['pengajuanDana']['id'] !== null ? $detail['pengajuanDana']['id'] : '0');
-                    @endphp
-                    <form class="form-horizontal" id="formPengajuanDana" method="post" action="{{route('overtimes.insert.pengajuanDana', ['id' => $id])}}" style="padding: 10px 15px;">
+                    <form class="form-horizontal" id="formPengajuanDana" method="post" action="#" style="padding: 10px 15px;display:none;">
                       @csrf
                       <input type="hidden" name="tanggal" value="{{$date}}">
                         <div class="input-group input-group-sm mb-0">
@@ -75,7 +73,7 @@
                     </div>
                     </form>
                   </li>
-
+-->
                   <li class="nav-item">
                     <a href="{{route('overtimes.view.form-pengajuan', ['tanggalspl' => $date])}}" target="_blank" class="nav-link link-black text-sm mr-2"><i class="fas fa-print mr-1"></i> Print Form Pengajuan Dana</a>
                   </li>
@@ -106,8 +104,12 @@ small.nav-link {
 <script type="text/javascript">
     $(function() {
         var date = $("#date");
-        date.on("input", function() {
+        // date.on("input", function() {
+        date.keydown(function(event) {
+          if (event.keyCode === 13) {
+            event.preventDefault();
             $("#form").submit();
+          }
         });
     });
 </script>

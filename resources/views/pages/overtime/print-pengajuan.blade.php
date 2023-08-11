@@ -82,22 +82,32 @@
 <body>
     <table class="">
         <tr>
-            <td style="font-size:12pt">FORM PENGAJUAN DANA</td>
+            <td style="font-size:12pt"><b>FORM PENGAJUAN DANA</b></td>
         </tr>
         <tr>
             <td>
-                <table class="table">
+                <table class="table" style="margin-top: 10px;">
                     <tr>
-                        <td width="80px" style="text-align: left;font-size:8pt">Tanggal</td>
-                        <td style="text-align: left;font-size:8pt">: {{ \Carbon\Carbon::parse($tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y') }}</td>
+                        <td width="120px" style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">Tanggal</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">: {{ \Carbon\Carbon::parse($tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y') }}</td>
+                        <td width="90px" style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">: Posting</td>
+                        <td width="5px" style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt;">&nbsp;</td>
+                        <td width="200px" style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">[&nbsp;]&nbsp;Project</td>
+
                     </tr>
                     <tr>
-                        <td style="text-align: left;font-size:8pt">PT</td>
-                        <td style="text-align: left;font-size:8pt">: DJT</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">PT</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">: DJT</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">:</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">&nbsp;</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">[&nbsp;]&nbsp;Operasional</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;font-size:8pt">Dari</td>
-                        <td style="text-align: left;font-size:8pt">: HRD</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">Dari</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">: HRD</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">:</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">&nbsp;</td>
+                        <td style="border: 1px solid #aaaaaa;text-align: left;font-size:8pt">[&nbsp;]&nbsp;Lain-lain</td>
                     </tr>
                 </table>
             </td>
@@ -121,32 +131,38 @@
                             $total = 0;
                             $totalRupiah =  0;
                         @endphp
-                        @foreach ($detail['dept'] as $key => $row)
-                        <tr>
-                            <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $loop->iteration }}</td>
-                            <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt">{{$key}}</td>
-                            <td style="border: 1px solid #aaaaaa; font-size:8pt">{{count($row['people'])}}</td>
-                            <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt">{{$row['kegiatan']}}</td>
-                            <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">Rp. {{ number_format(str_replace('.', '', count($row['people']) * 15000)) }}</td>
-                        </tr>
-                        @php
-                            $last = $loop->iteration;
-                            $total+=count($row['people']);
-                            $totalRupiah += count($row['people']) * 15000;
-                        @endphp
-                        @endforeach
+                        @foreach ($detail as $k => $r)
+                            <tr>
+                                <td style="border: 1px solid #aaaaaa; font-size:8pt">&nbsp;</td>
+                                <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt" colspan="4"><b>{{strtoupper($k)}}</b></td>
+                            </tr>
+                            @foreach ($r['dept'] as $key => $row)
+                            <tr>
+                                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $loop->iteration }}</td>
+                                <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt">{{$key}}</td>
+                                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{count($row['people'])}}</td>
+                                <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt">{{$row['kegiatan']}}</td>
+                                <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">Rp. {{ number_format(str_replace('.', '', count($row['people']) * 15000)) }}</td>
+                            </tr>
+                            @php
+                                $last = $loop->iteration;
+                                $total+=count($row['people']);
+                                $totalRupiah += count($row['people']) * 15000;
+                            @endphp
+                            @endforeach
 
-                        @foreach ($detail['pengajuanDana']['detail'] as $key => $row)
-                        @php
-                            $last += 1;
-                            $totalRupiah += $row[1];
-                        @endphp 
-                        <tr>
-                            <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $last }}</td>
-                            <td colspan="2" style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt">{{$row[0]}}</td>
-                            <td style="border: 1px solid #aaaaaa; font-size:8pt"></td>
-                            <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">Rp. {{ number_format(str_replace('.', '', $row[1])) }}</td>
-                        </tr>
+                            @foreach ($r['pengajuanDana']['detail'] as $key => $row)
+                            @php
+                                $last += 1;
+                                $totalRupiah += $row[1];
+                            @endphp 
+                            <tr>
+                                <td style="border: 1px solid #aaaaaa; font-size:8pt">{{ $last }}</td>
+                                <td colspan="2" style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt">{{$row[0]}}</td>
+                                <td style="border: 1px solid #aaaaaa; font-size:8pt"></td>
+                                <td style="text-align: right;border: 1px solid #aaaaaa; font-size:8pt">Rp. {{ number_format(str_replace('.', '', $row[1])) }}</td>
+                            </tr>
+                            @endforeach
                         @endforeach
                         <tr>
                             <td style="border: 1px solid #aaaaaa; font-size:8pt"></td>

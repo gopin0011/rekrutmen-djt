@@ -37,6 +37,8 @@ use App\Models\InvitationToken;
 use App\Models\Staff;
 use PDFMerger;
 use App\Mail\UserInterview;
+use App\Models\Overtime;
+use App\Models\Detail;
 
 class GuestController extends Controller
 {
@@ -67,7 +69,7 @@ class GuestController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview', 'debug']);
+        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview', 'debug', 'approveSPL','postSpl']);
     }
 
     public function formUserInterview($token)
@@ -515,5 +517,40 @@ class GuestController extends Controller
         $request = JWTHelper::decode($token, JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
 
         dd($request);
+    }
+
+    public function approveSPL(Request $request, $token)
+    {
+        $data = JWTHelper::decode($token, JWTHelper::jwtSecretKey, JWTHelper::algoJwt);
+
+        $withAction = $request->withAction;
+
+        $noSpl = $idovertime = $data->overtimes->nomor;
+        $atasan = $data->overtimes->atasan;
+
+        $overtime = Overtime::where('nomor', $noSpl)->first();
+        $detail = Detail::where('splid', $noSpl)->get();
+
+        $employee = Staff::where(['id' => $atasan])->first();
+
+        $tanggal = Carbon::parse($overtime->tanggalspl);
+        $tglSplSebelumnya['1hari'] = $tanggal->subDay()->isoFormat('D MMMM YYYY');
+        $tglSplSebelumnya['2hari'] = $tanggal->subDay(1)->isoFormat('D MMMM YYYY');
+        // dd($tglSplSebelumnya);
+
+        return view('pages.overtime.app', compact('overtime', 'detail', 'employee', 'idovertime','tglSplSebelumnya'));
+    }
+
+    public function postSpl(Request $request, $id)
+    {
+        $spl = Overtime::find($id);
+
+        $spl->update([
+            'manajer'   => $request->manajer,
+            'nmmanajer' => $request->nmmanajer,
+            'catatan'   => $request->catatan,
+        ]);
+
+        return redirect()->back()->with("message", "Sukses Input Data");
     }
 }

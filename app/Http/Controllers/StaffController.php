@@ -31,11 +31,11 @@ class StaffController extends Controller
     public function showDataStaffActive(Request $request, $id)
     {
         if ($id == 'all') {
-            $data = Staff::where([['status', '<>', '2'], ['resign', '']])->get();
+            $data = Staff::where('status', '<>', '2')->whereNull('resign')->get();
         } else if ($id == 'alper') {
-            $data = Staff::where([['status', '<>', '2'], ['resign', ''], ['corp', '1']])->get();
+            $data = Staff::where([['status', '<>', '2'], ['corp', '1']])->whereNull('resign')->get();
         } else {
-            $data = Staff::where([['status', '<>', '2'], ['resign', ''], ['corp', '2']])->get();
+            $data = Staff::where([['status', '<>', '2'], ['corp', '2']])->whereNull('resign')->get();
         }
         if ($request->ajax()) {
             $allData = DataTables::of($data)
@@ -212,11 +212,11 @@ class StaffController extends Controller
     public function showDataTlhActive(Request $request, $id)
     {
         if ($id == 'all') {
-            $data = Staff::where([['status', '2'], ['resign', '']])->get();
+            $data = Staff::where([['status', '2']])->whereNull('resign')->get();
         } else if ($id == 'alper') {
-            $data = Staff::where([['status', '2'], ['resign', ''], ['corp', '1']])->get();
+            $data = Staff::where([['status', '2'], ['corp', '1']])->whereNull('resign')->get();
         } else {
-            $data = Staff::where([['status', '2'], ['resign', ''], ['corp', '2']])->get();
+            $data = Staff::where([['status', '2'], ['corp', '2']])->whereNull('resign')->get();
         }
         if ($request->ajax()) {
             $allData = DataTables::of($data)
@@ -381,6 +381,10 @@ class StaffController extends Controller
     public function edit($id)
     {
         $data = Staff::find($id);
+        // dd($data->age = $data->age);
+        $data->age = $data->age;
+        $data->masaKerja = $data->masaKerja;
+
         return response()->json($data);
     }
 
@@ -421,6 +425,18 @@ class StaffController extends Controller
                 'prodi' => $request->prodi,
                 'ijazah' => $request->ijazah,
                 'resign' => $resign,
+                'bpjs_kesehatan' => $request->bpjs_kes,
+                'bpjs_tk' => $request->bpjs_tk,
+                'is_titip_ijazah' => $request->titip_ijazah,
+                'vaksin1' => $request->vaksin1,
+                'vaksin2' => $request->vaksin2,
+                'vaksin3' => $request->vaksin3,
+                'vaksin4' => $request->vaksin4,
+                'end_contract' => $request->end_contract,
+                'sp1' => $request->sp1,
+                'sp2' => $request->sp2,
+                'sp3' => $request->sp3,
+                'role' => ($request->role == "0") ? null : $request->role,
             ]
         );
         return response()->json(['success' => 'Data telah berhasil disimpan']);

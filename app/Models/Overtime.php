@@ -58,4 +58,31 @@ class Overtime extends Model
 
         return $data;
     }
+
+    public static function getCountWithGroup($arr = [])
+    {
+        $data = [];
+        $kode = '';
+        foreach ($arr as $row) {
+            $kode = $row->division->kode.' - '.$row->division->nama;
+            $data[$row->bisnis]['dept'][$kode]['kegiatan'] = $row->catatan;
+            foreach ($row->detail as $detail) {
+                $data[$row->bisnis]['dept'][$kode]['people'][] = $detail->nama;
+            }
+        }
+
+        if(count($arr)) {
+            $data[$row->bisnis]['pengajuanDana']['detail'] = [];
+            $data[$row->bisnis]['pengajuanDana']['id'] = ($arr[0]->getPengajuanDana) ? $arr[0]->getPengajuanDana->id : null;
+            // dd($arr[0]->getPengajuanDana);
+            if($arr[0]->getPengajuanDana) {
+                foreach ($arr[0]->getPengajuanDana->detail as $detail) {
+                    $data[$row->bisnis]['pengajuanDana']['detail'][] = [$detail->keterangan, $detail->jumlah];
+                }
+            }
+        }
+        // dd($data);
+
+        return $data;
+    }
 }

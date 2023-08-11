@@ -740,13 +740,13 @@
     'name' => 'DJT - Human Resources',
     'env' => 'local',
     'debug' => true,
-    'url' => 'http://localhost/php8/rekrutmen-djt',
-    'asset_url' => 'http://localhost/php8/rekrutmen-djt/public',
+    'url' => 'http://localhost/rekrutmen',
+    'asset_url' => 'http://localhost/rekrutmen/public',
     'timezone' => 'Asia/Jakarta',
     'locale' => 'id',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
-    'key' => 'base64:38O+KTe7nNJAHPk9hDfqbQfoZJC6NIyRonwljz/6eIM=',
+    'key' => 'base64:fnXp8xx4iN+zYXp8tnPsWhHHaXxUx9Mx7uDOc7z5DKs=',
     'cipher' => 'AES-256-CBC',
     'maintenance' => 
     array (
@@ -938,7 +938,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/framework/cache/data',
+        'path' => '/home/user/www/rekrutmen/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -1021,7 +1021,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'new_hris',
+        'database' => 'local_hrisdb',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -1031,9 +1031,9 @@
         'url' => NULL,
         'host' => 'localhost',
         'port' => '3306',
-        'database' => 'new_hris',
+        'database' => 'local_hrisdb',
         'username' => 'root',
-        'password' => 'root',
+        'password' => '123rootPassword!',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -1051,9 +1051,9 @@
         'url' => NULL,
         'host' => 'localhost',
         'port' => '3306',
-        'database' => 'new_hris',
+        'database' => 'local_hrisdb',
         'username' => 'root',
-        'password' => 'root',
+        'password' => '123rootPassword!',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -1066,9 +1066,9 @@
         'url' => NULL,
         'host' => 'localhost',
         'port' => '3306',
-        'database' => 'new_hris',
+        'database' => 'local_hrisdb',
         'username' => 'root',
-        'password' => 'root',
+        'password' => '123rootPassword!',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -1167,14 +1167,14 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/app',
+        'root' => '/home/user/www/rekrutmen/storage/app',
         'throw' => false,
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/app/public',
-        'url' => 'http://localhost/php8/rekrutmen-djt/storage',
+        'root' => '/home/user/www/rekrutmen/storage/app/public',
+        'url' => 'http://localhost/rekrutmen/storage',
         'visibility' => 'public',
         'throw' => false,
       ),
@@ -1193,7 +1193,7 @@
     ),
     'links' => 
     array (
-      '/Users/erfin/Sites/php8/rekrutmen-djt/public/storage' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/app/public',
+      '/home/user/www/rekrutmen/public/storage' => '/home/user/www/rekrutmen/storage/app/public',
     ),
   ),
   'hashing' => 
@@ -1232,13 +1232,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/logs/laravel.log',
+        'path' => '/home/user/www/rekrutmen/storage/logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/logs/laravel.log',
+        'path' => '/home/user/www/rekrutmen/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
@@ -1290,7 +1290,7 @@
       ),
       'emergency' => 
       array (
-        'path' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/logs/laravel.log',
+        'path' => '/home/user/www/rekrutmen/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -1356,7 +1356,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => '/Users/erfin/Sites/php8/rekrutmen-djt/resources/views/vendor/mail',
+        0 => '/home/user/www/rekrutmen/resources/views/vendor/mail',
       ),
     ),
   ),
@@ -1462,7 +1462,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/framework/sessions',
+    'files' => '/home/user/www/rekrutmen/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -1482,9 +1482,9 @@
   array (
     'paths' => 
     array (
-      0 => '/Users/erfin/Sites/php8/rekrutmen-djt/resources/views',
+      0 => '/home/user/www/rekrutmen/resources/views',
     ),
-    'compiled' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/framework/views',
+    'compiled' => '/home/user/www/rekrutmen/storage/framework/views',
   ),
   'dompdf' => 
   array (
@@ -1493,10 +1493,10 @@
     'convert_entities' => true,
     'options' => 
     array (
-      'font_dir' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/fonts',
-      'font_cache' => '/Users/erfin/Sites/php8/rekrutmen-djt/storage/fonts',
-      'temp_dir' => '/var/folders/wt/hvp7kml51z3g5_k1_xq736lc0000gn/T',
-      'chroot' => '/Users/erfin/Sites/php8/rekrutmen-djt',
+      'font_dir' => '/home/user/www/rekrutmen/storage/fonts',
+      'font_cache' => '/home/user/www/rekrutmen/storage/fonts',
+      'temp_dir' => '/tmp',
+      'chroot' => '/home/user/www/rekrutmen',
       'allowed_protocols' => 
       array (
         'file://' => 
@@ -1607,7 +1607,7 @@
     array (
     ),
     'enable_runnable_solutions' => NULL,
-    'remote_sites_path' => '/Users/erfin/Sites/php8/rekrutmen-djt',
+    'remote_sites_path' => '/home/user/www/rekrutmen',
     'local_sites_path' => '',
     'housekeeping_endpoint_prefix' => '_ignition',
     'settings_file_path' => '',

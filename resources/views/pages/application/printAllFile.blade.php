@@ -124,7 +124,7 @@
 
             function sendWhatsAppMessage(phoneNumber, message) {
                 const encodedMessage = encodeURIComponent(message);
-                const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                const url = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text=${encodedMessage}`;
                 window.open(url, 'WhatsApp');
             }
 

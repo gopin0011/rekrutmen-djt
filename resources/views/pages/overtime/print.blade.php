@@ -81,7 +81,6 @@
 </head>
 <body>
     <header>
-        @foreach ($overtime as $overtime)
         <table class="table">
             <tr>
                 <td style="text-align: left"><strong>SURAT PERINTAH LEMBUR</strong></td>
@@ -89,7 +88,6 @@
             </tr>
             
         </table>
-        @endforeach
     </header>
     <br>
     <br>
@@ -100,15 +98,15 @@
                     <table>
                         <tr>
                             <td style="text-align: left;font-size:8pt">Tanggal SPL    : <strong>{{ \Carbon\Carbon::parse($overtime->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y') }}</strong></td>
-                            <td style="text-align: right;font-size:8pt"></td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: left;font-size:8pt">Nomor SPL    : <strong>{{ $overtime->nomor }}</strong></td>
                             <td style="text-align: right;font-size:8pt">Departemen/Divisi   : <strong>{{ $overtime->bisnis }}/{{ $overtime->divisi }}</strong></td>
                         </tr>
                         <tr>
-                            <td style="text-align: left;font-size:8pt">Tanggal Lembur   : <strong>{{ \Carbon\Carbon::parse($overtime->tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}</strong></td>
+                            <td style="text-align: left;font-size:8pt">Nomor SPL    : <strong>{{ $overtime->nomor }}</strong></td>
                             <td style="text-align: right;font-size:8pt">Waktu Lembur    : <strong>{{ $overtime->waktu }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;font-size:8pt">Tanggal Lembur   : <strong>{{ \Carbon\Carbon::parse($overtime->tanggalspl)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y') }}</strong></td>
+                            <td style="text-align: right;font-size:8pt">Shift    : <strong>{{ $overtime->shift }}</strong></td>
                         </tr>
                     </table>
                 </td>
@@ -179,7 +177,25 @@
             <tr>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt; height: 60px;vertical-align: bottom;">{{ $overtime->pemohon }}</td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">{{ $overtime->nmmanajer }}</td>
-                <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">{{ $overtime->nmhr }}</td>
+                <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">
+                <table>
+                    <tr>
+                        <td>{{ $overtime->nmhr }}</td>
+                        @if($overtime->corp == '1')
+                            @if($overtime->dept == '9' || $overtime->dept == '10' || $overtime->dept == '11' || $overtime->dept == '12' || $overtime->dept == '13' || $overtime->dept == '15' || $overtime->dept == '16' || $overtime->dept == '18' || $overtime->dept == '25')
+                            <td>Achmad Zainal Arifin</td>
+                            @endif
+                        @elseif($overtime->corp == '2')
+                            @if($overtime->dept == '24' || $overtime->dept == '27' || $overtime->dept == '33')
+                            <td>Justinus Iwan Soerjono</td>
+                            @elseif($overtime->dept == '9' || $overtime->dept == '20' || $overtime->dept == '21' || $overtime->dept == '22' || $overtime->dept == '23' || $overtime->dept == '25')
+                            <td>Justinus Iwan Soerjono</td>
+                            <td>Achmad Zainal Arifin</td>
+                            @endif
+                        @endif
+                    </tr>
+                </table>
+                </td>
                 <td style="border: 1px solid #aaaaaa; font-size:8pt;vertical-align: bottom;">
                     <table style="border:0px solid #333;border-collapse:collapse;">
                         <tr>
@@ -202,5 +218,6 @@
             </tr>
         </tbody>
     </table>
+    
 </body>
 </html>

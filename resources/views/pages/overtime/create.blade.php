@@ -54,6 +54,11 @@
                                         <option value="Hari Kerja">Hari Kerja</option>
                                         <option value="Hari Libur">Hari Libur</option>
                                     </select>    
+                                    <select class="form-control" id="shift" name="shift">
+                                        <option value="Shift 1">Shift 1</option>
+                                        <option value="Long Shift 2">Long Shift 2</option>
+                                        <option value="Non Shift">Non Shift</option>
+                                    </select>   
                                     <input type="text" class="form-control" readonly="readonly" value="{{ Auth::user()->name }}" id="pemohon" name="pemohon">
                                     <input type="text" class="form-control" placeholder="Manager Approval" id="manajer" name="manajer" readonly="readonly" hidden="hidden">
                                     <input type="text" class="form-control" placeholder="HR Approval" id="hr" name="hr" readonly="readonly" hidden="hidden">

@@ -45,11 +45,12 @@ use Illuminate\Support\Facades\Storage;
 Route::get('/reset-password', [UsersController::class, 'resetPasswordShow']);
 Route::post('/reset-password', [UsersController::class, 'resetPassword']);
 
-Route::get('/', [HomeController::class, 'index']);
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth','rolebasedlogin']], function () {
+    Route::get('/', [HomeController::class, 'index']);
+
     // IMPORT KANDIDAT
     Route::get('/import', [HomeController::class, 'formImport']);
     Route::post('/import-xls', [HomeController::class, 'importXlsKandidat'])->name('doUploadKandidat');
@@ -229,6 +230,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('spl-form/view/2/{tanggalspl}', [OvertimeController::class, 'viewFormDetail'])->name('overtimes.view.form-detail');
         Route::get('spl-form/print/2/{tanggalspl}', [OvertimeController::class, 'viewPrintDetail'])->name('overtimes.print.form-detail');
         Route::post('spl-form/view/2/{tanggalspl}', [OvertimeController::class, 'postFormDetail'])->name('overtimes.post.form-detail');
+
+        Route::get('/import', [OvertimeController::class, 'formImport']);
+        Route::post('/import-xls', [OvertimeController::class, 'importXlsStaff'])->name('doUploadStaff');
+        Route::get('spl-form/export/2/{tanggalspl}', [OvertimeController::class, 'exportDetailSpl'])->name('exportDetailSpl');
+        Route::post('spl-form/import/2/{tanggalspl}', [OvertimeController::class, 'importDetailSpl'])->name('importDetailSpl');
+        
     });
 
     // encrypt or update
@@ -289,6 +296,9 @@ Route::get('docs/{id}/rekrutmen.pdf', function ($id)
 })->name('storage.old.doc');
 
 Route::get('interviews/share/{id}/{userId}/{type}', [\App\Http\Controllers\GuestController::class, 'shareHasilInterview'])->name('interviews.share.test');
+
+Route::get('overtimes/app/{token}', [\App\Http\Controllers\GuestController::class, 'approveSPL'])->name('overtimes.app');
+Route::post('overtimes/app/{id}', [\App\Http\Controllers\GuestController::class, 'postSpl'])->name('overtimes.app.post');
 
 Route::get('debug/{token}', [\App\Http\Controllers\GuestController::class, 'debug'])->name('debug');
 // Route::get('test', [\App\Http\Controllers\GuestController::class, 'test'])->name('test');
