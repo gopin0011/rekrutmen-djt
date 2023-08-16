@@ -643,8 +643,9 @@ class OvertimeController extends Controller
                 ]);
             }
 
-            $userOvertime = User::with('divisi')->where('id', $spl->created_by)->first();
-
+            $u = User::where('id', $spl->created_by)->first();
+            $userOvertime = Staff::where(['role' => 5, 'dept' => $u->dept, 'corp' => $u->corp])->first();
+// dd($u);
             return response()->json([
                 "status" => true,
                 "data" => [
@@ -664,8 +665,6 @@ class OvertimeController extends Controller
                 "reason" => $e->getMessage()
             ]);
             return redirect()->back()->with(['error' => $e->getMessage()]);
-
-            
         }
     }
 
@@ -1569,4 +1568,25 @@ class OvertimeController extends Controller
             ]);
         }
     }
+
+    // public function selfUpdate()
+    // {
+    //     $divisi = Dept::all();
+    //     $dept = [];
+    //     foreach($divisi as $div) {
+    //         $temp[$div->id] = $div->kode;
+    //         if($div->kode_temp != $div->kode) {
+                
+    //         }
+    //     }
+
+    //     $user = Staff::all();
+
+    //     foreach($user as $u) {
+    //         $div = Dept::where($u)
+    //         $u->update([
+    //             'dept' => $temp[$u->dept]
+    //         ]);
+    //     }
+    // }
 }

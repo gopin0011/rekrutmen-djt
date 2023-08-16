@@ -353,7 +353,7 @@
                     }
                     else {
                         if(data.data.revision) {
-                            const message = `Kepada Admin Departemen ${data.data.admin.divisi.nama}, ${data.data.admin.name}.\n\n HR meminta untuk merevisi SPL Anda: ${data.data.nomor}`;
+                            const message = `Kepada Admin Departemen ${data.data.admin.name}.\n\n HR meminta untuk merevisi SPL Anda: ${data.data.nomor}`;
 
                             if(data.data.admin.kontak == null || data.data.admin.kontak == '') {
                                 return alert("Nomor whatsapp admin masih kosong\nHub Div Multimedia");
