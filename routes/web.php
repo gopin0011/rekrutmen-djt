@@ -48,7 +48,7 @@ Route::post('/reset-password', [UsersController::class, 'resetPassword']);
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth','rolebasedlogin']], function () {
+Route::group(['middleware' => ['auth','rolebasedlogin', 'cors']], function () {
     Route::get('/', [HomeController::class, 'index']);
 
     // IMPORT KANDIDAT
