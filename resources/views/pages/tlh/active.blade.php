@@ -17,6 +17,8 @@
                     class="btn btn-success float-right ml-1">Alper</a>
                 <a type="button" href="javascript:void(0)" id="showLegano"
                     class="btn btn-primary float-right ml-1">Legano</a>
+                <a type="button" href="javascript:void(0)" id="showLegano5"
+                    class="btn btn-default float-right ml-1">Legano 5</a>
                 <a type="button" href="javascript:void(0)" id="showAll"
                     class="btn btn-warning float-right ml-1">Semua</a>
             </div>
@@ -630,6 +632,10 @@
 
             $('body').on('click', '#showLegano', function() {
                 window.location.href = '{{ route('tlhActive.all', ['id' => 'legano']) }}';
+            });
+
+            $('body').on('click', '#showLegano5', function() {
+                window.location.href = '{{ route('tlhActive.all', ['id' => 'legano5']) }}';
             });
 
             $('body').on('click', '#showAll', function() {

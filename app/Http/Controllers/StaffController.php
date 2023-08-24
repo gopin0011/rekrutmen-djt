@@ -32,9 +32,14 @@ class StaffController extends Controller
     {
         if ($id == 'all') {
             $data = Staff::where('status', '<>', '2')->whereNull('resign')->get();
-        } else if ($id == 'alper') {
+        } 
+        else if ($id == 'alper') {
             $data = Staff::where([['status', '<>', '2'], ['corp', '1']])->whereNull('resign')->get();
-        } else {
+        } 
+        else if ($id == 'legano5'){
+            $data = Staff::where([['status', '<>', '2'], ['corp', '3']])->whereNull('resign')->get();
+        }
+        else {
             $data = Staff::where([['status', '<>', '2'], ['corp', '2']])->whereNull('resign')->get();
         }
         if ($request->ajax()) {
@@ -124,6 +129,8 @@ class StaffController extends Controller
             $data = Staff::where([['status', '<>', '2'], ['resign', '<>', '']])->get();
         } else if ($id == 'alper') {
             $data = Staff::where([['status', '<>', '2'], ['resign', '<>', ''], ['corp', '1']])->get();
+        } else if ($id == 'legano5') {
+            $data = Staff::where([['status', '<>', '2'], ['resign', '<>', ''], ['corp', '3']])->get();
         } else {
             $data = Staff::where([['status', '<>', '2'], ['resign', '<>', ''], ['corp', '2']])->get();
         }
@@ -215,6 +222,8 @@ class StaffController extends Controller
             $data = Staff::where([['status', '2']])->whereNull('resign')->get();
         } else if ($id == 'alper') {
             $data = Staff::where([['status', '2'], ['corp', '1']])->whereNull('resign')->get();
+        } else if ($id == 'legano5') {
+            $data = Staff::where([['status', '2'], ['corp', '3']])->whereNull('resign')->get();
         } else {
             $data = Staff::where([['status', '2'], ['corp', '2']])->whereNull('resign')->get();
         }
@@ -305,6 +314,8 @@ class StaffController extends Controller
             $data = Staff::where([['status', '2'], ['resign', '<>', '']])->get();
         } else if ($id == 'alper') {
             $data = Staff::where([['status', '2'], ['resign', '<>', ''], ['corp', '1']])->get();
+        } else if ($id == 'legano5') {
+            $data = Staff::where([['status', '2'], ['resign', '<>', ''], ['corp', '3']])->get();
         } else {
             $data = Staff::where([['status', '2'], ['resign', '<>', ''], ['corp', '2']])->get();
         }
