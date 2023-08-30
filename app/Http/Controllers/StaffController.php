@@ -393,7 +393,7 @@ class StaffController extends Controller
     {
         $data = Staff::find($id);
         // dd($data->age = $data->age);
-        $data->age = $data->age;
+        $data->age = $data->age; 
         $data->masaKerja = $data->masaKerja;
 
         return response()->json($data);
@@ -401,9 +401,8 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-
         if ($request->opsiresign == 0) {
-            $resign = '';
+            $resign = null;
         } else {
             $resign = $request->resign;
         }
@@ -438,7 +437,7 @@ class StaffController extends Controller
                 'resign' => $resign,
                 'bpjs_kesehatan' => $request->bpjs_kes,
                 'bpjs_tk' => $request->bpjs_tk,
-                'is_titip_ijazah' => $request->titip_ijazah,
+                'titip_ijazah' => $request->titip_ijazah,
                 'vaksin1' => $request->vaksin1,
                 'vaksin2' => $request->vaksin2,
                 'vaksin3' => $request->vaksin3,

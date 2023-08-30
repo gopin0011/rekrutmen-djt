@@ -134,7 +134,7 @@
                         @foreach ($detail as $k => $r)
                             <tr>
                                 <td style="border: 1px solid #aaaaaa; font-size:8pt">&nbsp;</td>
-                                <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt" colspan="4"><b>{{strtoupper($k)}}</b></td>
+                                <td style="text-align: left;border: 1px solid #aaaaaa; font-size:8pt" colspan="4"><b>{{ 'CA UMAK LEMBUR '.strtoupper($k)}}</b></td>
                             </tr>
                             @foreach ($r['dept'] as $key => $row)
                             <tr>

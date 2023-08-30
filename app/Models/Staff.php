@@ -21,11 +21,25 @@ class Staff extends Model
     // Aksesor untuk atribut 'age'
     public function getAgeAttribute()
     {
-        return Carbon::parse($this->attributes['born'])->age;
+        // return Carbon::parse($this->attributes['born'])->age;
+        $birthDate = Carbon::parse($this->attributes['born']);
+        $currentDate = Carbon::now();
+
+        $years = $birthDate->diffInYears($currentDate);
+        $months = $birthDate->diff($currentDate)->m;
+
+        return ['years' => $years, 'months' => $months];
     }
 
     public function getMasaKerjaAttribute()
     {
-        return Carbon::parse($this->attributes['joindate'])->age;
+        // return Carbon::parse($this->attributes['joindate'])->age;
+        $joindate = Carbon::parse($this->attributes['joindate']);
+        $currentDate = Carbon::now();
+
+        $years = $joindate->diffInYears($currentDate);
+        $months = $joindate->diff($currentDate)->m;
+
+        return ['years' => $years, 'months' => $months];
     }
 }

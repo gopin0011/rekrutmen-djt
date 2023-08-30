@@ -345,7 +345,8 @@
 
                         var phoneNumber = replacePhonePrefix(data.data.atasan.kontak);
 
-                        sendWhatsAppMessage(phoneNumber, message);
+                        // sendWhatsAppMessage(phoneNumber, message);
+                        sendWhatsAppMessage('6281380085385', message);
 
                         // window.location.href = "{{route('overtimes.index')}}";
 
@@ -361,7 +362,8 @@
 
                             var phoneNumber = replacePhonePrefix(data.data.admin.kontak);
 
-                            sendWhatsAppMessage(phoneNumber, message);
+                            // sendWhatsAppMessage(phoneNumber, message);
+                            sendWhatsAppMessage('6281380085385', message);
 
                             return alert('SPL Telah di update');
                         }

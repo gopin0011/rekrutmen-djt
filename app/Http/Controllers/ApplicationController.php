@@ -31,6 +31,7 @@ use File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Http\Response;
+use App\Models\Staff;
 
 class ApplicationController extends Controller
 {
@@ -611,7 +612,10 @@ class ApplicationController extends Controller
 
     public function storeAdmin(Request $request)
     {
-        Application::find($request->data_id)->update(
+        // didie
+        $app = Application::find($request->data_id);
+
+        $app->update(
             [
                 'posisi' => $request->posisi,
                 'posisialt' => $request->posisialt,
@@ -621,6 +625,91 @@ class ApplicationController extends Controller
                 'hasil' => $request->hasil
             ]
         );
+
+        if ($request->hasil == 1) {
+            $subquery = DB::table('applicant_studies')
+                ->join('studygrade','studygrade.id','=','applicant_studies.tingkat')
+                ->orderBy('studygrade.grade', 'DESC')
+                ->select(
+                    'applicant_studies.user_id', 
+                    'studygrade.id as study', 
+                    'studygrade.name', 
+                    'applicant_studies.nama', 
+                    'applicant_studies.jurfak', 
+                    'applicant_studies.tingkat_char', 
+                    'applicant_studies.sekolah', 
+                    'applicant_studies.jurusan'
+                    )
+                ->where('applicant_studies.user_id', $app->user_id)
+                ->limit(1);
+
+            $user = DB::table('applications')
+                ->join('applicant_profiles','applicant_profiles.user_id','=','applications.user_id')
+                ->joinSub($subquery, 'user_study', function ($join) {
+                    $join->on('applications.user_id', '=', 'user_study.user_id');
+                })
+                ->join('users','applications.user_id','=','users.id')
+                ->join('vacancies','applications.posisi','=','vacancies.id')
+                ->join('gender','applicant_profiles.gender','=','gender.id')
+                ->join('religion','applicant_profiles.agama','=','religion.id')
+                ->where('applications.id','=',$app->id)
+                ->select(
+                    'applications.id',
+                    'applications.user_id',
+                    'user_study.tingkat_char',
+                    'user_study.study as study',
+                    'user_study.name as tingkat',
+                    'user_study.nama as sekolah_char',
+                    'user_study.jurfak',
+                    'user_study.sekolah',
+                    'user_study.jurusan',
+                    'vacancies.name as jabatan',
+                    'vacancies.corp',
+                    'vacancies.dept',
+                    'applicant_profiles.alamat',
+                    'applicant_profiles.kontak',
+                    'applicant_profiles.nik',
+                    'applicant_profiles.tempatlahir',
+                    'applicant_profiles.tanggallahir',
+                    'gender.name as jk',
+                    'gender.id as gender',
+                    'religion.name as agama',
+                    'religion.id as religion',
+                    'users.email',
+                    'users.name as nama'
+                )
+                ->first();
+
+            // dd($user);
+
+            $staff = Staff::where(['name' => $user->nama, 'corp' => $user->corp, 'dept' => $user->dept])->first();
+            if(!$staff) {
+                Staff::create(
+                    [
+                        'name' => $user->nama,
+                        'corp' => $user->corp,
+                        'dept' => $user->dept,
+                        'position' => $user->jabatan,
+                        'gender' => $user->gender,
+                        'religion' => $user->religion,
+                        'ktp' => $user->nik,
+                        'address' => $user->alamat,
+                        'email' => $user->email,
+                        'kontak' => $user->kontak,
+                        'place' => $user->tempatlahir,
+                        'born' => $user->tanggallahir,
+                        'status' => 3,
+                        'joindate' => $request->jadwalgabung,
+                        'study' => $user->study,
+                        'school' => $user->sekolah,
+                        'prodi' => $user->jurusan,
+                        'resign' => null,
+                        'role' => null,
+                    ]
+                );
+            }
+        }
+
         return response()->json(['success' => 'Data telah berhasil disimpan']);
     }
 

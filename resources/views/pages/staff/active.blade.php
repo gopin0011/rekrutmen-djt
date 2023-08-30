@@ -150,11 +150,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1">Ijazah dititipkan</span>
                                 </div>
-                                <select type="text" class="form-control" id="titip_ijazah" name="titip_ijazah" value="">
-                                    <option value=""></option>
-                                    <option value="1">Ya</option>
-                                    <option value="2">Tidak</option>
-                                </select>
+                                <input type="text" class="form-control" placeholder="Ijazah dititipkan" aria-label="titip_ijazah"
+                                    id="titip_ijazah" name="titip_ijazah" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <div class="form-row">
@@ -735,12 +732,11 @@
                     $("#prodi").val(data.prodi);
                     $("#ijazah").val(data.ijazah);
                     $("#resign").val(data.resign);
-                    $("#age").val(data.age+" Thn");
-                    $("#masa_kerja").val(data.masaKerja+" Thn");
+                    $("#age").val(data.age.years+" year, "+data.age.months+" month");
+                    $("#masa_kerja").val(data.masaKerja.years+" year, "+data.masaKerja.months+" month");
                     $("#bpjs_kes").val(data.bpjs_kesehatan);
                     $("#bpjs_tk").val(data.bpjs_tk);
-                    const is_titip_ijazah = (data.is_titip_ijazah == null) ? "0" : data.is_titip_ijazah;
-                    $("#titip_ijazah").val(is_titip_ijazah);
+                    $("#titip_ijazah").val(data.titip_ijazah);
                     $("#vaksin1").val(data.vaksin1);
                     $("#vaksin2").val(data.vaksin2);
                     $("#vaksin3").val(data.vaksin3);
@@ -771,28 +767,86 @@
             });
 
             function calculateAge(dateOfBirth) {
-                const today = new Date();
-                const birthDate = new Date(dateOfBirth);
+                var now = new Date();
+                var today = new Date(now.getYear(),now.getMonth(),now.getDate());
 
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
+                var yearNow = now.getYear();
+                var monthNow = now.getMonth();
+                var dateNow = now.getDate();
 
-                // Jika tanggal lahir belum lewat, kurangi umur satu tahun
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
+                var dob = new Date(dateOfBirth);
+
+                var yearDob = dob.getYear();
+                var monthDob = dob.getMonth();
+                // var dateDob = dob.getDate();
+                var age = {};
+                var ageString = "";
+                var yearString = "";
+                var monthString = "";
+                // var dayString = "";
+
+                yearAge = yearNow - yearDob;
+
+                if (monthNow >= monthDob)
+                    var monthAge = monthNow - monthDob;
+                else {
+                    yearAge--;
+                    var monthAge = 12 + monthNow -monthDob;
                 }
 
-                return age;
+                // if (dateNow >= dateDob)
+                //     var dateAge = dateNow - dateDob;
+                // else {
+                //     monthAge--;
+                //     var dateAge = 31 + dateNow - dateDob;
+
+                //     if (monthAge < 0) {
+                //         monthAge = 11;
+                //         yearAge--;
+                //     }
+                // }
+
+                age = {
+                    years: yearAge,
+                    months: monthAge,
+                    // days: dateAge
+                 };
+
+                if ( age.years > 1 ) yearString = " year";
+                    else yearString = " year";
+                if ( age.months> 1 ) monthString = " month";
+                    else monthString = " month";
+                // if ( age.days > 1 ) dayString = " days";
+                // else dayString = " day";
+
+
+                if ( (age.years > 0) && (age.months > 0) )
+                    ageString = age.years + yearString + ", " + age.months + monthString + "";
+                else if ( (age.years == 0) && (age.months == 0) )
+                    ageString = "Only " + age.days + dayString + "";
+                else if ( (age.years > 0) && (age.months == 0) )
+                    ageString = age.years + yearString + "";
+                else if ( (age.years > 0) && (age.months > 0) )
+                    ageString = age.years + yearString + "";
+                else if ( (age.years == 0) && (age.months > 0) )
+                    ageString = age.months + monthString + "";
+                else if ( (age.years > 0) && (age.months == 0) )
+                    ageString = age.years + yearString + "";
+                else if ( (age.years == 0) && (age.months > 0) )
+                    ageString = age.months + monthString + "";
+                else ageString = "Oops! Could not calculate age!";
+
+                return ageString;
             }
 
             $("#born").on('change', function(){
                 const age = calculateAge($(this).val());
-                $("#age").val(age+" Thn");
+                $("#age").val(age);
             });
 
             $("#joindate").on('change', function(){
                 const age = calculateAge($(this).val());
-                $("#masa_kerja").val(age+" Thn");
+                $("#masa_kerja").val(age);
             });
         });
     </script>

@@ -421,6 +421,7 @@ class OvertimeController extends Controller
                 'status'    => $request->status,
                 'corp'      => Corp::where('name', $request->bisnis)->first()->id,
                 'dept'      => Dept::where('nama', $request->divisi)->first()->id,
+                'created_by' => Auth::user()->id,
             ]); 
             $id = $request->nomor;
             return redirect(route('overtimes.detailcreate', ['id' => $id]));
@@ -1503,6 +1504,9 @@ class OvertimeController extends Controller
                 $id = $sheet->getCell( 'A' . $row )->getValue();
 
                 $detail = Detail::find($id);
+                if(!$detail) {
+                    continue;
+                }
 
                 if($masuk)
                 {
