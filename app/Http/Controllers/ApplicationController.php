@@ -279,6 +279,8 @@ class ApplicationController extends Controller
                     $url4 = route('applications.printAll', ['id' => $row['id']]);
                     $btn .= '<a target="_blank" href="' . $url4 . '" data-toggle="tooltip" data-original-title="All File" class="file btn btn-primary btn-sm AllFile"><i class="fa fa-file"></i></a>';
                     $btn .= '&nbsp;&nbsp;';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row['id'] . '" data-username="' . $row->user['name'] . '" data-posisi="' . $row->vacancy['name'] . '" data-original-title="Share" class="btn btn-success btn-sm shareData"><i class="fa fa-share-alt"></i></a>';
+                    $btn .= '&nbsp;&nbsp;';
                     $btn .= '<label class="switch"><input type="checkbox" class="is-lock" '.($row['is_lock_for_view'] == "1" ? 'checked':'').' data-id="'.$row['id'].'" /><span class="slider"></span></label></div>';
                     return $btn;
                 })
@@ -626,7 +628,7 @@ class ApplicationController extends Controller
             ]
         );
 
-        if ($request->hasil == 1) {
+        if ($request->hasil == 1) { // hasil diterima
             $subquery = DB::table('applicant_studies')
                 ->join('studygrade','studygrade.id','=','applicant_studies.tingkat')
                 ->orderBy('studygrade.grade', 'DESC')
@@ -681,32 +683,34 @@ class ApplicationController extends Controller
                 ->first();
 
             // dd($user);
-
-            $staff = Staff::where(['name' => $user->nama, 'corp' => $user->corp, 'dept' => $user->dept])->first();
-            if(!$staff) {
-                Staff::create(
-                    [
-                        'name' => $user->nama,
-                        'corp' => $user->corp,
-                        'dept' => $user->dept,
-                        'position' => $user->jabatan,
-                        'gender' => $user->gender,
-                        'religion' => $user->religion,
-                        'ktp' => $user->nik,
-                        'address' => $user->alamat,
-                        'email' => $user->email,
-                        'kontak' => $user->kontak,
-                        'place' => $user->tempatlahir,
-                        'born' => $user->tanggallahir,
-                        'status' => 3,
-                        'joindate' => $request->jadwalgabung,
-                        'study' => $user->study,
-                        'school' => $user->sekolah,
-                        'prodi' => $user->jurusan,
-                        'resign' => null,
-                        'role' => null,
-                    ]
-                );
+            
+            if($user) {
+                $staff = Staff::where(['name' => $user->nama, 'corp' => $user->corp, 'dept' => $user->dept])->first();
+                if(!$staff) {
+                    Staff::create(
+                        [
+                            'name' => $user->nama,
+                            'corp' => $user->corp,
+                            'dept' => $user->dept,
+                            'position' => $user->jabatan,
+                            'gender' => $user->gender,
+                            'religion' => $user->religion,
+                            'ktp' => $user->nik,
+                            'address' => $user->alamat,
+                            'email' => $user->email,
+                            'kontak' => $user->kontak,
+                            'place' => $user->tempatlahir,
+                            'born' => $user->tanggallahir,
+                            'status' => 3,
+                            'joindate' => $request->jadwalgabung,
+                            'study' => $user->study,
+                            'school' => $user->sekolah,
+                            'prodi' => $user->jurusan,
+                            'resign' => null,
+                            'role' => null,
+                        ]
+                    );
+                }
             }
         }
 

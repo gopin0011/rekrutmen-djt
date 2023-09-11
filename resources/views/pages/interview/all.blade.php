@@ -91,6 +91,45 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade bd-example-modal-lg" id="ajaxModalShare" arial-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="">Select User</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="tableUser" class="table" width="100%">
+                        <thead>
+                            <tr>
+                                <td colspan="9">
+                                    <input type="text" placeholder="Nama, email atau kontak staff" class="form-control" id="search" aria-label="search" aria-describedby="basic-addon1">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="50px">#</th>
+                                <th>Nama</th>
+                                <th>Kontak</th>
+                                <th>Untuk User</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-right" style="text-align: right;">
+                                    <div aria-label="Page navigation example">
+                                        <ul class="pagination">
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>                    
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('content')
@@ -223,7 +262,12 @@
 
     <script type="text/javascript">
         $(function() {
-            
+            var user = {
+                'name' : null,
+                'posisi': null
+            };
+
+            var application = null;
 
             // $(".is-lock").change(function(){
             //     let lock = '0';
@@ -508,6 +552,110 @@
                     $("#hasil").val(data.hasil);
                     $("#kerabat").val(data.kerabat);
                 });
+            });
+
+            function validatePhone(phone) {
+                // Format nomor telepon yang diizinkan adalah 0xx-xxxxxxx atau 0xxx-xxxxxxx
+                const phoneRegex = /^(0\d{2,3})-?\d{7,8}$/;
+                return phoneRegex.test(phone);
+            }
+
+            function replacePhonePrefix(phone) {
+                // Cek apakah nomor telepon diawali dengan "0"
+                if (phone.startsWith('0')) {
+                    // Ganti "0" dengan "62"
+                    return phone.replace(/^0/, '62');
+                }
+                // Jika tidak, kembalikan nomor telepon yang sama
+                return phone;
+            }
+
+            function sendWhatsAppMessage(phoneNumber, message) {
+                const encodedMessage = encodeURIComponent(message);
+                const url = `https://api.whatsapp.com/send/?phone=${phoneNumber}&text=${encodedMessage}`;
+                window.open(url, 'WhatsApp');
+            }
+
+            function funcShare()
+            {
+                var kontak = $(this).data("kontak");
+                var id = $(this).data("id");
+                var staff = $(this).data("staff");
+                var name = $(this).data("username");
+                var posisi = $(this).data("posisi");
+
+                var checkUser = $('#forUser'+staff).is(":checked");
+
+                if(kontak == '') return alert('Kontak user ini masih kosong, silahkan edit staff terlebih dahulu.');
+
+                if(confirm("Aksi ini tidak bisa dibatalkan, lanjut untuk kirim Whatsapp ke "+kontak+"?")) {
+                    var link =  "{{route('applications.printAll', [':id'])}}".replace(':id', id);
+                   
+                    link += "?all=1&share=1&staff="+staff;
+                    if(checkUser == true) {
+                        link += "&forUser=1";
+                    }
+                    else {
+                        link += "&forUser=0";
+                    }
+
+                    const message = `Kepada Yth. Bapak/Ibu Pimpinan Departemen, berikut kandidat atas nama ${user.name} untuk Posisi ${posisi} PT Dwida Jaya Tama: ${link}`;
+                    var phoneNumber = replacePhonePrefix(kontak);
+                    sendWhatsAppMessage(phoneNumber, message);
+                }
+            }
+
+            const getData = async (url) => {
+                const request = await fetch(url);
+                const d = await request.json();
+
+                return d;
+            };
+
+            function makeStruct(d)
+            {
+                // add to table
+                $('#tableUser').find('tbody').empty();
+
+                if(Object.keys(d.paginator.data).length > 0)
+                {
+                    for (const row of Object.keys(d.paginator.data))
+                    {
+                        var data = d.paginator.data[row];
+
+                        $('#tableUser').find('tbody').append("<tr><td class='text-center'>"+(parseInt(data.id))+"</td><td>"+data.name+"</td><td>"+data.kontak+"</td><td><input type='checkbox' name='forUser[]' id='forUser"+data.id+"'></td><td id='td"+row+"'></td></tr>");
+                        if(validatePhone(data.kontak)) {
+                            var $tautan = $('<a>', { 'href':'javascript:void(0);', 'type':'button', 'data-toggle':'tooltip', 'data-id': application, 'data-staff': data.id, 'data-kontak': data.kontak, 'data-username': user.name, 'data-posisi': user.posisi, 'data-original-title':'Edit', 'class': 'edit btn btn-success btn-sm share' });
+                            $tautan.text('Whatsapp');
+                        } else {
+                            var $tautan = $('<a>', { 'href':'javascript:void(0);', 'data-toggle':'tooltip', 'data-original-title':'Not Valid', 'class': 'text-danger' });
+                            $tautan.text(' ');
+                        }
+
+                        $('<div>', { class: 'btn-group' }).append($tautan).appendTo($('#td'+row));
+
+                    }
+                }
+
+                var elements = $('.share');
+                for (var i = 0; i < elements.length; i++) { 
+                    elements[i].addEventListener('click', funcShare, false);
+                }
+            }
+
+            $('body').on('click', '.shareData', function() {
+                $('#tableUser').find('tbody').empty();
+                var data_id = $(this).data("id");
+                application = data_id;
+                user.name = $(this).data("username");
+                user.posisi = $(this).data("posisi");
+
+                $("#ajaxModalShare").modal('show');
+            });
+
+            $('#search').on('keyup', function() {
+                var s = $(this).val();
+                getData("{{route('staff.data')}}?search="+s).then(result => { makeStruct(result); });
             });
 
             // function editLock()

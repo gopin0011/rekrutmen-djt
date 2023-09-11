@@ -31,7 +31,7 @@
                     <h4 class="modal-title" id="modalHeading"></h4>
                 </div>
                 <div class="modal-body">
-                <form id="dataForm" name="dataForm" class="form-horizontal">
+                    <form id="dataForm" name="dataForm" class="form-horizontal">
                         <input type="hidden" name="data_id" id="data_id">
                         <h5>Data Pribadi</h5>
                         <div class="form-row">
@@ -87,6 +87,36 @@
                                 </div>
                                 <input type="text" class="form-control" placeholder="Usia" aria-label="age"
                                     id="age" name="age" aria-describedby="basic-addon1" readonly>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Kel</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Kelurahan" aria-label="kelurahan"
+                                    id="kelurahan" name="kelurahan" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Kec</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Kecamatan" aria-label="kecamatan"
+                                    id="kecamatan" name="kecamatan" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Kota</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Kota" aria-label="kota"
+                                    id="kota" name="kota" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Prov</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Propinsi" aria-label="propinsi"
+                                    id="propinsi" name="propinsi" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <div class="form-row">
@@ -155,6 +185,38 @@
                             </div>
                         </div>
                         <div class="form-row">
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 1</span>
+                                </div>
+                                <select type="text" class="form-control" id="is_vaksin1" name="is_vaksin1" value="">
+                                        <option value=""></option>
+                                        <option value="1">Ya</option>
+                                        <option value="0">Tidak</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 2</span>
+                                </div>
+                                <select type="text" class="form-control" id="is_vaksin2" name="is_vaksin2" value="">
+                                        <option value=""></option>
+                                        <option value="1">Ya</option>
+                                        <option value="0">Tidak</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Vaksin 3</span>
+                                </div>
+                                <select type="text" class="form-control" id="is_vaksin3" name="is_vaksin3" value="">
+                                        <option value=""></option>
+                                        <option value="1">Ya</option>
+                                        <option value="0">Tidak</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
                             <div class="input-group mb-3 col-md-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1">Vaksin 1</span>
@@ -182,6 +244,15 @@
                                 </div>
                                 <input type="text" class="form-control" placeholder="Vaksin 4" aria-label="vaksin4"
                                     id="vaksin4" name="vaksin4" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-6">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Nama Vaksin</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Nama Vaksin" aria-label="vaksin_name"
+                                    id="vaksin_name" name="vaksin_name" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         <hr>
@@ -309,6 +380,15 @@
                                     aria-describedby="basic-addon1">
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-12">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">PIC Mesin</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="PIC Mesin" aria-label="pic_mesin"
+                                    id="pic_mesin" name="pic_mesin" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
                         <hr>
                         <h5>Data Pendidikan</h5>
                         <div class="form-row">
@@ -354,6 +434,22 @@
                                 </div>
                                 <input type="text" class="form-control" placeholder="Sertifikat" aria-label="certi"
                                     id="certi" name="certi" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-group mb-3 col-md-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Tanggal Ijazah</span>
+                                </div>
+                                <input type="date" class="form-control" aria-label="tgl_ijazah" id="tgl_ijazah" name="tgl_ijazah"
+                                    aria-describedby="basic-addon1">
+                            </div>
+                            <div class="input-group mb-3 col-md-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-medal"></i></span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="NIM" aria-label="nim"
+                                    id="nim" name="nim" aria-describedby="basic-addon1">
                             </div>
                         </div>
                         
@@ -749,6 +845,20 @@
                     $("#sp3").val(data.sp3);
                     const role = (data.role == null) ? "0" : data.role;
                     $("#role").val(role);
+                    $("#tgl_ijazah").val(data.tgl_ijazah);
+                    $("#nim").val(data.nim);
+                    $("#kelurahan").val(data.kelurahan);
+                    $("#kecamatan").val(data.kecamatan);
+                    $("#kota").val(data.kota);
+                    $("#propinsi").val(data.propinsi);
+                    $("#vaksin_name").val(data.vaksin_name);
+                    const is_vaksin1 = (data.is_vaksin1 == null) ? "" : data.is_vaksin1;
+                    $("#is_vaksin1").val(is_vaksin1);
+                    const is_vaksin2 = (data.is_vaksin2 == null) ? "" : data.is_vaksin2;
+                    $("#is_vaksin2").val(is_vaksin2);
+                    const is_vaksin3 = (data.is_vaksin3 == null) ? "" : data.is_vaksin3;
+                    $("#is_vaksin3").val(is_vaksin3);
+                    $("#pic_mesin").val(data.pic_mesin);
                 });
             });
 

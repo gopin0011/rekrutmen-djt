@@ -1,12 +1,172 @@
 @extends('adminlte::page')
 
 @section('title', 'HR | PT. Dwida Jaya Tama')
+@section('css')
+<style>
+.form-group-label{
+  padding:10px;
+  border:1px solid #c0c0c0;
+  margin:10px 0;
+}
+.form-group-label>label{
+  position:absolute;
+  top:-1px;
+  left:20px;
+  background-color:white;
+  padding: 0px 10px;
+}
+
+.form-group-label>input{
+  border:none;
+}
+</style>
+@endsection
 
 @section('content_header')
     <div class="container">
         <div class="row">
             <div class="col float-left">
                 <h5><i class="fa fa-list"></i> <strong>Overtimes</strong></h5>
+            </div>
+        </div>
+    </div>
+    @php 
+        $tempPekerjaan = '';
+        $tempSpk = '';
+        $tempNoSpk = '';
+        $tempHasil2 = '';
+        $tempPersen2 = '';
+        $tempHasil = '';
+        $tempPersen = '';
+        $tempMulai = '';
+        $tempAkhir = '';
+    @endphp
+
+    @foreach ($data as $item)
+        @php 
+            $tempPekerjaan = $item->pekerjaan;
+            $tempSpk = $item->spk;
+            $tempNoSpk = $item->nospk;
+            $tempHasil2 = $item->hasil2;
+            $tempPersen2 = $item->persen2;
+            $tempHasil = $item->hasil;
+            $tempPersen = $item->persen;
+            $tempMulai = $item->mulai;
+            $tempAkhir = $item->akhir;
+        @endphp
+    @endforeach
+    <div class="modal fade bd-example-modal-xl" id="ajaxModal" arial-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalHeading">Tambah Daftar SPL</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('overtimes.insert', ['id' => $idovertime]) }}">
+                        @csrf    
+                        <input name="nomor" type="text" class="form-control" value="{{ $overtime->nomor }}" hidden="hidden">
+                        <input type="text" class="form-control" value="{{ $overtime->bisnis }}/{{ $overtime->divisi }}" hidden="hidden">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group-label">
+                                    <div class="form-group">
+                                        <label for="nik" class="form-label">Nik / Nama Karyawan</label>
+                                        <select class="form-control" id="nik" name="nik">
+                                            @foreach($employee as $item)
+                                                <option value="{{ $item->nik }}" data-jabatan="{{ $item->position }}">{{ $item->nik }} - {{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pekerjaan" class="form-label">Uraian Pekerjaan</label>
+                                        <input name="pekerjaan" placeholder="Pekerjaan" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPekerjaan}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="spk" class="form-label">SPK</label>
+                                        <input name="spk" placeholder="SPK" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempSpk}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nospk" class="form-label">No. SPK</label>
+                                        <input name="nospk" placeholder="Nomor SPK" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempNoSpk}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-label">
+                                    <label for="hasil2" class="form-label">{{$tglSplSebelumnya['2hari']}}</label>
+                                    <div class="form-group">
+                                        <label for="hasil2" class="form-label">Hasil</label>
+                                        <input name="hasil2" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempHasil2}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="persen2" class="form-label">Persen</label>
+                                        <input name="persen2" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPersen2}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-label">
+                                <label for="hasil2" class="form-label">{{$tglSplSebelumnya['1hari']}}</label>
+                                    <div class="form-group">
+                                            <label for="hasil" class="form-label">Hasil</label>
+                                            <input name="hasil" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempHasil}}">
+                                        </div>
+                                    <div class="form-group">
+                                        <label for="persen" class="form-label">Persen</label>
+                                        <input name="persen" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPersen}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>   
+                        <div class="row"> 
+                            <div class="col-md-12">
+                                <div class="form-group-label">
+                                    <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="mulai" class="form-label">Mulai</label>
+                                            <input type="time" class="form-control" aria-label="mulai" id="mulai" name="mulai" value="{{$tempMulai}}" 
+                                                    aria-describedby="basic-addon1">
+                                        </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="akhir" class="form-label">Akhir</label>
+                                            <input type="time" class="form-control" aria-label="akhir" id="akhir" name="akhir" value="{{$tempAkhir}}" 
+                                                    aria-describedby="basic-addon1">
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="makan" class="form-label">Makan</label>
+                                        <select name="makan" class="form-control menu-makan">
+                                            <optgroup label="Padang">
+                                                <option value="Padang-Rendang">Rendang</option>
+                                                <option value="Padang-Ayam Bakar">Ayam Bakar</option>
+                                                <option value="Padang-Ikan">Ikan</option>
+                                                <option value="Padang-Telur">Telur</option>
+                                            </optgroup>
+                                            <optgroup label="Pecel">
+                                                <option value="Pecel-Ayam">Ayam</option>
+                                                <option value="Pecel-Lele">Lele</option>
+                                                <option value="Pecel-Ayam Bakar">Ayam Bakar</option>
+                                            </optgroup>
+                                            <option value="Mie Goreng">Mie Goreng</option>
+                                            <option value="Nasi Goreng">Nasi Goreng</option>
+                                            <option value="Kwetiau">Kwetiau</option>
+                                            <option value="Ayam Geprek">Ayam Geprek</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -22,13 +182,13 @@
                             <h3 class="card-title"><strong>Detail SPL</strong></h3>
                             <form id="dataForm" method="POST" action="{{ route('overtimes.edit', ['id' => $overtime->id]) }}">
                             <input name="revisi" type="text" class="form-control" value="{{ $revisi }}" hidden="hidden">
-                                <div class="input-group mb-3"> 
+                                <div class="input-group form-group"> 
                                     <input name="nomor" type="text" class="form-control" value="{{ $overtime->nomor }}" hidden="hidden">
                                     <input name="bisnis" type="text" class="form-control" value="{{ $overtime->bisnis }}" hidden="hidden">
                                     <input name="divisi" type="text" class="form-control" value="{{ $overtime->divisi }}" hidden="hidden">
                                 </div>
 
-                                <div class="input-group mb-3">
+                                <div class="input-group form-group">
                                     <div class="input-group-append">
                                         <div class="input-group-text">
                                         <span class="fas fa-calendar" style="width: 15px"></span>
@@ -50,7 +210,7 @@
                                         aria-describedby="basic-addon1">
                                 </div>
 
-                                <div class="input-group mb-3">
+                                <div class="input-group form-group">
                                     <div class="input-group-append">
                                         <div class="input-group-text">
                                         <span class="fas fa-edit" style="width: 15px"></span>
@@ -60,7 +220,7 @@
                                 </div>
                                 
                                 @if(Auth::user()->admin ==2 || Auth::user()->admin ==3 ||Auth::user()->admin ==4 ||Auth::user()->admin ==10)
-                                <div class="input-group mb-3">
+                                <div class="input-group form-group">
                                     <div class="input-group-append">
                                         <div class="input-group-text">
                                         <span class="fas fa-check" style="width: 15px"></span>
@@ -106,7 +266,7 @@
                                 </div>
                                 @endif
 
-                                <div class="input-group mb-3">
+                                <div class="input-group form-group">
                                     <div class="input-group-append">
                                         <div class="input-group-text">
                                         <span style="width: 15px">A</span>
@@ -146,20 +306,20 @@
                                     @endif
                                 </div>
     
-                                <div class="mb-3">
+                                <div class="form-group">
                                     <button type="submit" class="btn btn-primary btn-block">Simpan</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('overtimes.insert', ['id' => $idovertime]) }}">
-                        @csrf    
+                    <!-- <form method="POST" action="{{ route('overtimes.insert', ['id' => $idovertime]) }}">
+                        @csrf     -->
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"><strong>Daftar SPL</strong></h3>
                             </div>
-                                <input name="nomor" type="text" class="form-control" value="{{ $overtime->nomor }}" hidden="hidden">
-                                <input type="text" class="form-control" value="{{ $overtime->bisnis }}/{{ $overtime->divisi }}" hidden="hidden">
+                                <!-- <input name="nomor" type="text" class="form-control" value="{{ $overtime->nomor }}" hidden="hidden">
+                                <input type="text" class="form-control" value="{{ $overtime->bisnis }}/{{ $overtime->divisi }}" hidden="hidden"> -->
 
                             <div class="card-body"> 
                                 <div class="card">
@@ -180,39 +340,21 @@
                                         <th rowspan="2">Akhir</th>
                                         <th rowspan="2">Total</th>
                                         <th rowspan="2">Makan</th>
-                                        <th rowspan="2">Aksi</th>
+                                        <th style="text-align:center"><a href="javascript:void(0)" class="btn btn-success btn-sm" data-toggle="tooltip" title="add" id="createNewData">
+                                                    <span class="fas fa-plus"></span>
+                                            </a>
+                                        </th>
                                     </tr>
                                     <tr>
                                         <th>Hasil</th>
                                         <th>Persen</th>
                                         <th>Hasil</th>
                                         <th>Persen</th>
+                                        <th>Aksi</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @php 
-                                            $tempPekerjaan = '';
-                                            $tempSpk = '';
-                                            $tempNoSpk = '';
-                                            $tempHasil2 = '';
-                                            $tempPersen2 = '';
-                                            $tempHasil = '';
-                                            $tempPersen = '';
-                                            $tempMulai = '';
-                                            $tempAkhir = '';
-                                        @endphp
                                         @foreach ($data as $item)
-                                        @php 
-                                            $tempPekerjaan = $item->pekerjaan;
-                                            $tempSpk = $item->spk;
-                                            $tempNoSpk = $item->nospk;
-                                            $tempHasil2 = $item->hasil2;
-                                            $tempPersen2 = $item->persen2;
-                                            $tempHasil = $item->hasil;
-                                            $tempPersen = $item->persen;
-                                            $tempMulai = $item->mulai;
-                                            $tempAkhir = $item->akhir;
-                                        @endphp
                                         <tr>
                                             <td>{{ $item->nik }}</td>
                                             <td>{{ $item->nama }}</td>
@@ -236,58 +378,12 @@
                                         </tr>
                                         @endforeach
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3">
-                                                <select class="form-control" id="nik" name="nik">
-                                                    @foreach($employee as $item)
-                                                        <option value="{{ $item->nik }}" data-jabatan="{{ $item->position }}">{{ $item->nik }} - {{ $item->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td><input name="pekerjaan" placeholder="Pekerjaan" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPekerjaan}}"></td>
-                                            <td><input name="spk" placeholder="SPK" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempSpk}}"></td>
-                                            <td><input name="nospk" placeholder="Nomor SPK" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempNoSpk}}"></td>
-                                            <td><input name="hasil2" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempHasil2}}"></td>
-                                            <td><input name="persen2" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPersen2}}"></td>
-                                            <td><input name="hasil" placeholder="Target Hasil" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempHasil}}"></td>
-                                            <td><input name="persen" placeholder="Persentasi Tercapai" type="text" class="form-control" oninput="setCustomValidity('')" value="{{$tempPersen}}"></td>
-                                            <td><input type="time" class="form-control" aria-label="mulai" id="mulai" name="mulai" value="{{$tempMulai}}" 
-                                    aria-describedby="basic-addon1"></td>
-                                            <td><input type="time" class="form-control" aria-label="akhir" id="akhir" name="akhir" value="{{$tempAkhir}}" 
-                                    aria-describedby="basic-addon1"></td>
-                                            <td colspan="2">
-                                                <select name="makan" class="form-control menu-makan">
-                                                    <optgroup label="Padang">
-                                                        <option value="Padang-Rendang">Rendang</option>
-                                                        <option value="Padang-Ayam Bakar">Ayam Bakar</option>
-                                                        <option value="Padang-Ikan">Ikan</option>
-                                                        <option value="Padang-Telur">Telur</option>
-                                                    </optgroup>
-                                                    <optgroup label="Pecel">
-                                                        <option value="Pecel-Ayam">Ayam</option>
-                                                        <option value="Pecel-Lele">Lele</option>
-                                                        <option value="Pecel-Ayam Bakar">Ayam Bakar</option>
-                                                    </optgroup>
-                                                    <option value="Mie Goreng">Mie Goreng</option>
-                                                    <option value="Nasi Goreng">Nasi Goreng</option>
-                                                    <option value="Kwetiau">Kwetiau</option>
-                                                    <option value="Ayam Geprek">Ayam Geprek</option>
-                                                </select>
-                                            </td>
-                                            
-                                            <td style="text-align: center">
-                                                <button class="btn btn-primary btn-sm" style="color:white" data-toggle="tooltip" title="Simpan">
-                                                    <span class="fas fa-save"></span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
+                                    
                                     </table>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    <!-- </form> -->
 <!--                    
                 </div>
             </div>
@@ -386,7 +482,9 @@
                 $("#example4 tfoot").hide();
             }
 
-
+            $("#createNewData").click(function() {
+                $("#ajaxModal").modal('show');
+            });
         });
 </script>    
 @endsection

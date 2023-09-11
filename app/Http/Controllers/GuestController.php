@@ -69,7 +69,7 @@ class GuestController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview', 'debug', 'approveSPL','postSpl']);
+        $this->middleware('guest')->except(['formUserInterview','autoRegistration', 'test', 'forms', 'showDataForm', 'printAll', 'isMobile', 'shareHasilInterview', 'debug', 'approveSPL','postSpl', 'userInterviewStore']);
     }
 
     public function formUserInterview($token)
@@ -100,7 +100,7 @@ class GuestController extends Controller
     public function userInterviewStore(Request $request)
     {
         $type = $request->type;
-
+        
         if ($type == 'user') {
             Interview::updateOrCreate(
                 ['id' => $request->data_id],
@@ -138,7 +138,6 @@ class GuestController extends Controller
             );
         }
         
-
         return redirect()->back()->with("message", "Sukses Input Data");
     }
 
@@ -417,10 +416,14 @@ class GuestController extends Controller
                 $merger->addPathToPDF($path, 'all', 'P');
             }
 
-            $merger->merge();
-            $merger->save(base_path('/public/storage/merger.pdf'));
+            // $merger->merge();
+            // $merger->save(base_path('/public/storage/merger.pdf'));
 
             $gdocs = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", url('public/storage/merger.pdf'));
+
+            if($request->get('all') == '1') {
+                return $this->allShareCandidate($request, $gdocs, $id, $request->get('staff'), $request->get('forUser'));
+            }
 
             if ($this->isMobile()) {
                 return view('pages.application.mobile.viewpdf', ['rekrutmen_pdf' => $gdocs, 'cv_url' => null]);
@@ -434,7 +437,19 @@ class GuestController extends Controller
         return view('pages.application.printAllFile', ['rekrutmen_pdf' => $rekrutmen_pdf, 'cv_url' => $cv_path, 'thisUrl' => $thisUrl, 'user' => $user, 'posisi' => $posisi]);
     }
 
-    public function shareHasilInterview(Request $request, $id, $userId, $type)
+    public function allShareCandidate(Request $request, $gdocs, $id, $userId, $forUser) 
+    {
+        $type = 'user';
+        if($forUser != '1') {
+            $type = 'mana';
+        }
+
+        $formHasilInterview = $this->shareHasilInterview($request, $id, $userId, $type, true);
+
+        return view('pages.application.all', compact('gdocs', 'formHasilInterview'));
+    }
+
+    public function shareHasilInterview(Request $request, $id, $userId, $type, $returnAction = false)
     {
         try {
             // $type = $request->type;
@@ -478,6 +493,10 @@ class GuestController extends Controller
 
             if($request->whatsapp == '1') {
                 return redirect($data->action);
+            }
+
+            if($returnAction) {
+                return $data->action;
             }
 
             $text = "Dear, ".$dear." ".$staff->name."<br><br>Anda Diminta Untuk Mengisi Hasil Interview Dengan Kandidat:";

@@ -447,6 +447,17 @@ class StaffController extends Controller
                 'sp2' => $request->sp2,
                 'sp3' => $request->sp3,
                 'role' => ($request->role == "0") ? null : $request->role,
+                'tgl_ijazah' => $request->tgl_ijazah,
+                'nim' => $request->nim,
+                'kelurahan' => $request->kelurahan,
+                'kecamatan' => $request->kecamatan,
+                'kota' => $request->kota,
+                'propinsi' => $request->propinsi,
+                'vaksin_name' => $request->vaksin_name,
+                'is_vaksin1' => ($request->is_vaksin1 == "") ? null : $request->is_vaksin1,
+                'is_vaksin2' => ($request->is_vaksin2 == "") ? null : $request->is_vaksin2,
+                'is_vaksin3' => ($request->is_vaksin3 == "") ? null : $request->is_vaksin3,
+                'pic_mesin' => $request->pic_mesin,
             ]
         );
         return response()->json(['success' => 'Data telah berhasil disimpan']);
