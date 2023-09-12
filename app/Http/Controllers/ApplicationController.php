@@ -278,8 +278,10 @@ class ApplicationController extends Controller
                     $btn .= '&nbsp;&nbsp;';
                     $url4 = route('applications.printAll', ['id' => $row['id']]);
                     $btn .= '<a target="_blank" href="' . $url4 . '" data-toggle="tooltip" data-original-title="All File" class="file btn btn-primary btn-sm AllFile"><i class="fa fa-file"></i></a>';
-                    $btn .= '&nbsp;&nbsp;';
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row['id'] . '" data-username="' . $row->user['name'] . '" data-posisi="' . $row->vacancy['name'] . '" data-original-title="Share" class="btn btn-success btn-sm shareData"><i class="fa fa-share-alt"></i></a>';
+                    if($row->vacancy) {
+                        $btn .= '&nbsp;&nbsp;';
+                        $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row['id'] . '" data-username="' . $row->user['name'] . '" data-posisi="' . $row->vacancy['name'] . '" data-original-title="Share" class="btn btn-success btn-sm shareData"><i class="fa fa-share-alt"></i></a>';
+                    }
                     $btn .= '&nbsp;&nbsp;';
                     $btn .= '<label class="switch"><input type="checkbox" class="is-lock" '.($row['is_lock_for_view'] == "1" ? 'checked':'').' data-id="'.$row['id'].'" /><span class="slider"></span></label></div>';
                     return $btn;
@@ -300,10 +302,9 @@ class ApplicationController extends Controller
                         }
                         return $row->user['name'];
                     }
-                    // return $name;
                 })
                 ->addColumn('posisi', function ($row){
-                    // if ($row->posisi) $posisi = Vacancy::find($row->posisi)->name;
+                    if ($row->posisi) $posisi = Vacancy::find($row->posisi)->name;
                     if($row->vacancy && $row->vacancy['name']) $posisi = $row->vacancy['name'];
                     else $posisi = $row['posisi_char'];
                     return $posisi;

@@ -416,8 +416,8 @@ class GuestController extends Controller
                 $merger->addPathToPDF($path, 'all', 'P');
             }
 
-            // $merger->merge();
-            // $merger->save(base_path('/public/storage/merger.pdf'));
+            $merger->merge();
+            $merger->save(base_path('/public/storage/merger.pdf'));
 
             $gdocs = sprintf("https://docs.google.com/viewer?embedded=true&url=%s", url('public/storage/merger.pdf'));
 

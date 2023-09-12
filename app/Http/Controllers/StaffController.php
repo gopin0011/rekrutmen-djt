@@ -472,6 +472,7 @@ class StaffController extends Controller
     public function showStaff(Request $request)
     {
         $current_page = request('page') ?? 1;
+        $to_json = request('to_json') ?? 0;
 
         $limit = self::per_page;
         $start = ($current_page * self::per_page) - self::per_page;
@@ -482,16 +483,32 @@ class StaffController extends Controller
         }
 
         $q = Staff::orderBy('name');
-        if ($search != '' && $search) {
-            $q->where('name', 'like', '%'.$search.'%')
-            ->orWhere('email', 'like', '%'.$search.'%')
-            ->orWhere('kontak', 'like', '%'.$search.'%');
+
+        if ($to_json == 1) {
+            // $q->where(
+            //     ['corp' => 1, 'dept' => 3]
+            // );
+            $q->whereNull('resign');
+
+            $total = $q->count();
         }
-        $total = $q->count();
-        
-        $q->offset($start)->limit($limit);
+        else {
+            if ($search != '' && $search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                ->orWhere('email', 'like', '%'.$search.'%')
+                ->orWhere('kontak', 'like', '%'.$search.'%');
+            }
+            
+            $total = $q->count();
+            
+            $q->offset($start)->limit($limit);
+        }
 
         $data = $q->get();
+
+        if ($to_json == 1) {
+            return response()->json($data);
+        }
 
         $result['paginator'] = new Paginator($data, $total, self::per_page, $current_page, [
             'path' => $request->url(),
