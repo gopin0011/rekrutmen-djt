@@ -2,7 +2,9 @@
 /vendor
 /node_modules
 # /storage/app/public
-# /storage/*
+/storage/**
 __MACOSX
 /app/.DS_Store
 /public/storage
+storage/**
+storage/framework/views/**

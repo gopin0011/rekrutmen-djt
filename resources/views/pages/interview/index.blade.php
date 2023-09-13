@@ -160,6 +160,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css"> -->
     <link rel="stylesheet" type="text/css" href="{{asset('bootstrap-tagsinput/bootstrap-tagsinput.css')}}" />
     <link rel="stylesheet" type="text/css" href="https://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/assets/app.css" />
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"> -->
     
     <style>
         .label-info {

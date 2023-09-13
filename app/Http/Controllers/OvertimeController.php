@@ -875,7 +875,13 @@ class OvertimeController extends Controller
 
     public function viewFormPengajuan(Request $request, $tanggalspl)
     {
-        $data = Overtime::with(['detail','division','pengajuanDana.detail'])->whereHas('detail')->where('tanggalspl', $tanggalspl)->get()->sortBy('division.kode');
+        $data = Overtime::with(['detail','division','pengajuanDana.detail'])
+        ->whereHas('detail')
+        ->has('detail', '>', 0)
+        ->where('tanggalspl', $tanggalspl)
+        ->where(['manajer' => 'diterima', 'hr' => 'diterima'])
+        ->get()
+        ->sortBy('division.kode');
         $detail = Overtime::getCountWithGroup($data);
 
         // dd($detail);
@@ -892,26 +898,31 @@ class OvertimeController extends Controller
         }
         // $data = Overtime::with(['detail','division','pengajuanDana.detail'])->whereHas('detail')->where('tanggalspl', $tanggalspl)->get();
         $data = Division::with(['overtime' => function ($query) use ($tanggalspl) {
-            $query->where('tanggalspl', '=', $tanggalspl);
+            $query
+                ->where('tanggalspl', '=', $tanggalspl)
+                ->where(['manajer' => 'diterima', 'hr' => 'diterima']);
         }])
+        ->withCount('overtime')
         ->has('overtime.detail', '>', 0)
+        ->has('overtime','>',0)
         ->orderBy('kode')
-        ->get();
+        ->get()
+        ->where('overtime_count', '>', 0);
 
+        // dd($data);
         $divisi = [];
         foreach($data as $row) {
-            if(!isset($divisi[$row->nama])) {
-                $divisi[$row->nama] = $row->id;
+            if(count($row->overtime) > 0) {
+                if(!isset($divisi[$row->nama])) {
+                    $divisi[$row->nama] = $row->id;
+                }
             }
         }
 
         $filter = $request->filter;
-        // dd($request->filter);
         if($request->filter != '0' && $request->filter) {
             $data = $data->where('id', $filter);
         }
-
-        // $data = Overtime::getCountWithGroup($data);
 
         return view('pages.overtime.form-detail', compact('data', 'tanggalspl','divisi', 'filter'));
     }
