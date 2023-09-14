@@ -1,10 +1,12 @@
 .env
 /vendor
 /node_modules
-# /storage/app/public
-/storage/**
+/storage/app/public
+# /storage/**
 __MACOSX
 /app/.DS_Store
 /public/storage
-storage/**
+# storage/**
 storage/framework/views/**
+storage/framework/sessions/**
+storage/logs/**
