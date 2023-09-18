@@ -31,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
                 return false;
             }
 
+            $jam = explode(":", $value);
+            $value = sprintf("%02d", $jam[0]).":".$jam[1];
+
             $timeRegex = '/^([01]\d|2[0-3]):([0-5]\d)$/'; // Format HH:mm
 
             return preg_match($timeRegex, $value);
